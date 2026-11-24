@@ -26,7 +26,7 @@
                 if (item.imageUrl.startsWith("/") || item.imageUrl.endsWith("/")) {
                     return;
                 }
-                return resolve("/api/assets/[id]", { id: item.imageUrl });
+                return resolve("/pdc/assets/[id]", { id: item.imageUrl });
             }
         }
     });

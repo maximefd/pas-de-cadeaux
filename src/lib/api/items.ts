@@ -15,7 +15,7 @@ export class ItemAPI {
 
         if (body) options.body = JSON.stringify(body);
 
-        return await fetch(`/api/items/${this.itemId}`, options);
+        return await fetch(`/pdc/items/${this.itemId}`, options);
     };
 
     delete = async () => {
@@ -35,7 +35,7 @@ export class ItemsAPI {
 
         if (body) options.body = JSON.stringify(body);
 
-        return await fetch(`/api/items${path}`, options);
+        return await fetch(`/pdc/items${path}`, options);
     };
 
     clearItemsFromLists = async (groupId?: string, claimed?: boolean) => {

@@ -17,7 +17,7 @@ export class ClaimAPI {
             options.body = JSON.stringify(data);
         }
 
-        const url = `/api/claims/${this.claimId}`;
+        const url = `/pdc/claims/${this.claimId}`;
         return await fetch(url, options);
     };
 

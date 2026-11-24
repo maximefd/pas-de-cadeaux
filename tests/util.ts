@@ -55,7 +55,7 @@ export const createUser = async (request: APIRequestContext, existingGroup?: Gro
     const password = randomString(12);
 
     const userId = await request
-        .put("/api/users", { data: { name, username, email, password } })
+        .put("/pdc/users", { data: { name, username, email, password } })
         .then((response) => response.json())
         .then(({ id }) => id as string);
 
@@ -64,13 +64,13 @@ export const createUser = async (request: APIRequestContext, existingGroup?: Gro
         group = existingGroup;
     } else {
         group = await request
-            .put("/api/groups", { data: { name: randomString(), createOnly: true } })
+            .put("/pdc/groups", { data: { name: randomString(), createOnly: true } })
             .then((response) => response.json())
             .then(({ group }) => group);
     }
 
-    await request.put(`/api/groups/${group.id}/users/${userId}`, { data: { manager: true } });
-    await request.patch(`/api/users/${userId}/groups/${group.id}`, { data: { active: true } });
+    await request.put(`/pdc/groups/${group.id}/users/${userId}`, { data: { manager: true } });
+    await request.patch(`/pdc/users/${userId}/groups/${group.id}`, { data: { active: true } });
 
     return {
         id: userId,
