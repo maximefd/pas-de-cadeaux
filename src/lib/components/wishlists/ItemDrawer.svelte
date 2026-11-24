@@ -9,6 +9,7 @@
     import ModalBackdrop from "../modals/parts/ModalBackdrop.svelte";
     import type { InternalItemCardProps } from "./ItemCard/ItemCard.svelte";
     import ItemFooter from "./ItemCard/components/ItemFooter.svelte";
+    import ItemComments from "./ItemComments.svelte";
 
     let { defaultImage: _defaultImage, item, ...props }: InternalItemCardProps = $props();
     const t = getFormatter();
@@ -76,6 +77,10 @@
                 {/if}
 
                 <ItemAttributes {...props} fullNotes {item} showDetail />
+
+                {#if open}
+                    <ItemComments isSelfClaimable={props.isSelfClaimable} {item} user={props.user} />
+                {/if}
 
                 <ItemFooter {...props} {item} noPadding onEdit={() => (open = false)}></ItemFooter>
             </ModalContent>

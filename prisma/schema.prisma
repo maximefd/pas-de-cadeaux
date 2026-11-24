@@ -26,6 +26,7 @@ model User {
     lists               List[]
     preferredLanguage   String?
     managedLists        ListManager[]
+    itemComments        ItemComment[]
 
     @@map("user")
 }
@@ -136,9 +137,24 @@ model Item {
     createdById String
     lists       ListItem[]
     claims      ItemClaim[]
+    comments    ItemComment[]
 
     @@index([userId])
     @@map("items")
+}
+
+// Commentaire court signé sur une idée. Jamais renvoyé à la personne concernée ni à ses gestionnaires.
+model ItemComment {
+    id        String   @id @unique @default(uuid())
+    item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+    itemId    Int
+    author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId  String
+    text      String
+    createdAt DateTime @default(now())
+
+    @@index([itemId])
+    @@map("item_comment")
 }
 
 model ItemPrice {
