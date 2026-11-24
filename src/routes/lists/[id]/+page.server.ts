@@ -43,7 +43,10 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
         listOwnerId: list.owner.id,
         listManagers: new Set(list.managers.map(({ userId }) => userId)),
         loggedInUserId: locals.user?.id || null,
-        isSelfClaimable
+        isSelfClaimable,
+        hideOffered:
+            (list.owner.id === locals.user?.id || list.managers.some(({ userId }) => userId === locals.user?.id)) &&
+            !(isSelfClaimable || config.claims.showForOwner)
     };
 
     const items = await getItems(list.id, options);

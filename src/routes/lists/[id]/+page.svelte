@@ -280,6 +280,14 @@
             <ClaimFilterChip />
         {/if}
         <SortBy />
+        {#if data.loggedInUser}
+            <a
+                class="btn btn-sm md:btn inset-ring-surface-500 inset-ring"
+                href={`/wishlists/${data.list.owner.username}/received`}
+            >
+                {$t("wishes.received")}
+            </a>
+        {/if}
     </div>
     <div class="flex flex-row flex-wrap items-end gap-2">
         {#if !reordering}

@@ -18,6 +18,8 @@ export interface GetItemsOptions {
     listManagers?: Set<string>;
     loggedInUserId: string | null;
     isSelfClaimable?: boolean;
+    // Never reveal the "offered" state to the list owner/managers (they would learn about gifts)
+    hideOffered?: boolean;
 }
 
 export interface ListProperties {
@@ -233,7 +235,7 @@ export const getItems = async (listId: string, options: GetItemsOptions) => {
 
     return items
         .filter((item) => item.lists.length > 0) // need to filter out items not on a list because prisma generates a stupid query
-        .map((i) => toItemOnListDTO(i, list.id))
+        .map((i) => toItemOnListDTO(options.hideOffered ? { ...i, offered: false } : i, list.id))
         .filter(claimFilter(options.filter, options.loggedInUserId))
         .toSorted(
             itemSorter({

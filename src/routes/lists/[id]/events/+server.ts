@@ -38,10 +38,16 @@ export const GET = (async ({ locals, params }) => {
         return new Response();
     }
 
+    // owners/managers must never learn that an item was offered
+    const hideOffered =
+        !!locals.user &&
+        (list.owner.id === locals.user.id || list.managers.some(({ userId }) => userId === locals.user!.id)) &&
+        !(list.allowSelfClaims || list.notForMe || config.claims.showForOwner);
+
     const { readable, subscribeToEvent } = createSSE();
 
-    subscribeToEvent(itemEmitter, new ItemUpdateHandler(params.id));
-    subscribeToEvent(itemEmitter, new ItemCreateHandler(params.id));
+    subscribeToEvent(itemEmitter, new ItemUpdateHandler(params.id, hideOffered));
+    subscribeToEvent(itemEmitter, new ItemCreateHandler(params.id, hideOffered));
     subscribeToEvent(itemEmitter, new ItemDeleteHandler(params.id));
     subscribeToEvent(itemEmitter, new ItemsUpdateHandler(params.id));
 

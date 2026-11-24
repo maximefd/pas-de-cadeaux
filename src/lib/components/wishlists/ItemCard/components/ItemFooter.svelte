@@ -2,6 +2,7 @@
     import ClaimButtons from "../ClaimButtons.svelte";
     import type { InternalItemCardProps } from "../ItemCard.svelte";
     import ManageButtons from "../ManageButtons.svelte";
+    import OfferedButton from "../OfferedButton.svelte";
     import ReorderButtons from "../ReorderButtons.svelte";
 
     interface Props extends Omit<InternalItemCardProps, "id" | "defaultImage"> {
@@ -26,6 +27,7 @@
         <ReorderButtons {...props} />
     {:else}
         <ClaimButtons isClaimableOrClaimed={(ans) => (isClaimButtonVisible = ans)} {...props} />
+        <OfferedButton isSelfClaimable={props.isSelfClaimable} item={props.item} user={props.user} />
         <ManageButtons {...props} />
     {/if}
 </footer>
