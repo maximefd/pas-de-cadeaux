@@ -280,7 +280,7 @@
             <ClaimFilterChip />
         {/if}
         <SortBy />
-        {#if data.loggedInUser}
+        {#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
             <a
                 class="btn btn-sm md:btn inset-ring-surface-500 inset-ring"
                 href={`/wishlists/${data.list.owner.username}/received`}
