@@ -20,9 +20,7 @@
     let submitButton: HTMLElement | undefined = $state();
 </script>
 
-<div
-    class="card preset-filled-surface-100-900 inset-ring-surface-200-800 flex w-full min-w-96 flex-col gap-1 p-4 inset-ring md:max-w-1/3"
->
+<div class="paper-account">
     <div class="relative m-auto h-full w-full max-w-37.5">
         <Avatar class="size-32 text-3xl" {user} />
         <form
@@ -112,7 +110,7 @@
                 <span>{$t("admin.profile-disabled")}</span>
             {/if}
 
-            <button class="preset-filled-primary-500 btn w-fit" {disabled} formaction="?/profile" type="submit">
+            <button class="paper-primary" {disabled} formaction="?/profile" type="submit">
                 {$t("general.update")}
             </button>
         </div>

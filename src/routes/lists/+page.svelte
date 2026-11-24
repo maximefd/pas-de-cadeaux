@@ -2,10 +2,11 @@
     import type { PageData, PageProps } from "./$types";
     import { fade } from "svelte/transition";
     import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
-    import ListCard from "$lib/components/ListCard.svelte";
+    import ListRow from "$lib/components/papier/ListRow.svelte";
+    import CircleTabs from "$lib/components/papier/CircleTabs.svelte";
+    import { page } from "$app/state";
     import { goto } from "$app/navigation";
     import ListFilterChip from "$lib/components/wishlists/chips/ListFilterChip.svelte";
-    import empty from "$lib/assets/no_wishes.svg";
     import { getFormatter } from "$lib/i18n";
     import { resolve } from "$app/paths";
 
@@ -25,37 +26,34 @@
     };
 </script>
 
-<div class="flex flex-wrap-reverse items-start justify-between gap-2 pb-4 print:hidden">
+<CircleTabs groups={page.data.groups} user={page.data.user} />
+
+<div class="paper-toolbar pb-2 print:hidden">
     <ListFilterChip {users} />
-    <button
-        class="preset-tonal-secondary inset-ring-secondary-500 btn btn-xs h-fit items-center inset-ring"
-        onclick={() => goto(resolve("/lists/create"))}
-    >
-        <iconify-icon icon="ion:add"></iconify-icon>
-        <span>{$t("wishes.create-list")}</span>
-    </button>
 </div>
 
 {#if data.myLists.length + data.otherLists.length === 0}
-    <div class="flex flex-col items-center justify-center space-y-4 pt-4">
-        <img class="w-3/4 md:w-1/3" alt={$t("a11y.two-people-looking-in-an-empty-box")} src={empty} />
-        <p class="text-2xl">{$t("wishes.no-lists-yet")}</p>
-    </div>
+    <p class="paper-empty" data-testid="list-container-empty">{$t("wishes.no-lists-yet")}</p>
 {:else}
-    <div class="flex flex-col space-y-4" data-testid="list-container" in:fade>
+    <div class="paper-list" data-testid="list-container" in:fade>
         {#each data.myLists as list (list.id)}
-            <ListCard hideCount {list} />
+            <ListRow hideCount {list} />
         {/each}
 
         {#each data.otherLists as list (list.id)}
             {#await hasNewItems(list)}
-                <ListCard {list} />
+                <ListRow {list} />
             {:then hasNewItems}
-                <ListCard {hasNewItems} {list} />
+                <ListRow {hasNewItems} {list} />
             {/await}
         {/each}
     </div>
 {/if}
+
+<button class="paper-add print:hidden" onclick={() => goto(resolve("/lists/create"))} type="button">
+    <b aria-hidden="true">+</b>
+    <span>{$t("wishes.create-list")}</span>
+</button>
 
 <svelte:head>
     <title>{$t("wishes.lists")}</title>

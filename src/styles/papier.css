@@ -230,3 +230,214 @@
 .paper-toolbar {
     max-width: 40rem;
 }
+
+/* --- Cercles (Famille, Amis…) : deux ou trois onglets de texte --- */
+.paper-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    max-width: 40rem;
+    border-bottom: 1px solid var(--paper-line);
+    margin-bottom: 0.75rem;
+}
+.paper-tab {
+    min-height: 3rem;
+    padding: 0.5rem 0.125rem;
+    font-size: 1.125rem;
+    color: var(--paper-mute);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+.paper-tab[aria-current="true"] {
+    color: var(--paper-fg);
+    font-weight: 650;
+    border-bottom-color: var(--paper-fg);
+}
+.paper-tab:not([aria-current="true"]):hover {
+    color: var(--paper-fg);
+}
+.paper-tab:disabled {
+    opacity: 0.6;
+}
+
+/* --- Liste des listes : une ligne par personne --- */
+.paper-list-row {
+    text-decoration: none;
+    min-height: 3.5rem;
+}
+.paper-list-row .paper-body {
+    gap: 0.5rem;
+}
+.paper-count {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--paper-mute);
+    font-size: 0.9375rem;
+    white-space: nowrap;
+}
+.paper-chevron {
+    color: var(--paper-mute);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.paper-new-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--paper-accent);
+}
+.paper-approvals {
+    color: var(--paper-accent);
+    font-size: 0.875rem;
+    margin-top: 0.125rem;
+}
+.paper-empty {
+    color: var(--paper-mute);
+    font-size: 1.0625rem;
+    padding: 1.25rem 0;
+}
+.paper-section {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--paper-mute);
+    margin: 1.75rem 0 0.25rem;
+}
+.paper-claims {
+    max-width: 40rem;
+}
+
+/* --- Connexion, inscription, compte : champs soulignés, grandes zones tactiles --- */
+.paper-auth {
+    max-width: 28rem;
+    margin-inline: auto;
+    padding-top: 1.5rem;
+}
+.paper-auth .h1 {
+    margin-bottom: 1rem;
+}
+.paper-form {
+    width: 100%;
+}
+.paper-fields,
+.paper-account {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 28rem;
+}
+.paper-fields .label,
+.paper-account .label {
+    font-size: 0.9375rem;
+    color: var(--paper-mute);
+}
+.paper-fields .input,
+.paper-fields .ig-input,
+.paper-account .input,
+.paper-account .ig-input {
+    min-height: 3.25rem;
+    font-size: 1.25rem;
+    color: var(--paper-fg);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--paper-mute);
+    border-radius: 0;
+    box-shadow: none;
+    padding-inline: 0;
+}
+.paper-fields .input:focus,
+.paper-fields .ig-input:focus,
+.paper-account .input:focus,
+.paper-account .ig-input:focus {
+    outline: 2px solid var(--paper-accent);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+.paper-fields .input-group,
+.paper-account .input-group {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-inset-ring-shadow: 0 0 #0000;
+}
+.paper-fields .input-group,
+.paper-account .input-group {
+    border-bottom: 1px solid var(--paper-mute);
+    border-radius: 0;
+}
+.paper-fields .input-group .ig-input,
+.paper-account .input-group .ig-input {
+    border-bottom: 0;
+}
+.paper-fields .ig-cell,
+.paper-account .ig-cell {
+    background: transparent;
+    border: 0 !important;
+    color: var(--paper-fg);
+    font-size: 1.25rem;
+    min-width: 3rem;
+    min-height: 3rem;
+}
+.paper-fields .input-invalid,
+.paper-account .input-invalid {
+    border-bottom-color: var(--color-error-500);
+}
+.paper-optional {
+    font-weight: 400;
+    margin-inline-start: 0.25rem;
+}
+.paper-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--paper-accent);
+    color: var(--paper-bg);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+.paper-primary:disabled {
+    opacity: 0.5;
+}
+.paper-account .paper-primary {
+    width: auto;
+    align-self: flex-start;
+}
+.paper-auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+}
+.paper-auth-links .paper-link {
+    min-height: 2.75rem;
+    padding-inline: 0;
+    color: var(--paper-accent);
+}
+.paper-or {
+    text-align: center;
+    color: var(--paper-mute);
+}
+
+/* Compte : pas d'icône devant les champs */
+.paper-account .input-group {
+    grid-template-columns: 1fr;
+}
+.paper-account .ig-cell.preset-tonal {
+    display: none;
+}
+.paper-account .input-group:has(.ig-cell:not(.preset-tonal)) {
+    grid-template-columns: 1fr auto;
+}
+.paper-fields .input-group > *,
+.paper-account .input-group > * {
+    border-inline-width: 0 !important;
+}

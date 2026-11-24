@@ -6,9 +6,10 @@
     interface Props {
         hideActions?: boolean;
         signingIn?: boolean;
+        emailOptional?: boolean;
     }
 
-    const { hideActions = false, signingIn = false }: Props = $props();
+    const { hideActions = false, signingIn = false, emailOptional = false }: Props = $props();
     const t = getFormatter();
 
     let data = $derived(page.data);
@@ -18,7 +19,7 @@
     let passwordConfirm = $state("");
 </script>
 
-<div class="bg-surface-100-900 card border-surface-200-800 flex flex-col space-y-4 border p-4">
+<div class="paper-fields">
     {#if data.id}
         <input id="tokenId" name="tokenId" class="hidden" value={data.id} />
     {/if}
@@ -29,6 +30,7 @@
             name="name"
             class={["input", formData?.errors?.name && "input-invalid"]}
             autocomplete="name"
+            enterkeyhint="next"
             required
             type="text"
         />
@@ -37,7 +39,7 @@
         {/if}
     </label>
 
-    <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:gap-x-2">
+    <div class="paper-fields">
         <label class="label" for="username">
             <span>{$t("auth.username")}</span>
             <input
@@ -46,6 +48,8 @@
                 class={["input", formData?.errors?.username && "input-invalid"]}
                 autocapitalize="off"
                 autocomplete="username"
+                autocorrect="off"
+                enterkeyhint="next"
                 required
                 type="text"
             />
@@ -54,13 +58,17 @@
             {/if}
         </label>
         <label class="label" for="email">
-            <span>{$t("auth.email")}</span>
+            <span>
+                {$t("auth.email")}
+                {#if emailOptional}<small class="paper-optional">({$t("general.optional")})</small>{/if}
+            </span>
             <input
                 id="email"
                 name="email"
                 class={["input", formData?.errors?.email && "input-invalid"]}
                 autocomplete="email"
-                required
+                inputmode="email"
+                required={!emailOptional}
                 type="email"
             />
             {#if formData?.errors?.email}
@@ -72,12 +80,19 @@
     <PasswordInput
         id="password"
         name="password"
+        autocomplete="new-password"
         label={$t("auth.password")}
         required
         strengthMeter
         bind:value={password}
     />
-    <PasswordInput id="confirmpassword" label={$t("auth.confirm-password")} required bind:value={passwordConfirm} />
+    <PasswordInput
+        id="confirmpassword"
+        autocomplete="new-password"
+        label={$t("auth.confirm-password")}
+        required
+        bind:value={passwordConfirm}
+    />
 
     {#if password !== passwordConfirm}
         <span class="text-invalid">{$t("auth.passwords-must-match")}</span>
@@ -91,18 +106,14 @@
     {/if}
 
     {#if !hideActions}
-        <div class="flex items-center justify-center gap-x-4 pb-2">
-            <button
-                class="preset-filled-primary-500 btn w-min"
-                disabled={password !== passwordConfirm || signingIn}
-                type="submit"
-            >
-                {#if signingIn}
-                    <span class="loading loading-spinner loading-xs"></span>
-                {/if}
-                <span>{$t("auth.create-account")}</span>
-            </button>
-            <a class="anchor" href="/login">{$t("auth.sign-in")}</a>
+        <button class="paper-primary" disabled={password !== passwordConfirm || signingIn} type="submit">
+            {#if signingIn}
+                <span class="loading loading-spinner loading-xs"></span>
+            {/if}
+            <span>{$t("auth.create-account")}</span>
+        </button>
+        <div class="paper-auth-links">
+            <a class="paper-link" href="/login">{$t("auth.sign-in")}</a>
         </div>
     {/if}
 </div>
