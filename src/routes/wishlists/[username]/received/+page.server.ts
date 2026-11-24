@@ -33,6 +33,12 @@ export const load: PageServerLoad = async ({ params }) => {
         error(404, $t("errors.list-not-found"));
     }
 
+    // The recipient (and the managers of their lists) must never see what was offered to them:
+    // only the other members can read this history. Same filter as ideas suggested by others.
+    if (lists.some((list) => list.owner.id === user.id || list.managers.some(({ userId }) => userId === user.id))) {
+        error(404, $t("errors.list-not-found"));
+    }
+
     const received = new Map<number, { id: number; name: string; url: string | null; imageUrl: string | null }>();
     for (const list of lists) {
         const items = await getItems(list.id, {
@@ -52,7 +58,7 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     return {
-        owner: { ...lists[0].owner, isMe: lists[0].owner.id === user.id },
+        owner: { ...lists[0].owner, isMe: false },
         listId: lists[0].id,
         items: [...received.values()]
     };
