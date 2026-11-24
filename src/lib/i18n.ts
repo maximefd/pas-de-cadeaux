@@ -13,11 +13,19 @@ export interface Lang {
     hidden?: boolean;
 }
 
-export const defaultLang: Lang = {
+// Fork "Pas de cadeaux !" : le français est la langue par défaut (anglais conservé en secours)
+export const englishLang: Lang = {
     name: "English",
     endonym: "English",
     code: "en",
     loader: () => import("../i18n/en.json")
+};
+
+export const defaultLang: Lang = {
+    name: "French",
+    endonym: "Français",
+    code: "fr",
+    loader: () => import("../i18n/fr.json")
 };
 
 // Endonyms: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
@@ -25,8 +33,8 @@ export const supportedLangs: Lang[] = [
     { name: "Czech", endonym: "Čeština", code: "cs", loader: () => import("../i18n/cs.json") },
     { name: "Danish", endonym: "Dansk", code: "da", loader: () => import("../i18n/da.json") },
     { name: "Dutch", endonym: "Nederlands", code: "nl", loader: () => import("../i18n/nl.json") },
+    englishLang,
     defaultLang,
-    { name: "French", endonym: "Français", code: "fr", loader: () => import("../i18n/fr.json") },
     { name: "German", endonym: "Deutsch", code: "de", loader: () => import("../i18n/de.json") },
     { name: "Greek", endonym: "Νέα Ελληνικά", code: "el", loader: () => import("../i18n/el.json") },
     { name: "Italian", endonym: "Italiano", code: "it", loader: () => import("../i18n/it.json") },
@@ -95,7 +103,7 @@ export const initLang = async (locale: string) => {
     supportedLangs.forEach((lang) => register(lang.code, lang.loader));
 
     await init({
-        fallbackLocale: dev ? "dev" : defaultLang.code,
+        fallbackLocale: dev ? "dev" : englishLang.code,
         initialLocale: locale
     });
 };

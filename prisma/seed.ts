@@ -41,9 +41,15 @@ const groups = async () => {
     const groupCount = await prisma.group.count();
 
     if (groupCount === 0) {
+        // Fork "Pas de cadeaux !" : groupes « Famille » (groupe par défaut) et « Amis »
         const defaultGroup = await prisma.group.create({
             data: {
-                name: "Default"
+                name: "Famille"
+            }
+        });
+        await prisma.group.create({
+            data: {
+                name: "Amis"
             }
         });
 

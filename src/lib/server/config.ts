@@ -119,7 +119,7 @@ const getDefaultConfig = (): Config => ({
     enableSignup: true,
     suggestions: {
         enable: true,
-        method: "approval"
+        method: "surprise"
     },
     smtp: {
         enable: false,
@@ -131,11 +131,11 @@ const getDefaultConfig = (): Config => ({
         showNameAcrossGroups: false,
         showForOwner: false,
         showNamePublic: false,
-        requireEmail: true
+        requireEmail: false
     },
     listMode: "standard",
     security: {
-        passwordStrength: 2,
+        passwordStrength: -1,
         disablePasswordLogin: false
     },
     enableDefaultListCreation: true,
