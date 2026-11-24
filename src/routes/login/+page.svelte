@@ -35,11 +35,11 @@
     });
 </script>
 
-<div class="flex flex-col items-center space-y-4">
+<div class="paper-auth">
     <h1 class="h1 capitalize">{$t("auth.sign-in")}</h1>
 
     <form
-        class="w-80"
+        class="paper-form"
         method="POST"
         use:enhance={(form) => {
             signingIn = true;
@@ -55,9 +55,7 @@
             };
         }}
     >
-        <div
-            class="rounded-container card preset-filled-surface-100-900 border-surface-200-800 flex flex-col space-y-4 border p-4"
-        >
+        <div class="paper-fields">
             {#if data.isCallback}
                 <div class="flex flex-col items-center justify-center space-y-4">
                     <span class="loading loading-spinner w-8 md:w-12"></span>
@@ -73,6 +71,8 @@
                             class={["input", (form?.incorrect || form?.error) && "input-invalid"]}
                             autocapitalize="off"
                             autocomplete="username"
+                            autocorrect="off"
+                            enterkeyhint="next"
                             required
                             type="text"
                         />
@@ -87,6 +87,7 @@
                         <PasswordInput
                             id="password"
                             name="password"
+                            autocomplete="current-password"
                             error={form?.incorrect || form?.error}
                             label={$t("auth.password")}
                             required
@@ -103,38 +104,28 @@
                             </span>
                         {/if}
 
-                        <div class="flex items-center justify-center gap-x-4">
-                            <button class="preset-filled-primary-500 btn w-min" disabled={signingIn}>
-                                {#if signingIn}
-                                    <span class="loading loading-spinner loading-xs"></span>
-                                {/if}
-                                <span>{$t("auth.sign-in")}</span>
-                            </button>
+                        <button class="paper-primary" disabled={signingIn}>
+                            {#if signingIn}
+                                <span class="loading loading-spinner loading-xs"></span>
+                            {/if}
+                            <span>{$t("auth.sign-in")}</span>
+                        </button>
+
+                        <div class="paper-auth-links">
+                            <a class="paper-link" href="/forgot-password">{$t("auth.forgot-password")}</a>
                             {#if data.enableSignup}
-                                <a class="anchor" href="/signup">{$t("auth.create-an-account")}</a>
+                                <a class="paper-link" href="/signup">{$t("auth.create-an-account")}</a>
                             {/if}
                         </div>
-
-                        <a
-                            class="anchor absolute top-0 mt-0! pt-0.5 text-sm ltr:right-0 rtl:left-0"
-                            href="/forgot-password"
-                        >
-                            {$t("auth.forgot-password")}
-                        </a>
                     </div>
                 {/if}
                 {#if data.oidcConfig?.ready}
                     {#if data.enableLogin}
-                        <div class="-mt-4 flex w-full items-center justify-center">
-                            <hr class="hr my-2 h-px w-3/4" />
-                            <span class="preset-filled-surface-100-900 absolute left-1/2 -translate-x-1/2 px-2">
-                                {$t("auth.or")}
-                            </span>
-                        </div>
+                        <p class="paper-or">{$t("auth.or")}</p>
                     {/if}
                     <div class="flex justify-center">
                         <button
-                            class="preset-filled-primary-500 btn"
+                            class="paper-primary"
                             disabled={signingIn}
                             onclick={() => window.location.assign(`/login/oidc${page.url.search}`)}
                             type="button"

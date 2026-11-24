@@ -3,7 +3,6 @@
     import { flip } from "svelte/animate";
     import type { PageProps } from "./$types";
     import ItemCard from "$lib/components/wishlists/ItemCard/ItemCard.svelte";
-    import noClaims from "$lib/assets/no_claims.svg";
     import type { ItemOnListDTO } from "$lib/dtos/item-dto";
     import { getFormatter } from "$lib/i18n";
     import { getListViewPreference, initListViewPreference } from "$lib/stores/list-view-preference.svelte";
@@ -61,23 +60,18 @@
 </div>
 
 {#if data.items.length === 0}
-    <div class="flex flex-col items-center justify-center space-y-4 pt-4">
-        <img class="w-3/4 md:w-1/3" alt={$t("a11y.a-person-looking-at-an-empty-board")} src={noClaims} />
-        <p class="text-2xl">{$t("wishes.nothing-claimed-yet")}</p>
-    </div>
+    <p class="paper-empty">{$t("wishes.nothing-claimed-yet")}</p>
 {:else}
-    <div class="flex flex-col space-y-4" data-testid="claims-container">
+    <div class="paper-claims" data-testid="claims-container">
         {#each groupedItems as [category, items] (category)}
             {@const sortedItems =
                 groupBy !== "purchased" ? items.toSorted((a, b) => isPurchased(a) - isPurchased(b)) : items}
             {#if category !== "_default"}
-                <span transition:fade>{category}</span>
+                <h2 class="paper-section" transition:fade>{category}</h2>
             {/if}
             <div
                 class={[
-                    isTileView
-                        ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
-                        : "flex flex-col space-y-4"
+                    isTileView ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "paper-list"
                 ]}
                 data-testid="category"
                 transition:scale

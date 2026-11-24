@@ -44,7 +44,16 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions: Actions = {
     default: async ({ request, cookies }) => {
-        const formData = Object.fromEntries(await request.formData());
+        const formData: Record<string, unknown> = Object.fromEntries(await request.formData());
+        // L'e-mail est facultatif à l'inscription : on met une adresse factice unique (jamais utilisée pour écrire).
+        if (typeof formData.email !== "string" || formData.email.trim() === "") {
+            const slug = String(formData.username ?? "")
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+            formData.email = `${slug || "membre"}-${Date.now().toString(36)}@sans-email.invalid`;
+        }
         const signupSchema = await getSignupSchema();
         const signupData = signupSchema.safeParse(formData);
         const $t = await getFormatter();

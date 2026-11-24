@@ -15,11 +15,11 @@
     let signingIn = $state(false);
 </script>
 
-<div class="flex flex-col items-center space-y-4">
+<div class="paper-auth">
     <h1 class="h1 capitalize">{$t("auth.create-account")}</h1>
 
     <form
-        class="max-w-lg min-w-80 md:w-1/2 lg:w-2/3"
+        class="paper-form"
         method="POST"
         use:enhance={() => {
             signingIn = true;
@@ -29,7 +29,7 @@
             };
         }}
     >
-        <CreateAccountForm {signingIn} />
+        <CreateAccountForm emailOptional {signingIn} />
     </form>
 </div>
 
