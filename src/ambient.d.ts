@@ -116,6 +116,7 @@ type Config = {
     defaultGroup?: string | null;
     enableDefaultListCreation: boolean;
     allowPublicLists: boolean;
+    anyoneCanDeleteItems: boolean;
     oidc: OIDCConfig;
 };
 

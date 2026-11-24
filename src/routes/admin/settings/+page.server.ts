@@ -134,6 +134,7 @@ const generateConfig = (configData: z.infer<typeof settingSchema>) => {
         defaultGroup: configData.defaultGroup,
         enableDefaultListCreation: configData.enableDefaultListCreation,
         allowPublicLists: configData.allowPublicLists,
+        anyoneCanDeleteItems: configData.anyoneCanDeleteItems,
         oidc: oidcConfig
     };
 

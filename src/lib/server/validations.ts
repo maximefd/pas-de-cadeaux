@@ -77,6 +77,7 @@ export const settingSchema = z.object({
     defaultGroup: z.string().optional(),
     enableDefaultListCreation: z.coerce.boolean().default(false),
     allowPublicLists: z.coerce.boolean().default(false),
+    anyoneCanDeleteItems: z.coerce.boolean().default(false),
     enableOIDC: z.coerce.boolean().default(false),
     oidcDiscoveryUrl: z.string().optional(),
     oidcClientId: z.string().optional(),

@@ -5,6 +5,7 @@ import { tryDeleteImage } from "$lib/server/image-util";
 import { client } from "$lib/server/prisma";
 import { error, type RequestHandler } from "@sveltejs/kit";
 import { requireLoginOrError } from "$lib/server/auth";
+import { getConfig } from "$lib/server/config";
 import type { List as PrismaList, Item as PrismaItem } from "$lib/generated/prisma/client";
 
 interface List extends Pick<PrismaList, "groupId"> {
@@ -70,14 +71,46 @@ const isItemOnManagedList = (item: Item, user: LocalUser) => {
     return item.lists[0].managers.find((userId) => user.id === userId) !== undefined;
 };
 
+/**
+ * Who may delete an item:
+ * - its creator, or a manager of the (single) list it is on;
+ * - the owner, unless the item is hidden from them ("surprise" mode and added by someone else);
+ * - any other member of the list's group, if the admin enabled "anyoneCanDeleteItems".
+ */
+const canDeleteItem = async (item: Item, user: LocalUser) => {
+    if (user.id === item.createdById || isItemOnManagedList(item, user)) {
+        return true;
+    }
+
+    const lists = item.lists;
+    const configs = await Promise.all(lists.map((list) => getConfig(list.groupId)));
+
+    if (user.id === item.userId) {
+        // In "surprise" mode the owner can't see items added by others, so they can't delete them either
+        const hiddenFromOwner = configs.some((config) => config.suggestions.method === "surprise");
+        return !hiddenFromOwner;
+    }
+
+    if (!configs.some((config) => config.anyoneCanDeleteItems)) {
+        return false;
+    }
+
+    const membership = await client.userGroupMembership.findFirst({
+        where: {
+            userId: user.id,
+            groupId: { in: lists.map((list) => list.groupId) }
+        },
+        select: { id: true }
+    });
+    return membership !== null;
+};
+
 export const DELETE: RequestHandler = async ({ params }) => {
     const user = await requireLoginOrError();
     const $t = await getFormatter();
     const item = await validateItem(params?.itemId);
 
-    // item is not created by the user or for the user and
-    // item is not on a list which is managed by the user
-    if (user.id !== item.createdById && user.id !== item.userId && !isItemOnManagedList(item, user)) {
+    if (!(await canDeleteItem(item, user))) {
         error(403, $t("errors.not-authorized"));
     }
 
