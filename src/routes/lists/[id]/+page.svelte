@@ -278,7 +278,7 @@
             <ClaimFilterChip />
         {/if}
         <SortBy />
-        {#if data.loggedInUser}
+        {#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
             <a class="paper-link" href={`/wishlists/${data.list.owner.username}/received`}>
                 {$t("wishes.received")}
             </a>
