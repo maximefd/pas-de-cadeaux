@@ -82,7 +82,7 @@ const nonPrivateRoutes: RouteId[] = [
     "/setup-wizard/step/[step]",
     "/reset-password",
     "/group-error",
-    "/api/assets/[id]"
+    "/pdc/assets/[id]"
 ];
 
 function transformForLang(html: string, lang: Lang) {

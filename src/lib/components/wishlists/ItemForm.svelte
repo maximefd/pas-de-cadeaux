@@ -100,7 +100,7 @@
         if (productData.url && !urlFetched) {
             fetching = true;
             const url = extractUrl(productData.url);
-            const res = await fetch(`/api/product?url=${url}`);
+            const res = await fetch(`/pdc/product?url=${url}`);
             if (res.ok) {
                 let newProductData: ProductData = await res.json();
                 productData.url = newProductData.url ? newProductData.url : url;
