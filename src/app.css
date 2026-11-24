@@ -13,6 +13,7 @@
 @import "./styles/tabs.css";
 @import "./styles/alert.css";
 @import "./styles/dialog.css";
+@import "./styles/papier.css";
 
 @plugin "@tailwindcss/forms";
 

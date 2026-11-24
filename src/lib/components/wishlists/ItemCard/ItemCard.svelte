@@ -57,6 +57,7 @@
     import ListItemCard from "./ListItemCard.svelte";
     import type { Snippet } from "svelte";
     import ItemDrawer from "../ItemDrawer.svelte";
+    import { pendingRemovals } from "$lib/stores/pending-removals.svelte";
 
     const {
         item,
@@ -119,39 +120,45 @@
     {userCanManage}
 />
 
-<div
-    class={[
-        "card preset-filled-surface-100-900 border-surface-200-800 block h-full w-full border text-start print:break-inside-avoid print:shadow-none",
-        !item.approved && "preset-tonal-warning border-warning-500 border",
-        !reorderActions && "card-hover"
-    ]}
-    aria-labelledby={`${id}-name`}
-    onclick={() => {
-        if (!reorderActions) launchDrawer();
-    }}
-    onkeyup={(e) => {
-        if (!reorderActions && e.key === "Enter") launchDrawer();
-    }}
-    role={reorderActions ? "none" : "button"}
->
-    <ItemCard
-        {id}
-        {defaultImage}
-        {groupId}
-        {isSelfClaimable}
-        {item}
-        {onDecreasePriority}
-        {onIncreasePriority}
-        {onPriorityChange}
-        {onPublicList}
-        {reorderActions}
-        {requireClaimEmail}
-        {showClaimForOwner}
-        {showClaimedName}
-        {showFor}
-        {showNameAcrossGroups}
-        {showPublicClaimName}
-        {user}
-        {userCanManage}
-    />
-</div>
+<!-- Mode liste : look « Papier » (ligne de texte, voir styles/papier.css). Mode tuile : carte d'origine. -->
+{#if !pendingRemovals.has(item.id)}
+    <div
+        class={[
+            "card block w-full text-start print:break-inside-avoid print:shadow-none",
+            isTileView
+                ? "preset-filled-surface-100-900 border-surface-200-800 h-full border"
+                : ["paper-row", !item.approved && "paper-row-pending"],
+            isTileView && !item.approved && "preset-tonal-warning border-warning-500 border",
+            isTileView && !reorderActions && "card-hover"
+        ]}
+        aria-labelledby={`${id}-name`}
+        onclick={() => {
+            if (!reorderActions) launchDrawer();
+        }}
+        onkeyup={(e) => {
+            if (!reorderActions && e.key === "Enter") launchDrawer();
+        }}
+        role={reorderActions ? "none" : "button"}
+    >
+        <ItemCard
+            {id}
+            {defaultImage}
+            {groupId}
+            {isSelfClaimable}
+            {item}
+            {onDecreasePriority}
+            {onIncreasePriority}
+            {onPriorityChange}
+            {onPublicList}
+            {reorderActions}
+            {requireClaimEmail}
+            {showClaimForOwner}
+            {showClaimedName}
+            {showFor}
+            {showNameAcrossGroups}
+            {showPublicClaimName}
+            {user}
+            {userCanManage}
+        />
+    </div>
+{/if}

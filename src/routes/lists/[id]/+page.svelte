@@ -8,7 +8,6 @@
     import { flip } from "svelte/animate";
     import { quintOut } from "svelte/easing";
     import { crossfade } from "svelte/transition";
-    import { isInstalled } from "$lib/stores/is-installed";
     import empty from "$lib/assets/no_wishes.svg";
     import SortBy from "$lib/components/wishlists/chips/SortBy.svelte";
     import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
@@ -18,7 +17,6 @@
     import { dragHandleZone, type DndZoneAttributes, type Item, type Options } from "svelte-dnd-action";
     import ReorderChip from "$lib/components/wishlists/chips/ReorderChip.svelte";
     import ManageListChip from "$lib/components/wishlists/chips/ManageListChip.svelte";
-    import ListViewModeChip from "$lib/components/wishlists/chips/ListViewModeChip.svelte";
     import type { ItemOnListDTO } from "$lib/dtos/item-dto";
     import { ItemCreateHandler, ItemDeleteHandler, ItemsUpdateHandler, ItemUpdateHandler } from "$lib/events";
     import { getFormatter } from "$lib/i18n";
@@ -281,18 +279,12 @@
         {/if}
         <SortBy />
         {#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
-            <a
-                class="btn btn-sm md:btn inset-ring-surface-500 inset-ring"
-                href={`/wishlists/${data.list.owner.username}/received`}
-            >
+            <a class="paper-link" href={`/wishlists/${data.list.owner.username}/received`}>
                 {$t("wishes.received")}
             </a>
         {/if}
     </div>
     <div class="flex flex-row flex-wrap items-end gap-2">
-        {#if !reordering}
-            <ListViewModeChip {isTileView} />
-        {/if}
         {#if data.list.owner.isMe || data.list.isManager}
             <ReorderChip onFinalize={handleReorderFinalize} bind:reordering />
             <ManageListChip onclick={() => goto(`${new URL(page.url).pathname}/manage`)} />
@@ -323,9 +315,7 @@
     <div class="flex flex-col space-y-4 pb-4 print:hidden">
         <h2 class="h2">{$t("wishes.approvals")}</h2>
         <div
-            class={isTileView
-                ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
-                : "flex flex-col space-y-4"}
+            class={isTileView ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "paper-list"}
             data-testid="approvals-container"
         >
             {#each approvals as item (item.id)}
@@ -358,9 +348,7 @@
 {:else}
     <!-- items -->
     <div
-        class={isTileView
-            ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
-            : "flex flex-col space-y-4"}
+        class={isTileView ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "paper-list"}
         data-testid="items-container"
         onconsider={handleDnd}
         onfinalize={handleDnd}
@@ -424,21 +412,19 @@
 
     <!-- spacer -->
     <footer class="print:hidden">
-        <div class="h-16"></div>
+        <div class="h-2"></div>
     </footer>
 {/if}
 
 <!-- Add Item button -->
 {#if data.loggedInUser && (data.list.owner.isMe || data.list.isManager || data.suggestionsEnabled)}
     <button
-        class={[
-            "preset-tonal btn btn-icon btn-icon-sm md:btn-icon-base inset-ring-surface-200-800 fixed right-4 z-30 size-16 p-0! inset-ring md:right-10 md:bottom-10 md:size-20 print:hidden",
-            $isInstalled ? "bottom-24" : "bottom-4"
-        ]}
+        class="paper-add print:hidden"
         aria-label="add item"
         onclick={() => goto(`${page.url.pathname}/create-item?redirectTo=${page.url.pathname}`, { replaceState: true })}
     >
-        <iconify-icon class="text-xl md:text-2xl" icon="ion:add"></iconify-icon>
+        <b aria-hidden="true">+</b>
+        <span>{$t("wishes.add-idea")}</span>
     </button>
 {/if}
 

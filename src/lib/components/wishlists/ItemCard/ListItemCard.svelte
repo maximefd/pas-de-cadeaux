@@ -1,27 +1,78 @@
 <script lang="ts">
     import type { InternalItemCardProps } from "./ItemCard.svelte";
-    import type { MessageFormatter } from "$lib/server/i18n";
-    import ItemNameHeader from "./components/ItemNameHeader.svelte";
-    import ItemAttributes from "./components/ItemAttributes.svelte";
     import ItemFooter from "./components/ItemFooter.svelte";
-    import ItemImage from "./components/ItemImage.svelte";
+    import ClaimButtons from "./ClaimButtons.svelte";
+    import OfferedButton from "./OfferedButton.svelte";
+    import ManageButtons from "./ManageButtons.svelte";
+    import RemoveButton from "./RemoveButton.svelte";
+    import Markdown from "$lib/components/Markdown.svelte";
+    import { getFormatter } from "$lib/i18n";
 
+    // Look « Papier » : une ligne de texte par idée, sans carte, image ni prix.
+    // Le détail complet (image, prix, quantité...) reste disponible dans le tiroir au clic.
     const { defaultImage: _defaultImage, ...props }: InternalItemCardProps = $props();
+    const t = getFormatter();
+
+    const item = $derived(props.item);
+
+    // « ajouté par X » uniquement quand l'idée n'a pas été ajoutée par la personne concernée
+    const signedByOther = $derived(item.addedBy && item.addedBy.id !== item.user.id);
+    const showOffered = $derived(item.offered && props.user?.id !== item.userId);
 </script>
 
-<ItemNameHeader {...props} />
-
-<div class="flex flex-row gap-x-4 p-4 print:pt-1">
-    <ItemImage class="aspect-square h-24 w-24 rounded object-contain md:h-40 md:w-40" {...props} shrinkBadge>
-        {#snippet defaultImage(t: MessageFormatter)}
-            {@render _defaultImage(t, "aspect-square size-24 rounded md:size-40")}
-        {/snippet}
-    </ItemImage>
-
-    <div class="flex flex-col">
-        <ItemAttributes {...props} />
+<div class={["paper-body", showOffered && "paper-offered"]}>
+    <div class="paper-text">
+        <div class="paper-title">
+            {#if item.url}
+                <a
+                    id={`${props.id}-name`}
+                    data-testid="name"
+                    href={item.url}
+                    onclick={(e) => e.stopPropagation()}
+                    rel="noreferrer"
+                    target="_blank"
+                >
+                    {item.name}
+                </a>
+            {:else}
+                <span id={`${props.id}-name`} data-testid="name">{item.name}</span>
+            {/if}
+        </div>
+        {#if item.note}
+            <div class="paper-note line-clamp-2 whitespace-pre-wrap print:line-clamp-none" data-testid="notes">
+                <Markdown source={item.note} />
+            </div>
+        {/if}
+        {#if props.showFor}
+            <div class="paper-by" data-testid="added-by">
+                {@html $t("wishes.for", { values: { name: item.user.name, class: "" } })}
+            </div>
+        {:else if signedByOther}
+            <div class="paper-by" data-testid="added-by">
+                {#if props.onPublicList}
+                    {@html $t("wishes.added-by-somebody-else", { values: { class: "" } })}
+                {:else}
+                    {@html $t("wishes.added-by", { values: { name: item.addedBy.name, class: "" } })}
+                {/if}
+            </div>
+        {/if}
+        {#if !props.reorderActions}
+            <div class="paper-claimed-line print:hidden">
+                <ClaimButtons isClaimableOrClaimed={() => {}} {...props} />
+            </div>
+        {/if}
     </div>
-</div>
 
-<!-- Footer with buttons -->
-<ItemFooter {...props} />
+    {#if props.reorderActions}
+        <ItemFooter {...props} noPadding />
+    {:else}
+        <div class="paper-actions print:hidden">
+            <OfferedButton isSelfClaimable={props.isSelfClaimable} {item} user={props.user} />
+            {#if item.approved}
+                <RemoveButton {item} user={props.user} userCanManage={props.userCanManage} />
+            {:else}
+                <ManageButtons {...props} />
+            {/if}
+        </div>
+    {/if}
+</div>
