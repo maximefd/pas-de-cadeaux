@@ -115,7 +115,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
     const itemDTOs = items.map((item) => {
         const claim = item.claims[0];
-        return toItemOnListDTO(item, claim.listId);
+        return toItemOnListDTO(item.userId === user.id ? { ...item, offered: false } : item, claim.listId);
     });
 
     return {

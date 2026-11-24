@@ -24,8 +24,10 @@ export interface BaseEventHandler<D, T> {
 export class ItemUpdateHandler implements BaseEventHandler<FullItem, ItemOnListDTO> {
     static event = ItemEvent.ITEM_UPDATE;
     listId: string;
-    constructor(listId: string) {
+    hideOffered: boolean;
+    constructor(listId: string, hideOffered = false) {
         this.listId = listId;
+        this.hideOffered = hideOffered;
     }
 
     getEventId() {
@@ -33,7 +35,7 @@ export class ItemUpdateHandler implements BaseEventHandler<FullItem, ItemOnListD
     }
 
     handle(data: FullItem) {
-        return toItemOnListDTO(data, this.listId);
+        return toItemOnListDTO(this.hideOffered ? { ...data, offered: false } : data, this.listId);
     }
 
     predicate(data: FullItem) {
@@ -51,8 +53,10 @@ export class ItemUpdateHandler implements BaseEventHandler<FullItem, ItemOnListD
 export class ItemCreateHandler implements BaseEventHandler<FullItem, ItemOnListDTO> {
     static event = ItemEvent.ITEM_CREATE;
     listId: string;
-    constructor(listId: string) {
+    hideOffered: boolean;
+    constructor(listId: string, hideOffered = false) {
         this.listId = listId;
+        this.hideOffered = hideOffered;
     }
 
     getEventId() {
@@ -60,7 +64,7 @@ export class ItemCreateHandler implements BaseEventHandler<FullItem, ItemOnListD
     }
 
     handle(data: FullItem) {
-        return toItemOnListDTO(data, this.listId);
+        return toItemOnListDTO(this.hideOffered ? { ...data, offered: false } : data, this.listId);
     }
 
     predicate(data: FullItem) {

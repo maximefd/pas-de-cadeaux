@@ -376,6 +376,12 @@
     "wishes": {
         "added-by": "Ajouté par <span class=\"{class}\">{name}</span>",
         "claimed": "Réservé",
+        "offered": "Offert",
+        "received": "Reçus",
+        "received-by": "Reçus par {name}",
+        "received-by-me": "Reçus",
+        "nothing-received-yet": "Rien reçu pour l'instant.",
+        "back-to-list": "Retour à la liste",
         "claimed-item": "Elément {claimed, select, true {réservé} other {non réservé}}",
         "create-for": "Créer un souhait pour {listOwner}",
         "default-sort": "Priorité",
