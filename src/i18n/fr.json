@@ -163,6 +163,8 @@
         "oidc-auto-register-tooltip": "Autorise la création de nouveau compte pour les utilisateurs OAuth qui se connectent pour la première fois.",
         "oidc-client-id": "Client Id",
         "allow-public-lists": "Autoriser les listes publiques",
+        "anyone-can-delete-items": "Toute personne qui voit une idée peut la supprimer",
+        "anyone-can-delete-items-tooltip": "Permet à tout membre du groupe qui voit une idée de la supprimer, et pas seulement son créateur, son propriétaire ou un gestionnaire de liste. Les idées cachées à leur propriétaire le restent.",
         "allow-public-lists-tooltip": "Autorise les utilisateurs à rendre une liste publiques. N'a pas d'effet si le groupe est en mode \"Liste publique\".",
         "suggestions-auto-approve-tooltip": "L'élément est ajouté automatiquement à la liste, mais le propriétaire de la liste peut le voir, le modifier et le supprimer.",
         "suggestions-surprise-me-tooltip": "L'élément est automatiquement ajouté à la liste du propriétaire sans qu'il ne le sache.",

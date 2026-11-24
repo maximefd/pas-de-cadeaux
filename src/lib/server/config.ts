@@ -27,6 +27,7 @@ enum ConfigKey {
     DEFAULT_GROUP = "defaultGroup",
     ENABLE_DEFAULT_LIST_CREATION = "enableDefaultListCreation",
     ALLOW_PUBLIC_LISTS = "allowPublicLists",
+    ANYONE_CAN_DELETE_ITEMS = "anyoneCanDeleteItems",
     OIDC_ENABLE = "oidc.enable",
     OIDC_DISCOVERY_URL = "oidc.discoveryUrl",
     OIDC_CLIENT_ID = "oidc.clientId",
@@ -100,6 +101,7 @@ const transformers: Record<ConfigKey, Transformer<unknown>> = {
     defaultGroup: stringTransformer,
     enableDefaultListCreation: booleanTransformer,
     allowPublicLists: booleanTransformer,
+    anyoneCanDeleteItems: booleanTransformer,
     "oidc.enable": booleanTransformer,
     "oidc.clientId": stringTransformer,
     "oidc.clientSecret": maskableStringTransformer,
@@ -140,6 +142,7 @@ const getDefaultConfig = (): Config => ({
     },
     enableDefaultListCreation: true,
     allowPublicLists: false,
+    anyoneCanDeleteItems: false,
     oidc: {
         enable: false
     }

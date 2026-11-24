@@ -4,7 +4,7 @@
     import { getFormatter } from "$lib/i18n";
 
     interface Props {
-        config: Pick<Config, "enableDefaultListCreation" | "allowPublicLists" | "listMode">;
+        config: Pick<Config, "enableDefaultListCreation" | "allowPublicLists" | "anyoneCanDeleteItems" | "listMode">;
     }
 
     const { config }: Props = $props();
@@ -46,6 +46,23 @@
 
         {#snippet description()}
             {$t("admin.allow-public-lists-tooltip")}
+        {/snippet}
+    </Setting>
+
+    <Setting>
+        <label class="checkbox-label">
+            <input
+                id="anyoneCanDeleteItems"
+                name="anyoneCanDeleteItems"
+                class="checkbox"
+                checked={config.anyoneCanDeleteItems}
+                type="checkbox"
+            />
+            <span>{$t("admin.anyone-can-delete-items")}</span>
+        </label>
+
+        {#snippet description()}
+            {$t("admin.anyone-can-delete-items-tooltip")}
         {/snippet}
     </Setting>
 </SettingsGroup>

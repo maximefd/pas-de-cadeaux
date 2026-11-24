@@ -37,6 +37,8 @@
         "admin": "Admin",
         "administration": "Administration",
         "allow-public-lists": "Allow public lists",
+        "anyone-can-delete-items": "Anyone who can see an item can delete it",
+        "anyone-can-delete-items-tooltip": "Let any group member who can see an item delete it, not only its creator, its owner or a list manager. Items that are hidden from their owner stay hidden.",
         "allow-public-lists-tooltip": "Allow users to make a list public. Has no effect if the group is in 'Registry' mode.",
         "build": "Build: <a class=\"{class}\" href=\"{href}\">{sha}</a>",
         "build-date": "Build Date: {buildDate}",

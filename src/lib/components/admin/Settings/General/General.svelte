@@ -10,7 +10,13 @@
     interface Props {
         config: Pick<
             Config,
-            "claims" | "defaultGroup" | "suggestions" | "enableDefaultListCreation" | "listMode" | "allowPublicLists"
+            | "claims"
+            | "defaultGroup"
+            | "suggestions"
+            | "enableDefaultListCreation"
+            | "listMode"
+            | "allowPublicLists"
+            | "anyoneCanDeleteItems"
         >;
         groups: Group[];
         hidden?: boolean;
