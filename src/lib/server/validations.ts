@@ -14,8 +14,12 @@ export const loadLocale = async (locale_: string) => {
 };
 
 const passwordZxcvbn = async (minScore: number) => {
-    const zxcvbn = await init(getLocale());
     const $t = await getFormatter();
+    // Niveau "Off" (-1) : aucune exigence de robustesse, seulement non vide
+    if (minScore < 0) {
+        return z.string().min(1, $t("errors.password-must-not-be-blank"));
+    }
+    const zxcvbn = await init(getLocale());
     const minStrength = $t(meterLabel[minScore]);
     const message = $t("errors.password-min-strength", { values: { minStrength } });
     return z

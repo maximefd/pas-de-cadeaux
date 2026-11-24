@@ -22,9 +22,13 @@ const config: UserConfig = {
         SvelteKitPWA({
             registerType: "autoUpdate",
             manifest: {
-                name: "Wishlist",
-                short_name: "Wishlist",
-                description: "Christmas wishlist you can share with the whole family.",
+                name: "Pas de cadeaux !",
+                short_name: "Pas de cadeaux",
+                description: "Listes de souhaits à partager en famille et entre amis.",
+                lang: "fr",
+                start_url: "/",
+                display: "standalone",
+                background_color: "#423654",
                 theme_color: "#423654",
                 icons: [
                     {
