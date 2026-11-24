@@ -18,7 +18,7 @@ export class GroupAPI {
 
         if (body) options.body = JSON.stringify(body);
 
-        return await fetch(`/api/groups/${this.groupId}${path}`, options);
+        return await fetch(`/pdc/groups/${this.groupId}${path}`, options);
     };
 
     addMember = async (userId: string, manager = false): Promise<UserGroupMembership> => {
@@ -67,7 +67,7 @@ export class GroupsAPI {
 
         if (body) options.body = JSON.stringify(body);
 
-        return await fetch(`/api/groups`, options);
+        return await fetch(`/pdc/groups`, options);
     };
 
     create = async (name: string): Promise<Group> => {

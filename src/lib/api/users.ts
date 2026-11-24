@@ -17,7 +17,7 @@ export class UserAPI {
 
         if (body) options.body = JSON.stringify(body);
 
-        return await fetch(`/api/users/${this.userId}${path}`, options);
+        return await fetch(`/pdc/users/${this.userId}${path}`, options);
     };
 
     setActiveGroup = async (groupId: string): Promise<UserGroupMembership> => {
@@ -45,7 +45,7 @@ export class UsersAPI {
             }
         };
 
-        return await fetch(`/api/users?${query}`, options);
+        return await fetch(`/pdc/users?${query}`, options);
     };
 
     all = async () => {
@@ -71,7 +71,7 @@ export class InviteUsersAPI {
             body: JSON.stringify(body)
         };
 
-        return await fetch("/api/users/invite", options);
+        return await fetch("/pdc/users/invite", options);
     };
 
     invite = async (data: { group?: string; email?: string; method: InviteMethod }) => {
@@ -95,7 +95,7 @@ export class SystemUsersAPI {
             body: JSON.stringify(body)
         };
 
-        return await fetch(`/api/users/public`, options);
+        return await fetch(`/pdc/users/public`, options);
     };
 
     create = async (username?: string, name?: string) => {

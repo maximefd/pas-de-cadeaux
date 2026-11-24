@@ -18,7 +18,7 @@
     const toggle = async (e: MouseEvent) => {
         e.stopPropagation();
         const offered = !item.offered;
-        const resp = await fetch(`/api/lists/${item.list.id}/items/${item.id}/offered`, {
+        const resp = await fetch(`/pdc/lists/${item.list.id}/items/${item.id}/offered`, {
             method: "PUT",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ offered })

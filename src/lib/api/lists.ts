@@ -20,7 +20,7 @@ export class ListAPI {
             options.body = JSON.stringify(data);
         }
 
-        const url = `/api/lists/${this.listId}${path}`;
+        const url = `/pdc/lists/${this.listId}${path}`;
         return await fetch(url, options);
     };
 
@@ -55,7 +55,7 @@ export class ListItemAPI {
             options.body = JSON.stringify(data);
         }
 
-        const url = `/api/lists/${this.listId}/items/${this.itemId}${path}`;
+        const url = `/pdc/lists/${this.listId}/items/${this.itemId}${path}`;
         return await fetch(url, options);
     };
 
