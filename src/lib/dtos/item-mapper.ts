@@ -45,6 +45,16 @@ export interface FullItem extends Item {
     _count: ItemCount;
 }
 
+/**
+ * La personne concernée (et les gestionnaires de sa liste) ne doivent jamais savoir qu'une idée
+ * est réservée ou offerte : on retire ces informations avant de les envoyer au navigateur.
+ */
+export const hideSecretsFromOwner = <T extends Pick<FullItem, "offered" | "claims">>(item: T): T => ({
+    ...item,
+    offered: false,
+    claims: []
+});
+
 export const toItemOnListDTO = (item: FullItem, listId: string) => {
     const { lists, claims, _count, ...restOfItem } = item;
     const list = lists.find((l) => l.list.id === listId);

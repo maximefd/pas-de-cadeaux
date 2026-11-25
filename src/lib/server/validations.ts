@@ -125,14 +125,15 @@ export const listItemUpdateSchema = z.object({
 });
 
 export const listItemClaimSchema = z.object({
-    quantity: z.number(),
+    // 0 = « je participe » : on se joint à la réservation de quelqu'un d'autre sans prendre d'exemplaire
+    quantity: z.number().int().min(0),
     claimedById: z.string().nullish(),
     publicClaimedById: z.string().nullish()
 });
 
 export const listItemClaimUpdateSchema = z.object({
     purchased: z.boolean().nullish(),
-    quantity: z.number().optional()
+    quantity: z.number().int().min(0).optional()
 });
 
 export const getItemCreateSchema = async () => {

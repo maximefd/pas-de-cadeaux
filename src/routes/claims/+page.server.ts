@@ -6,7 +6,7 @@ import { requireLogin } from "$lib/server/auth";
 import { decodeMultiValueFilter } from "$lib/server/sort-filter-util";
 import { getConfig } from "$lib/server/config";
 
-export const load: PageServerLoad = async ({ url, cookies }) => {
+export const load: PageServerLoad = async ({ url, cookies, depends }) => {
     const user = requireLogin();
 
     const activeMembership = await getActiveMembership(user);
@@ -91,8 +91,8 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
                         }
                     }
                 },
+                // toutes les réservations de l'idée, pour savoir avec qui on la réserve
                 where: {
-                    claimedById: user.id,
                     list: {
                         groupId: activeMembership.groupId
                     }
@@ -113,9 +113,13 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         }
     });
 
+    depends("data:items");
+
     const itemDTOs = items.map((item) => {
-        const claim = item.claims[0];
-        return toItemOnListDTO(item.userId === user.id ? { ...item, offered: false } : item, claim.listId);
+        const claim = item.claims.find((c) => c.claimedBy?.id === user.id)!;
+        // sur ses propres idées, on ne voit que sa propre réservation (jamais celles des autres)
+        const visible = item.userId === user.id ? { ...item, offered: false, claims: [claim] } : item;
+        return toItemOnListDTO(visible, claim.listId);
     });
 
     return {

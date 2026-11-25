@@ -1,6 +1,6 @@
 import type { ItemOnListDTO } from "$lib/dtos/item-dto";
 import type { Item } from "$lib/generated/prisma/client";
-import { toItemOnListDTO, type FullItem } from "./dtos/item-mapper";
+import { hideSecretsFromOwner, toItemOnListDTO, type FullItem } from "./dtos/item-mapper";
 
 const ITEM_UPDATE = "item_update";
 const ITEM_CREATE = "item_create";
@@ -35,7 +35,7 @@ export class ItemUpdateHandler implements BaseEventHandler<FullItem, ItemOnListD
     }
 
     handle(data: FullItem) {
-        return toItemOnListDTO(this.hideOffered ? { ...data, offered: false } : data, this.listId);
+        return toItemOnListDTO(this.hideOffered ? hideSecretsFromOwner(data) : data, this.listId);
     }
 
     predicate(data: FullItem) {
@@ -64,7 +64,7 @@ export class ItemCreateHandler implements BaseEventHandler<FullItem, ItemOnListD
     }
 
     handle(data: FullItem) {
-        return toItemOnListDTO(this.hideOffered ? { ...data, offered: false } : data, this.listId);
+        return toItemOnListDTO(this.hideOffered ? hideSecretsFromOwner(data) : data, this.listId);
     }
 
     predicate(data: FullItem) {
