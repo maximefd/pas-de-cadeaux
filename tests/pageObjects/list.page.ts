@@ -33,7 +33,7 @@ export class ListPage extends BasePage {
         this.copyToClipboardButton = page.getByRole("button", { name: "Copy to clipboard" });
         this.publicUrlLink = page.getByRole("link", { name: "Public URL" });
         this.createItemButton = page.getByRole("button", { name: "add item" });
-        this.noItemsText = page.getByText("No wishes yet");
+        this.noItemsText = page.getByTestId("list-empty");
         this.approvalsContainer = page.getByTestId("approvals-container");
         this.itemsContainer = page.getByTestId("items-container");
     }
