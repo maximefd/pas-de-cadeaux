@@ -32,10 +32,17 @@
             };
         }}
     >
-        <ItemForm buttonText={$t("general.save")} item={data.item} lists={data.lists} {saving} userId={data.user.id} />
+        <ItemForm
+            buttonText={$t("general.save")}
+            item={data.item}
+            lists={data.lists}
+            namePlaceholder={$t("wishes.idea-placeholder-me")}
+            {saving}
+            userId={data.user.id}
+        />
     </form>
 {/if}
 
 <svelte:head>
-    <title>{$t("wishes.edit-wish")}</title>
+    <title>{$t("wishes.edit-title")}</title>
 </svelte:head>

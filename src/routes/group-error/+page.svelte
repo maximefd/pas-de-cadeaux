@@ -1,12 +1,11 @@
 <script lang="ts">
-    import noGroup from "$lib/assets/no_group.svg";
     import { getFormatter } from "$lib/i18n";
 
     const t = getFormatter();
 </script>
 
-<div class="flex flex-col items-center justify-center space-y-4 pt-4">
-    <h1 class="h1">{$t("errors.cant-find-your-group")}</h1>
-    <img class="w-3/4 pt-4 md:w-1/3" alt={$t("a11y.a-person-looking-at-an-empty-board")} src={noGroup} />
-    <p class="text-center">{$t("errors.no-group-friendly-msg")}</p>
+<div class="paper-empty">
+    <h2>{$t("errors.cant-find-your-group")}</h2>
+    <p>{$t("errors.no-group-friendly-msg")}</p>
+    <a class="paper-link" href="/">{$t("general.return-home")}</a>
 </div>

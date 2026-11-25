@@ -32,7 +32,7 @@
 </svelte:head>
 
 <div class="flex flex-col gap-2">
-    <a class="paper-link self-start" href={`/lists/${data.listId}`}>
+    <a class="paper-link paper-back self-start" href={`/lists/${data.listId}`}>
         {$t("wishes.back-to-list")}
     </a>
     <h1 class="h1">{$t("wishes.history-of", { values: { name: data.owner.name } })}</h1>

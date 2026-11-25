@@ -32,6 +32,7 @@
         "/group-error",
         "/bienvenue",
         /^\/lists\/(?!create$)[^/]+$/,
+        /\/history$/,
         /\/setup-wizard\/?.*/
     ];
 

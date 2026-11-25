@@ -696,3 +696,44 @@ header:has(> .paper-header) {
 .paper-faq p {
     margin: 0 0 0.875rem;
 }
+
+/* --- Formulaire d'idée (ajout / modification) --- */
+.paper-item-form {
+    max-width: 40rem;
+}
+.paper-item-form .paper-item-title {
+    font-size: 1.5rem;
+    min-height: 3.5rem;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-item-form .paper-item-note {
+    font-size: 1.0625rem;
+    min-height: 4rem;
+    padding-block: 0.5rem;
+    resize: vertical;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.paper-item-actions .paper-link {
+    font-size: 1.0625rem;
+}
+.paper-item-actions .paper-item-submit {
+    width: auto;
+    margin-top: 0;
+}
+
+/* Lien « ‹ Retour » au-dessus du titre */
+.paper-link.paper-back {
+    font-size: 0.9375rem;
+    padding-inline: 0;
+    min-height: 2rem;
+}
+.paper-link.paper-back:hover {
+    background: transparent;
+    color: var(--paper-fg);
+}
