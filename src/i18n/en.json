@@ -196,7 +196,9 @@
         "update-password": "Update Password",
         "username": "Username",
         "your-account-is-currently-linked-with-oauth": "Your account is currently linked with {providerName}",
-        "your-password-was-reset": "Your password was reset."
+        "your-password-was-reset": "Your password was reset.",
+        "name-hint": "This is what your family and friends will see.",
+        "username-hint": "You use it to sign in, with your password."
     },
     "email": {
         "invite-body": "You've been invited to join Wishlist! To accept the invitation, click on the link below.",
@@ -375,7 +377,8 @@
         "very-weak": "Very Weak",
         "weak": "Weak",
         "wishlists-cleared": "Wishlists cleared.",
-        "back": "Back"
+        "back": "Back",
+        "close-detail": "Close"
     },
     "setup": {
         "back": "Back",
@@ -572,7 +575,8 @@
         "nothing-yet": "Nothing yet",
         "new-ideas": "New ideas",
         "other-list-hint": "{name} can't see ideas added by others. Once you've given a gift, click “Remove” then “It's been given” so others know it's taken.",
-        "my-list-hint": "Ideas and comments from your family and friends don't show here. The surprise stays intact."
+        "my-list-hint": "Ideas and comments from your family and friends don't show here. The surprise stays intact.",
+        "claims-intro": "The ideas you claimed. Others see you are taking care of them and can join in. The person concerned never knows."
     },
     "help": {
         "title": "Help",
@@ -581,6 +585,8 @@
         "q2": "Made a mistake?",
         "a2": "Click “Undo” right after. You can also remove an idea any time.",
         "q3": "Forgot your password?",
-        "a3": "Ask the person who invited you: they will give you a new one."
+        "a3": "Ask the person who invited you: they will give you a new one.",
+        "q-claim": "What does “Claim” do?",
+        "a-claim": "It tells others you plan to give this idea. They won't buy it, but they can join you. The person concerned never sees claims."
     }
 }

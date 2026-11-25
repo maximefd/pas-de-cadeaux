@@ -47,6 +47,8 @@
 
 <!-- Maquette « Papier » : pas de filtres ni de vues, juste la liste -->
 
+<p class="paper-intro">{$t("wishes.claims-intro")}</p>
+
 {#if data.items.length === 0}
     <p class="paper-empty">{$t("wishes.nothing-claimed-yet")}</p>
 {:else}

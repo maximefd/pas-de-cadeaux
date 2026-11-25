@@ -56,7 +56,8 @@
     import GridItemCard from "./GridItemCard.svelte";
     import ListItemCard from "./ListItemCard.svelte";
     import type { Snippet } from "svelte";
-    import ItemDrawer from "../ItemDrawer.svelte";
+    import ItemDetail from "../ItemDetail.svelte";
+    import { page } from "$app/state";
     import { pendingRemovals } from "$lib/stores/pending-removals.svelte";
 
     const {
@@ -81,47 +82,22 @@
 
     const id = $props.id();
 
-    function launchDrawer() {
-        goto(`?item-id=${item.id}`, { replaceState: true, noScroll: true });
+    // Le détail se déplie sous la ligne ; l'adresse garde ?item-id=… pour pouvoir y revenir
+    const open = $derived(page.url.searchParams.get("item-id") === item.id.toString());
+
+    function toggleDetail() {
+        goto(open ? page.url.pathname : `?item-id=${item.id}`, { replaceState: true, noScroll: true, keepFocus: true });
     }
 
     const ItemCard = $derived(isTileView ? GridItemCard : ListItemCard);
 </script>
 
-{#snippet defaultImage(t: MessageFormatter, sizeClasses: ClassValue = ["w-24", "h-24", "md:w-40", "md:h-40"])}
-    <div
-        class={["bg-surface-300-700 grid flex-none place-items-center", sizeClasses]}
-        aria-label={t("a11y.default-item-image")}
-        data-testid="image"
-        role="img"
-    >
-        <iconify-icon class="size-8 md:size-16" height="none" icon="ion:gift"></iconify-icon>
-    </div>
-{/snippet}
-
-<ItemDrawer
-    {id}
-    {defaultImage}
-    {groupId}
-    {isSelfClaimable}
-    {item}
-    {onDecreasePriority}
-    {onIncreasePriority}
-    {onPriorityChange}
-    {onPublicList}
-    {reorderActions}
-    {requireClaimEmail}
-    {showClaimForOwner}
-    {showClaimedName}
-    {showFor}
-    {showNameAcrossGroups}
-    {showPublicClaimName}
-    {user}
-    {userCanManage}
-/>
+<!-- Pas d'image d'illustration : une idée sans photo n'affiche rien à la place -->
+{#snippet defaultImage(_t: MessageFormatter, _sizeClasses?: ClassValue)}{/snippet}
 
 <!-- Mode liste : look « Papier » (ligne de texte, voir styles/papier.css). Mode tuile : carte d'origine. -->
 {#if !pendingRemovals.has(item.id)}
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div
         class={[
             "card block w-full text-start print:break-inside-avoid print:shadow-none",
@@ -131,34 +107,44 @@
             isTileView && !item.approved && "preset-tonal-warning border-warning-500 border",
             isTileView && !reorderActions && "card-hover"
         ]}
-        aria-labelledby={`${id}-name`}
         onclick={() => {
-            if (!reorderActions) launchDrawer();
+            // toute la ligne (marges comprises) déplie le détail ; le détail lui-même arrête le clic
+            if (!reorderActions) toggleDetail();
         }}
-        onkeyup={(e) => {
-            if (!reorderActions && e.key === "Enter") launchDrawer();
-        }}
-        role={reorderActions ? "none" : "button"}
     >
-        <ItemCard
-            {id}
-            {defaultImage}
-            {groupId}
-            {isSelfClaimable}
-            {item}
-            {onDecreasePriority}
-            {onIncreasePriority}
-            {onPriorityChange}
-            {onPublicList}
-            {reorderActions}
-            {requireClaimEmail}
-            {showClaimForOwner}
-            {showClaimedName}
-            {showFor}
-            {showNameAcrossGroups}
-            {showPublicClaimName}
-            {user}
-            {userCanManage}
-        />
+        <div
+            class="paper-row-main"
+            aria-expanded={reorderActions ? undefined : open}
+            aria-labelledby={`${id}-name`}
+            onkeyup={(e) => {
+                if (!reorderActions && e.key === "Enter") toggleDetail();
+            }}
+            role={reorderActions ? "none" : "button"}
+            tabindex={reorderActions ? -1 : 0}
+        >
+            <ItemCard
+                {id}
+                {defaultImage}
+                {groupId}
+                {isSelfClaimable}
+                {item}
+                {onDecreasePriority}
+                {onIncreasePriority}
+                {onPriorityChange}
+                {onPublicList}
+                {reorderActions}
+                {requireClaimEmail}
+                {showClaimForOwner}
+                {showClaimedName}
+                {showFor}
+                {showNameAcrossGroups}
+                {showPublicClaimName}
+                {user}
+                {userCanManage}
+            />
+        </div>
+        {#if open && !reorderActions}
+            <ItemDetail {isSelfClaimable} {item} onClose={toggleDetail} {showClaimForOwner} {user} />
+        {/if}
     </div>
 {/if}

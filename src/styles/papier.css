@@ -92,7 +92,7 @@
     background: color-mix(in oklab, var(--color-warning-500) 12%, transparent);
     padding-inline: 0.5rem;
 }
-.card.paper-row[role="none"] {
+.card.paper-row:has(> .paper-row-main[role="none"]) {
     cursor: default;
 }
 
@@ -152,6 +152,34 @@
     gap: 0.5rem;
     margin-top: 0.25rem;
     font-size: 0.875rem;
+}
+
+/* Détail d'une idée, déplié sous sa ligne */
+.paper-row-main:focus-visible {
+    outline: 2px solid var(--paper-accent);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+}
+.paper-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-inline-start: 0.75rem;
+    border-inline-start: 2px solid var(--paper-line);
+    cursor: default;
+    font-size: 0.9375rem;
+}
+.paper-detail-fact {
+    color: var(--paper-mute);
+    font-size: 0.875rem;
+    margin: 0;
+}
+.paper-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-inline-start: -0.5rem;
 }
 
 /* Boutons d'action : du texte, pas des boutons */
@@ -451,10 +479,10 @@
     color: var(--paper-accent);
 }
 .paper-brand-name {
-    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-family: "Titan One", Georgia, "Times New Roman", serif;
     font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     line-height: 1.1;
     white-space: nowrap;
 }
@@ -736,4 +764,20 @@ header:has(> .paper-header) {
 .paper-link.paper-back:hover {
     background: transparent;
     color: var(--paper-fg);
+}
+
+/* Petite explication sous un champ (à quoi il sert) */
+.paper-field-hint {
+    margin-top: -0.875rem;
+    color: var(--paper-mute);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+/* Phrase d'explication en haut d'une page (ex. Mes réservations) */
+.paper-intro {
+    color: var(--paper-mute);
+    font-size: 0.9375rem;
+    margin: 0 0 0.5rem;
+    max-width: 40rem;
 }

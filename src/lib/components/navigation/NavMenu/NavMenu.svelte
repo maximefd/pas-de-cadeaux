@@ -77,18 +77,11 @@
                                     </button>
                                 </li>
                             {/if}
-                            <hr class="hr pb-1" />
-                            <li>
-                                <div class="flex w-full justify-around pt-1">
-                                    <LightSwitch />
-                                </div>
-                            </li>
                         </ul>
                     </nav>
                 </div>
             {/snippet}
         </Popup>
     </div>
-{:else}
-    <LightSwitch />
 {/if}
+<LightSwitch />
