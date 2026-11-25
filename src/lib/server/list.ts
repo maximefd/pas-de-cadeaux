@@ -1,7 +1,7 @@
 import { init } from "@paralleldrive/cuid2";
 import { client } from "./prisma";
 import { claimFilter } from "./sort-filter-util";
-import { toItemOnListDTO } from "../dtos/item-mapper";
+import { hideSecretsFromOwner, toItemOnListDTO } from "../dtos/item-mapper";
 import { getItemInclusions } from "./items";
 import type { Prisma } from "$lib/generated/prisma/client";
 import { getConfig } from "./config";
@@ -235,7 +235,7 @@ export const getItems = async (listId: string, options: GetItemsOptions) => {
 
     return items
         .filter((item) => item.lists.length > 0) // need to filter out items not on a list because prisma generates a stupid query
-        .map((i) => toItemOnListDTO(options.hideOffered ? { ...i, offered: false } : i, list.id))
+        .map((i) => toItemOnListDTO(options.hideOffered ? hideSecretsFromOwner(i) : i, list.id))
         .filter(claimFilter(options.filter, options.loggedInUserId))
         .toSorted(
             itemSorter({

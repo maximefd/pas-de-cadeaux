@@ -70,7 +70,8 @@ export const PUT: RequestHandler = async ({ locals, request, params }) => {
             quantity: true,
             claims: {
                 select: {
-                    quantity: true
+                    quantity: true,
+                    claimedById: true
                 }
             }
         },
@@ -93,6 +94,22 @@ export const PUT: RequestHandler = async ({ locals, request, params }) => {
         if (activeGroupId !== list.groupId) {
             error(403, $t("errors.this-list-is-not-part-of-your-active-group"));
         }
+    }
+
+    // Réservation à plusieurs : on rejoint (quantité 0) une idée déjà réservée par quelqu'un d'autre
+    if (updateData.data.quantity === 0) {
+        if (!updateData.data.claimedById) {
+            error(400, $t("errors.claimed-by-user-must-be-specified"));
+        }
+        if (!item.claims.some(({ claimedById }) => claimedById !== updateData.data.claimedById)) {
+            error(400, $t("errors.nothing-to-join"));
+        }
+    }
+    if (
+        updateData.data.claimedById &&
+        item.claims.some(({ claimedById }) => claimedById === updateData.data.claimedById)
+    ) {
+        error(409, $t("errors.already-claimed"));
     }
 
     const claimedQuantity = item.claims.reduce((a, { quantity }) => a + quantity, 0);

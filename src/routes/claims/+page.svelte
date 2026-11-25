@@ -30,7 +30,7 @@
     let groupedItems = $derived.by(() => {
         let groupedItems: Record<string, ItemOnListDTO[]> = { _default: items };
         if (groupBy === "purchased") {
-            groupedItems = Object.groupBy(items, (it) => (it.claims[0].purchased ? "Purchased" : "_default"));
+            groupedItems = Object.groupBy(items, (it) => (myClaim(it)?.purchased ? "Purchased" : "_default"));
         } else if (groupBy === "user") {
             groupedItems = items.reduce(
                 (accum, item) => {
@@ -44,8 +44,12 @@
     });
 
     const isPurchased = (item: ItemOnListDTO) => {
-        return item.claims[0].purchased ? 1 : 0;
+        return myClaim(item)?.purchased ? 1 : 0;
     };
+
+    function myClaim(item: ItemOnListDTO) {
+        return item.claims.find((c) => c.claimedBy?.id === data.user.id);
+    }
 
     let users = $derived(items.map((item) => item.user));
 </script>

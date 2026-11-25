@@ -21,6 +21,8 @@ export class ItemCard {
     private readonly denyButton: Locator;
     private readonly claimButton: Locator;
     private readonly unclaimButton: Locator;
+    private readonly joinButton: Locator;
+    private readonly myClaim: Locator;
 
     constructor(card: Locator) {
         this.card = card;
@@ -37,7 +39,9 @@ export class ItemCard {
         this.approveButton = card.getByRole("button", { name: "Approve" });
         this.denyButton = card.getByRole("button", { name: "Deny" });
         this.claimButton = card.getByRole("button", { name: "Claim", exact: true });
-        this.unclaimButton = card.getByRole("button", { name: "Unclaim", exact: true });
+        this.unclaimButton = card.getByRole("button", { name: "Cancel", exact: true });
+        this.joinButton = card.getByTestId("join-claim");
+        this.myClaim = card.getByTestId("my-claim");
     }
 
     async assertDefaultImage() {
@@ -127,6 +131,27 @@ export class ItemCard {
     async unclaimSingle() {
         await this.unclaimButton.click();
         await new Toast(this.card.page()).waitForToastWithText("Unclaimed item");
+    }
+
+    async join() {
+        await this.joinButton.click();
+        await new Toast(this.card.page()).waitForToastWithText("Claimed item");
+        return this;
+    }
+
+    async assertMyClaimText(text: string) {
+        await expect(this.myClaim).toContainText(text);
+        return this;
+    }
+
+    async assertClaimText(text: string) {
+        await expect(this.card).toContainText(text);
+        return this;
+    }
+
+    async assertNoClaimText(text: string) {
+        await expect(this.card).not.toContainText(text);
+        return this;
     }
 
     async claimAmount(quantity: number) {

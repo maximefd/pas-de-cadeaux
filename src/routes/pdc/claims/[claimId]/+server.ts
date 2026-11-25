@@ -67,7 +67,7 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
     }
 };
 
-interface ItemClaim extends Pick<ItemClaimModel, "id" | "claimedById" | "publicClaimedById"> {
+interface ItemClaim extends Pick<ItemClaimModel, "id" | "claimedById" | "publicClaimedById" | "quantity"> {
     item: Pick<ItemModel, "id" | "userId">;
 }
 
@@ -79,6 +79,7 @@ async function findClaim(claimId: string, user: LocalUser): Promise<ItemClaim> {
             id: true,
             claimedById: true,
             publicClaimedById: true,
+            quantity: true,
             item: {
                 select: {
                     id: true,
@@ -107,9 +108,23 @@ async function deleteClaim(claim: ItemClaim) {
     const $t = await getFormatter();
 
     try {
-        await client.itemClaim.delete({
-            where: {
-                id: claim.id
+        await client.$transaction(async (tx) => {
+            await tx.itemClaim.delete({
+                where: {
+                    id: claim.id
+                }
+            });
+            // Si la personne qui avait réservé se retire, la première personne qui participait prend le relais
+            if (claim.quantity > 0) {
+                const participant = await tx.itemClaim.findFirst({
+                    where: { itemId: claim.item.id, quantity: 0 }
+                });
+                if (participant) {
+                    await tx.itemClaim.update({
+                        where: { id: participant.id },
+                        data: { quantity: claim.quantity }
+                    });
+                }
             }
         });
 

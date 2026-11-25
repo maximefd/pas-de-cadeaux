@@ -75,7 +75,9 @@
         "self-claims-not-available": "Impossible d'autoriser les réservations pour soi lorsque les réservations ne sont pas visibles aux propriétaires sur leur propre liste",
         "this-list-does-not-allow-self-claimed-items": "Cette liste n'autorise pas les réservations pour soi-même.",
         "this-list-is-not-part-of-your-active-group": "Cette liste ne fait pas partie de votre groupe actif",
-        "user-is-not-allowed-to-edit-this-item": "L'utilisateur n'est pas autorisé à modifier cet élément"
+        "user-is-not-allowed-to-edit-this-item": "L'utilisateur n'est pas autorisé à modifier cet élément",
+        "nothing-to-join": "Personne n'a encore réservé cette idée.",
+        "already-claimed": "Tu as déjà réservé cette idée."
     },
     "admin": {
         "version": "Version : <a class=\"{class}\" href=\"{href}\">{version}</a>",
@@ -474,7 +476,7 @@
         "show-all-currencies": "Afficher toutes les devises…",
         "show-description": "Afficher la description",
         "supports-markdown": "Supporte le Markdown",
-        "update-claim": "Mettre à jour la réservation",
+        "update-claim": "Modifier",
         "updated-claim": "Réservation mise à jour",
         "view-item": "Voir l'objet",
         "write": "Écrire",
@@ -518,7 +520,12 @@
         "list-not-for-me-description": "Si vous gérez cette liste pour quelqu'un d'autre, ce paramètre permettra au propriétaire de la liste de voir les réservations et de demander des éléments sur la liste.",
         "public-list-option-description": "Permet à cette liste d'être publiquement consultable et réservable.",
         "update-claim-for-name": "Mettre à jour la réservation pour {name}",
-        "cannot-update-lists-of-item": "Impossible de mettre à jour les listes d'un élément que vous n'avez pas créé. Vous pouvez toujours les supprimer à partir d'une liste que vous possédez ou gérez en utilisant le bouton \"Supprimer\" sur la liste."
+        "cannot-update-lists-of-item": "Impossible de mettre à jour les listes d'un élément que vous n'avez pas créé. Vous pouvez toujours les supprimer à partir d'une liste que vous possédez ou gérez en utilisant le bouton \"Supprimer\" sur la liste.",
+        "you-claim": "Tu le réserves",
+        "you-claim-with": "Tu le réserves avec {names}",
+        "you-claim-with-others": "Tu le réserves avec d'autres",
+        "cancel-claim": "Annuler",
+        "join-claim": "Je participe"
     },
     "unable-to-load-icons": "Impossible de charger les icônes."
 }
