@@ -15,7 +15,8 @@ export class Modal {
 
     constructor(page: Page, props?: Props) {
         this.page = page;
-        this.modal = page.getByRole("dialog");
+        // le menu « Mon compte » (aussi un role=dialog) peut encore être en train de se fermer
+        this.modal = props?.modalName ? page.getByRole("dialog", { name: props.modalName }) : page.getByRole("dialog");
         this.modalHeader = this.modal.getByRole("heading", { name: props?.modalName });
         this.cancelButton = this.modal.getByRole("button", { name: props?.cancelButtonText ?? "Cancel" });
         this.submitButton = this.modal.getByRole("button", { name: props?.submitButtonText ?? "Submit" });

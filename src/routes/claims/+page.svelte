@@ -5,10 +5,6 @@
     import ItemCard from "$lib/components/wishlists/ItemCard/ItemCard.svelte";
     import type { ItemOnListDTO } from "$lib/dtos/item-dto";
     import { getFormatter } from "$lib/i18n";
-    import { getListViewPreference, initListViewPreference } from "$lib/stores/list-view-preference.svelte";
-    import ListViewModeChip from "$lib/components/wishlists/chips/ListViewModeChip.svelte";
-    import ListFilterChip from "$lib/components/wishlists/chips/ListFilterChip.svelte";
-    import ClaimsGroupBy from "$lib/components/wishlists/chips/ClaimsGroupBy.svelte";
 
     const { data }: PageProps = $props();
     const t = getFormatter();
@@ -19,13 +15,10 @@
         items = data.items;
     });
 
-    // Initialize from server data (cookie) to prevent flicker
-    // This value comes from the server, so SSR renders the correct view
-    // svelte-ignore state_referenced_locally
-    initListViewPreference(data.initialViewPreference);
-    let isTileView = $derived(getListViewPreference() === "tile");
+    // Une seule vue : liste de texte, regroupée par personne
+    const isTileView = false;
 
-    let groupBy = $state("purchased");
+    const groupBy: string = "user";
 
     let groupedItems = $derived.by(() => {
         let groupedItems: Record<string, ItemOnListDTO[]> = { _default: items };
@@ -50,18 +43,9 @@
     function myClaim(item: ItemOnListDTO) {
         return item.claims.find((c) => c.claimedBy?.id === data.user.id);
     }
-
-    let users = $derived(items.map((item) => item.user));
 </script>
 
-<!-- View mode toggle -->
-<div class="flex flex-wrap items-end justify-between gap-2 pb-4 print:hidden">
-    <div class="flex items-end gap-2">
-        <ListFilterChip {users} />
-        <ClaimsGroupBy bind:groupBy />
-    </div>
-    <ListViewModeChip {isTileView} />
-</div>
+<!-- Maquette « Papier » : pas de filtres ni de vues, juste la liste -->
 
 {#if data.items.length === 0}
     <p class="paper-empty">{$t("wishes.nothing-claimed-yet")}</p>

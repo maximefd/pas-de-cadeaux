@@ -5,48 +5,55 @@ import { Toast } from "./toast";
 import { DeleteItemModal } from "./delete-item-modal";
 import { ClaimItemModal } from "./claim-item-modal";
 
+// Look « Papier » : la ligne de la liste ne montre que le nom, la précision et la réservation.
+// Image, prix, quantité et « ajouté par » sont dans le tiroir de détail, qui s'ouvre au clic sur la ligne.
 export class ItemCard {
     private readonly card: Locator;
     private readonly name: Locator;
-    private readonly image: Locator;
-    private readonly price: Locator;
-    private readonly quantity: Locator;
-    private readonly quantityDesired: Locator;
-    private readonly quantityClaimed: Locator;
-    private readonly addedBy: Locator;
     private readonly notes: Locator;
-    private readonly editButton: Locator;
-    private readonly deleteButton: Locator;
+    private readonly removeButton: Locator;
     private readonly approveButton: Locator;
     private readonly denyButton: Locator;
     private readonly claimButton: Locator;
     private readonly unclaimButton: Locator;
     private readonly joinButton: Locator;
     private readonly myClaim: Locator;
+    private readonly drawer: Locator;
 
     constructor(card: Locator) {
         this.card = card;
         this.name = card.getByTestId("name");
-        this.image = card.getByTestId("image");
-        this.price = card.getByTestId("price");
-        this.quantity = card.getByTestId("quantity");
-        this.quantityDesired = card.getByTestId("quantity-desired");
-        this.quantityClaimed = card.getByTestId("quantity-claimed");
-        this.addedBy = card.getByTestId("added-by");
         this.notes = card.getByTestId("notes");
-        this.editButton = card.getByRole("button", { name: "Edit" });
-        this.deleteButton = card.getByRole("button", { name: "Delete" });
+        this.removeButton = card.getByRole("button", { name: "Remove" });
         this.approveButton = card.getByRole("button", { name: "Approve" });
         this.denyButton = card.getByRole("button", { name: "Deny" });
         this.claimButton = card.getByRole("button", { name: "Claim", exact: true });
         this.unclaimButton = card.getByRole("button", { name: "Cancel", exact: true });
         this.joinButton = card.getByTestId("join-claim");
         this.myClaim = card.getByTestId("my-claim");
+        this.drawer = card.page().getByRole("dialog");
+    }
+
+    async openDrawer() {
+        await this.card.click({ position: { x: 4, y: 4 } });
+        await expect(this.drawer).toBeVisible();
+        return this.drawer;
+    }
+
+    async closeDrawer() {
+        await this.drawer.getByRole("button", { name: "close" }).click();
+        await expect(this.drawer).toBeHidden();
+    }
+
+    private async inDrawer(check: (drawer: Locator) => Promise<void>) {
+        const drawer = await this.openDrawer();
+        await check(drawer);
+        await this.closeDrawer();
+        return this;
     }
 
     async assertDefaultImage() {
-        await expect(this.image).toHaveAccessibleName("default item image");
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("image")).toHaveAccessibleName("default item image"));
     }
 
     async assertHasLink() {
@@ -65,43 +72,35 @@ export class ItemCard {
     }
 
     async assertHasImage() {
-        await expect(this.image).toHaveAttribute("src");
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("image")).toHaveAttribute("src"));
     }
 
     async assertPrice(price: string) {
-        await expect(this.price).toHaveText(price);
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("price")).toHaveText(price));
     }
 
     async assertNoPrice() {
-        await expect(this.price).not.toBeVisible({ timeout: 100 });
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("price")).toHaveCount(0));
     }
 
     async assertNoQuantity() {
-        await expect(this.quantityDesired).toHaveText("No limit");
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText("No limit"));
     }
 
     async assertDesiredQuantity(quantity: number) {
-        await expect(this.quantityDesired).toHaveText(`${quantity} desired`);
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText(`${quantity} desired`));
     }
 
     async assertClaimedQuantity(quantity: number) {
-        await expect(this.quantityClaimed).toHaveText(`${quantity} claimed`);
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-claimed")).toHaveText(`${quantity} claimed`));
     }
 
     async assertClaimedQuantityHidden() {
-        await expect(this.quantityClaimed).not.toBeVisible({ timeout: 100 });
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-claimed")).toHaveCount(0));
     }
 
     async assertAddedBy(addedBy: string) {
-        await expect(this.addedBy).toHaveText(`Added by ${addedBy}`);
-        return this;
+        return this.inDrawer((d) => expect(d.getByTestId("added-by")).toHaveText(`Added by ${addedBy}`));
     }
 
     async assertNotes(notes: string) {
@@ -110,12 +109,7 @@ export class ItemCard {
     }
 
     async assertNoNotes() {
-        await expect(this.notes).not.toBeVisible({ timeout: 100 });
-        return this;
-    }
-
-    async assertDeleteButtonHidden() {
-        await expect(this.deleteButton).not.toBeVisible();
+        await expect(this.notes).toHaveCount(0);
         return this;
     }
 
@@ -165,17 +159,25 @@ export class ItemCard {
         return this;
     }
 
+    // Modifier : bouton du pied du tiroir de détail
     async edit() {
-        await this.editButton.click();
+        const drawer = await this.openDrawer();
+        await drawer.getByRole("button", { name: "Edit" }).click();
         await this.card.page().waitForURL(/\/items\/\d+\/edit/);
         return new EditItemPage(this.card.page());
     }
 
+    // Supprimer : bouton « Retirer » de la ligne. Sur une idée présente sur plusieurs listes, on choisit la liste ;
+    // sinon l'idée disparaît tout de suite et la suppression part après le délai d'annulation.
     async delete(multipleLists = false, type: "this" | "all" = "all") {
-        const modal = await this.deleteNoConfirm();
         if (!multipleLists) {
-            await modal.submit();
-        } else if (type === "this") {
+            const deleted = this.card.page().waitForResponse((r) => r.request().method() === "DELETE" && r.ok());
+            await this.removeButton.click();
+            await deleted;
+            return;
+        }
+        const modal = await this.deleteNoConfirm();
+        if (type === "this") {
             await modal.thisList();
         } else {
             await modal.allLists();
@@ -183,8 +185,19 @@ export class ItemCard {
     }
 
     async deleteNoConfirm() {
-        await this.deleteButton.click();
+        await this.removeButton.click();
         return new DeleteItemModal(this.card.page());
+    }
+
+    // Une personne sans droit de suppression ne se voit proposer que « C'est offert », jamais « Plus d'actualité »
+    async assertCannotDelete() {
+        await this.removeButton.click();
+        const page = this.card.page();
+        await expect(page.locator("[data-testid=remove-offered]:visible")).toBeVisible();
+        await expect(page.locator("[data-testid=remove-outdated]:visible")).toHaveCount(0);
+        await page.getByRole("dialog").getByRole("button", { name: "Cancel" }).click();
+        await expect(page.getByRole("dialog")).toBeHidden();
+        return this;
     }
 
     async approve() {

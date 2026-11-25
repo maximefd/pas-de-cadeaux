@@ -1,8 +1,6 @@
 <script lang="ts">
     import { page } from "$app/state";
     import { getFormatter } from "$lib/i18n";
-    import { isInstalled } from "$lib/stores/is-installed";
-    import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
     interface Props {
         navItems: NavItem[];
@@ -12,30 +10,29 @@
     const { navItems, user }: Props = $props();
     const t = getFormatter();
 
-    const isSelected = (href: string) => {
-        return page.url.href.endsWith(href);
-    };
+    // Onglet actif : « Mes envies » sur sa propre liste, « Proches » sur les listes des autres.
+    const current = $derived.by(() => {
+        const path = page.url.pathname;
+        if (path.startsWith("/aide")) return "app.help";
+        const list = page.data?.list as { owner?: { isMe?: boolean } } | undefined;
+        if (path.startsWith("/lists/") && list?.owner?.isMe) return "wishes.my-lists";
+        if (path === "/lists" || path.startsWith("/lists/") || path.startsWith("/wishlists/")) return "app.home";
+        return undefined;
+    });
 </script>
 
-{#if user && $isInstalled}
-    <Navigation class="bg-surface-200-800 bottom-nav" layout="bar">
-        <Navigation.Menu class="flex justify-around">
+{#if user}
+    <nav class="paper-bottom-tabs print:hidden" aria-label={$t("a11y.menu")}>
+        <div>
             {#each navItems as navItem (navItem.labelKey)}
-                {@const href = navItem.href(user)}
-                <Navigation.TriggerAnchor
-                    class={["hover:bg-primary-500/30 min-w-24 rounded-full", isSelected(href) && "bg-primary-500/20"]}
-                    {href}
+                <a
+                    aria-current={current === navItem.labelKey ? "page" : undefined}
+                    data-sveltekit-preload-data
+                    href={navItem.href(user)}
                 >
-                    <iconify-icon class="text-xl" icon={navItem.icon}></iconify-icon>
-                    <Navigation.TriggerText>{$t(navItem.labelKey)}</Navigation.TriggerText>
-                </Navigation.TriggerAnchor>
+                    {$t(navItem.labelKey)}
+                </a>
             {/each}
-        </Navigation.Menu>
-    </Navigation>
+        </div>
+    </nav>
 {/if}
-
-<style>
-    :global(.bottom-nav) {
-        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-    }
-</style>

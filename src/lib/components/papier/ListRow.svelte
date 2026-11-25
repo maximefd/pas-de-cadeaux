@@ -10,42 +10,29 @@
     }
 
     interface Props {
-        hideCount?: boolean;
         list: ListWithCounts;
         hasNewItems?: boolean;
     }
 
-    const { hideCount = false, hasNewItems = false, list }: Props = $props();
+    const { hasNewItems = false, list }: Props = $props();
     const t = getFormatter();
 
-    let listName = $derived(list.name || $t("wishes.wishes-for", { values: { listOwner: list.owner.name } }));
-    let availableCount = $derived((list.itemCount ?? 0) - (list.claimedCount ?? 0));
+    const count = $derived(list.itemCount ?? 0);
 </script>
 
-<!-- Ligne de texte « Papier » (voir styles/papier.css) : un nom, une précision, un chevron. -->
-<a class="card paper-row paper-list-row" href={`/lists/${list.id}`}>
-    <div class="paper-body items-center">
-        <div class="paper-text">
-            <div class="paper-title" data-testid="list-name">{listName}</div>
-            {#if !list.hideOwner}
-                <div class="paper-by" data-testid="list-owner">{list.owner.name}</div>
-            {/if}
-            {#if list.unapprovedCount && list.unapprovedCount > 0}
-                <div class="paper-approvals">
-                    {$t("wishes.approvals-waiting", { values: { approvalCount: list.unapprovedCount } })}
-                </div>
-            {/if}
-        </div>
-        <div class="paper-count" data-testid="item-count">
-            {#if hasNewItems}
-                <span class="paper-new-dot" aria-hidden="true"></span>
-            {/if}
-            {#if hideCount}
-                {$t("wishes.items-requested", { values: { itemCount: list.itemCount } })}
-            {:else}
-                {$t("wishes.items-available", { values: { availableCount } })}
-            {/if}
-        </div>
-        <span class="paper-chevron" aria-hidden="true">›</span>
-    </div>
+<!-- Une personne par ligne (maquette « Papier ») : son prénom, le nombre d'idées, un chevron. -->
+<a class="paper-person" href={`/lists/${list.id}`}>
+    <span class="paper-person-name">
+        <span data-testid="list-owner">{list.owner.name}</span>
+        {#if list.name}
+            <small data-testid="list-name">{list.name}</small>
+        {/if}
+    </span>
+    <small data-testid="item-count">
+        {#if hasNewItems}
+            <span class="paper-new-dot" aria-label={$t("wishes.new-ideas")}></span>
+        {/if}
+        {count > 0 ? $t("wishes.idea-count", { values: { count } }) : $t("wishes.nothing-yet")}
+        <span aria-hidden="true">›</span>
+    </small>
 </a>

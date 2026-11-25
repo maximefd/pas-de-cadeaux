@@ -19,15 +19,15 @@ test("shared claim stays hidden from the owner", async ({
     await test.step("owner creates an item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
         listId = ownerListPage.getId();
         const createItemPage = await ownerListPage.createItem();
         await createItemPage.getForm().then((f) => f.fillName(itemName));
         await createItemPage.create();
     });
 
-    const firstList = new ListPage(firstPage, { id: listId, name: `${owner.name}'s Wishes` });
-    const secondList = new ListPage(secondPage, { id: listId, name: `${owner.name}'s Wishes` });
+    const firstList = new ListPage(firstPage, { id: listId, name: owner.name });
+    const secondList = new ListPage(secondPage, { id: listId, name: owner.name });
 
     await test.step("first user claims the item", async () => {
         await firstList.goto();

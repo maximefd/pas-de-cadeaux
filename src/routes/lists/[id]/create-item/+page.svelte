@@ -6,7 +6,6 @@
     import { getFormatter } from "$lib/i18n";
     import { toaster } from "$lib/components/toaster";
     import { goto } from "$app/navigation";
-    import Alert from "$lib/components/Alert.svelte";
 
     const { data }: PageProps = $props();
     const t = getFormatter();
@@ -19,7 +18,6 @@
         imageUrl: null
     };
 
-    let warningHidden = $state(false);
     let saving = $state(false);
 
     const clearFields = () => {
@@ -49,17 +47,6 @@
     };
 </script>
 
-{#if data.suggestion && data.suggestionMethod === "approval" && !warningHidden}
-    <Alert title={$t("wishes.heads-up")} type="info">
-        {$t("wishes.approval-required", { values: { listOwner: data.list.owner.name } })}
-        {#snippet actions(variant)}
-            <button class={["btn btn-sm", variant]} onclick={() => (warningHidden = true)}>
-                {$t("general.ok")}
-            </button>
-        {/snippet}
-    </Alert>
-{/if}
-
 <form
     enctype="multipart/form-data"
     method="POST"
@@ -86,10 +73,13 @@
     }}
 >
     <ItemForm
-        buttonText={$t("wishes.add-item")}
+        buttonText={$t("wishes.add-short")}
         currentList={data.list.id}
         item={itemData}
         lists={data.lists}
+        namePlaceholder={data.list.owner.isMe
+            ? $t("wishes.idea-placeholder-me")
+            : $t("wishes.idea-placeholder-other", { values: { name: data.list.owner.name } })}
         {saving}
         userId={data.user.id}
     />
@@ -97,8 +87,8 @@
 
 <svelte:head>
     {#if data.list.owner.isMe}
-        <title>{$t("wishes.create")}</title>
+        <title>{$t("wishes.idea-title-me")}</title>
     {:else}
-        <title>{$t("wishes.create-for", { values: { listOwner: data.list.owner.name } })}</title>
+        <title>{$t("wishes.idea-title-other", { values: { name: data.list.owner.name } })}</title>
     {/if}
 </svelte:head>

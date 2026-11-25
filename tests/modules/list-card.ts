@@ -19,44 +19,27 @@ export class ListCard {
         return this;
     }
 
+    async assertNoName() {
+        await expect(this.name).toHaveCount(0);
+        return this;
+    }
+
     async assertOwner(name: string) {
         await expect(this.owner).toHaveText(name);
         return this;
     }
 
-    async assertOwnerHidden() {
-        await expect(this.owner).toBeHidden();
-        return this;
-    }
-
     async assertItemCount(count: number) {
-        await expect(this.itemCount).toHaveText(`${count} Requested`);
-        return this;
-    }
-
-    async assertAvailableCount(count: number) {
-        await expect(this.itemCount).toHaveText(`${count} Available`);
+        await expect(this.itemCount).toHaveText(count === 0 ? /Nothing yet/ : new RegExp(`^\\s*${count} ideas?\\b`));
         return this;
     }
 
     async click() {
-        const name = await this.getName();
-        expect(name).not.toBeNull();
-        const owner = await this.owner.textContent();
-        const listPageName = name === `${owner}'s Wishes` ? "My Wishes" : name!;
+        const owner = (await this.owner.textContent())!;
+        const name = await this.name.textContent({ timeout: 500 }).catch(() => null);
         await this.card.click();
         await this.card.page().waitForURL(/\/lists\/.*/);
-        return new ListPage(this.card.page(), { name: listPageName });
-    }
-
-    async getName() {
-        const name = await this.name.textContent();
-        expect(name).not.toBeNull();
-        return name!;
-    }
-
-    async assertApprovalBanner() {
-        this.card.locator("p", { hasText: /You have \d items? awaiting your approval/ });
-        return this;
+        // Titre : le nom de la liste s'il est personnalisé, sinon le prénom du propriétaire
+        return new ListPage(this.card.page(), { name: name ?? owner });
     }
 }

@@ -1,21 +1,16 @@
 <script lang="ts">
     import type { PageData, PageProps } from "./$types";
-    import { fade } from "svelte/transition";
     import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
     import ListRow from "$lib/components/papier/ListRow.svelte";
     import CircleTabs from "$lib/components/papier/CircleTabs.svelte";
     import { page } from "$app/state";
-    import { goto } from "$app/navigation";
-    import ListFilterChip from "$lib/components/wishlists/chips/ListFilterChip.svelte";
     import { getFormatter } from "$lib/i18n";
-    import { resolve } from "$app/paths";
 
     type ListData = PageData["otherLists"][0];
 
     let { data }: PageProps = $props();
 
     const t = getFormatter();
-    const users = $state(data.users);
 
     const hasNewItems = async (list: ListData) => {
         if (!list.items || list.items.length === 0) return false;
@@ -26,20 +21,13 @@
     };
 </script>
 
+<!-- « Mes proches » : une ligne par personne du cercle, sa liste s'ouvre d'un clic. -->
 <CircleTabs groups={page.data.groups} user={page.data.user} />
 
-<div class="paper-toolbar pb-2 print:hidden">
-    <ListFilterChip {users} />
-</div>
-
-{#if data.myLists.length + data.otherLists.length === 0}
-    <p class="paper-empty" data-testid="list-container-empty">{$t("wishes.no-lists-yet")}</p>
+{#if data.otherLists.length === 0}
+    <p class="paper-empty" data-testid="list-container-empty">{$t("wishes.no-relatives-yet")}</p>
 {:else}
-    <div class="paper-list" data-testid="list-container" in:fade>
-        {#each data.myLists as list (list.id)}
-            <ListRow hideCount {list} />
-        {/each}
-
+    <div data-testid="list-container">
         {#each data.otherLists as list (list.id)}
             {#await hasNewItems(list)}
                 <ListRow {list} />
@@ -50,11 +38,6 @@
     </div>
 {/if}
 
-<button class="paper-add print:hidden" onclick={() => goto(resolve("/lists/create"))} type="button">
-    <b aria-hidden="true">+</b>
-    <span>{$t("wishes.create-list")}</span>
-</button>
-
 <svelte:head>
-    <title>{$t("wishes.lists")}</title>
+    <title>{$t("wishes.my-relatives")}</title>
 </svelte:head>

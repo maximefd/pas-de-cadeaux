@@ -14,7 +14,7 @@ test("unauthenticated", async ({ anonymousPage: page }) => {
 test("admin authenticated", async ({ adminPage: page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Lists" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Family & friends" })).toBeVisible();
     const userMenu = new UserMenu(page);
     await userMenu.assertAdminButtonVisible();
 });
@@ -22,7 +22,7 @@ test("admin authenticated", async ({ adminPage: page }) => {
 test("user authenticated", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Lists" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Family & friends" })).toBeVisible();
     const userMenu = new UserMenu(page);
     await userMenu.assertAdminButtonNotVisible();
 });
@@ -60,7 +60,7 @@ test("add user to a group", async ({ page, userData, adminPage, anonymousPage: n
     await userMenu.manageGroup().then((p) => p.addMember(newUser.name));
 
     const listsPage = new ListsPage(page);
-    await listsPage.goto().then((p) => p.expectListCount(2));
+    await listsPage.goto().then((p) => p.expectListCount(1));
 
     const signinPage = new SigninPage(newUserPage);
     await signinPage.goto();
@@ -69,5 +69,5 @@ test("add user to a group", async ({ page, userData, adminPage, anonymousPage: n
     const newUserMenu = new UserMenu(newUserPage);
     await newUserMenu.changeGroup(userData.groups[0].name);
     const newUserlistsPage = new ListsPage(newUserPage);
-    await newUserlistsPage.goto().then((p) => p.expectListCount(2));
+    await newUserlistsPage.goto().then((p) => p.expectListCount(1));
 });

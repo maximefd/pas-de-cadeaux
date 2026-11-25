@@ -1,104 +1,96 @@
 import { expect, test } from "../fixtures";
+import { ListPage } from "../pageObjects/list.page";
 import { ListsPage } from "../pageObjects/lists.page";
 import { randomString } from "../util";
 
-test("create list with default values", async ({ page, userData }) => {
+// « Famille & amis » ne liste que les listes des autres : on vérifie donc le résultat depuis le point de vue
+// d'une autre personne du cercle (`additionalPage`).
+
+test("create list with default values", async ({ page, userData, additionalPage: otherPage }) => {
+    const otherListsPage = new ListsPage(otherPage);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(1);
+
     const listsPage = new ListsPage(page);
     await listsPage.goto();
-    const countBefore = await listsPage.getListCount();
-
     const createListPage = await listsPage.create();
     await createListPage.at();
     await createListPage.createDefault();
 
-    await listsPage.goto();
-    await listsPage.expectListCount(countBefore + 1);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(2);
 
-    const listCount = await listsPage.getListCount();
-    const newList = await listsPage.getListAt(listCount - 1);
-    await newList.assertName(`${userData.name}'s Wishes`);
-    await newList.assertOwner(userData.name);
+    // Sans nom personnalisé, seule la personne est affichée
+    for (const index of [0, 1]) {
+        const card = await otherListsPage.getListAt(index);
+        await card.assertOwner(userData.name);
+        await card.assertNoName();
+    }
 });
 
-test("create list with name", async ({ page, userData }) => {
+test("create list with name", async ({ page, userData, additionalPage: otherPage }) => {
+    const otherListsPage = new ListsPage(otherPage);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(1);
+
     const listsPage = new ListsPage(page);
     await listsPage.goto();
-    const countBefore = await listsPage.getListCount();
-
     const listName = randomString();
     const createListPage = await listsPage.create();
     await createListPage.at();
     await createListPage.create(listName);
 
-    await listsPage.goto();
-    await listsPage.expectListCount(countBefore + 1);
-
-    const listCount = await listsPage.getListCount();
-    const newList = await listsPage.getListAt(listCount - 1);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(2);
+    const newList = await otherListsPage.getListByName(listName);
     await newList.assertName(listName);
     await newList.assertOwner(userData.name);
 });
 
-test("change list name", async ({ page }) => {
+test("change list name", async ({ page, userData, additionalPage: otherPage }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const listCount = await listsPage.getListCount();
-    const list = await listsPage.getListAt(0);
+    const otherListsPage = new ListsPage(otherPage);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(1);
+    await otherListsPage.getListAt(0).then((card) => card.assertNoName());
 
-    const manageListPage = await list.click().then((list) => list.manage());
+    const manageListPage = await listsPage.openMyList().then((list) => list.manage());
     await manageListPage.at();
     const newListName = randomString();
     await manageListPage.setName(newListName).then((p) => p.save());
 
-    await listsPage.goto();
-    expect(await listsPage.getListCount()).toEqual(listCount);
-    await list.assertName(newListName);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(1);
+    const card = await otherListsPage.getListAt(0);
+    await card.assertName(newListName);
+    await card.assertOwner(userData.name);
 });
 
-test("hide owner removes the owner from the list card", async ({ page, userData }) => {
+test("delete list", async ({ page, additionalPage: otherPage }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
+    const otherListsPage = new ListsPage(otherPage);
 
-    // The owner is shown on the card by default
-    const list = await listsPage.getListAt(0);
-    await list.assertOwner(userData.name);
-
-    // Enable "Hide Owner" in the manage form and save
-    await list
-        .click()
-        .then((listPage) => listPage.manage())
-        .then((manage) => manage.at())
-        .then((manage) => manage.setHideOwner(true))
-        .then((manage) => manage.save());
-
-    // The owner should no longer be rendered on the list card
-    await listsPage.goto();
-    await listsPage.getListAt(0).then((card) => card.assertOwnerHidden());
-});
-
-test("delete list", async ({ page }) => {
-    const listsPage = new ListsPage(page);
-    await listsPage.goto();
-
-    const countBefore = await listsPage.getListCount();
-
+    const listName = randomString();
     const createListPage = await listsPage.create();
     await createListPage.at();
-    await createListPage.createDefault();
+    await createListPage.create(listName);
+    const newList = new ListPage(page, { name: listName });
 
-    await listsPage.goto();
-    await listsPage.expectListCount(countBefore + 1);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(2);
 
-    const newList = await listsPage.getListAt(countBefore);
-    const manageListPage = await newList.click().then((list) => list.manage());
+    const manageListPage = await newList.manage();
     await manageListPage.delete();
 
     await listsPage.at();
-    await listsPage.expectListCount(countBefore);
+    await otherListsPage.goto();
+    await otherListsPage.expectListCount(1);
 });
 
-test("multiple users and list filter", async ({
+test("lists page shows only the lists of other people", async ({
     page: user1Page,
     userData,
     additionalPage: user2Page,
@@ -107,32 +99,13 @@ test("multiple users and list filter", async ({
     const user1ListsPage = new ListsPage(user1Page);
     await user1ListsPage.goto();
 
-    const user1List = await user1ListsPage.getListAt(0);
-    await user1List.assertOwner(userData.name);
-
     const user2ListsPage = new ListsPage(user2Page);
     await user2ListsPage.goto();
-    const user2List = await user2ListsPage.getListAt(0);
-    await user2List.assertOwner(user2.name);
 
-    await user1ListsPage.expectListCount(2);
-    await user2ListsPage.expectListCount(2);
-
-    // Assert second list from User 1's perspective is User 2's list
-    await user1ListsPage.getListAt(1).then((list) => list.assertOwner(user2.name));
-    // Assert second list from User 2's perspective is User 1's list
-    await user2ListsPage.getListAt(1).then((list) => list.assertOwner(userData.name));
-
-    // Filter by user 1 lists
-    await user1ListsPage.filterLists(userData.name);
+    // Chacun ne voit que la liste de l'autre, jamais la sienne
     await user1ListsPage.expectListCount(1);
-    await user1ListsPage.getListAt(0).then((list) => list.assertOwner(userData.name));
-
-    await user1ListsPage.clearFilter();
-    await user1ListsPage.expectListCount(2);
-
-    // Filter by user 2 lists
-    await user1ListsPage.filterLists(user2.name);
-    await user1ListsPage.expectListCount(1);
+    await user2ListsPage.expectListCount(1);
     await user1ListsPage.getListAt(0).then((list) => list.assertOwner(user2.name));
+    await user2ListsPage.getListAt(0).then((list) => list.assertOwner(userData.name));
+    await expect(user1Page.getByTestId("list-owner").filter({ hasText: userData.name })).toHaveCount(0);
 });

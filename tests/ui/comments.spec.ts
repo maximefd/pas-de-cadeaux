@@ -12,7 +12,7 @@ test("comments are signed, visible to other members and hidden from the list own
 }) => {
     const ownerLists = new ListsPage(ownerPage);
     await ownerLists.goto();
-    const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+    const ownerListPage = await ownerLists.openMyList();
     const listId = ownerListPage.getId();
 
     const itemName = randomString();
@@ -27,7 +27,7 @@ test("comments are signed, visible to other members and hidden from the list own
     let itemId = "";
 
     await test.step("another member opens the idea and comments", async () => {
-        const otherListPage = new ListPage(otherPage, { id: listId, name: `${owner.name}'s Wishes` });
+        const otherListPage = new ListPage(otherPage, { id: listId, name: owner.name });
         await otherListPage.goto();
         await otherPage.getByTestId("items-container").locator("div.card").first().click();
         await expect(otherPage).toHaveURL(/item-id=\d+/);

@@ -1,6 +1,6 @@
 import type { RouteId } from "$app/types";
 import { env } from "$env/dynamic/private";
-import { getClosestAvailableLocaleFromHeader, getClosestAvailablePreferredLanguage, type Lang } from "$lib/i18n";
+import { defaultLang, getClosestAvailableLocale, type Lang } from "$lib/i18n";
 import {
     deleteSessionTokenCookie,
     sessionCookieName,
@@ -12,7 +12,9 @@ import { loadLocale } from "$lib/server/validations";
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
-    let lang = getClosestAvailableLocaleFromHeader(event.request.headers.get("accept-language"));
+    // Fork "Pas de cadeaux !" : tout le monde voit l'appli en français, quel que soit le navigateur
+    // (PDC_LOCALE permet aux tests automatiques, écrits en anglais, de garder l'anglais)
+    const lang = env.PDC_LOCALE ? getClosestAvailableLocale([env.PDC_LOCALE]) : defaultLang;
 
     const sessionToken = event.cookies.get(sessionCookieName);
     if (!sessionToken) {
@@ -28,10 +30,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     const { session, user, fresh } = await validateSessionToken(sessionToken);
-    if (user?.preferredLanguage) {
-        lang = getClosestAvailablePreferredLanguage(user.preferredLanguage) ?? lang;
-    }
-
     await loadLocale(lang.code);
     if (session === null) {
         deleteSessionTokenCookie(event.cookies);

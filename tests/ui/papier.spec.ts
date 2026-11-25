@@ -4,16 +4,10 @@ import { randomString } from "../util";
 
 // Look « Papier » : liste textuelle, suppression différée avec « Annuler »
 test.describe("papier", () => {
-    test.beforeEach(async ({ page, baseURL }) => {
-        // Mode liste (par défaut) : on retire le cookie posé par les fixtures
-        await page.context().clearCookies({ name: "listViewPreference" });
-        await page.context().addCookies([{ name: "listViewPreference", value: "list", url: baseURL! }]);
-    });
-
     const createItem = async (page: import("@playwright/test").Page, name: string) => {
         const listsPage = new ListsPage(page);
         await listsPage.goto();
-        const listPage = await (await listsPage.getListAt(0)).click();
+        const listPage = await listsPage.openMyList();
         const createItemPage = await listPage.createItem();
         await createItemPage.getForm().then((f) => f.fillName(name));
         await createItemPage.create();

@@ -11,3 +11,5 @@ services:
             SEED_DEFAULT_GROUP: "false"
             # les comptes de test ne passent pas par l'écran de bienvenue (testé à part)
             SKIP_WELCOME: "true"
+            # les tests sont écrits en anglais ; l'appli est en français pour tout le monde sinon
+            PDC_LOCALE: "en"

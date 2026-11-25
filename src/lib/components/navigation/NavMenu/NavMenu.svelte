@@ -1,11 +1,8 @@
 <script lang="ts">
     import { invalidateAll } from "$app/navigation";
     import { Role } from "$lib/schema";
-    import Avatar from "../../Avatar.svelte";
     import GroupSubMenu from "./GroupSubMenu.svelte";
     import { getFormatter } from "$lib/i18n";
-    import GroupSelectChip from "$lib/components/wishlists/chips/GroupSelectChip.svelte";
-    import ChangeLanguageModal from "$lib/components/modals/ChangeLanguageModal.svelte";
     import LightSwitch from "./LightSwitch.svelte";
     import Popup from "$lib/components/Popup.svelte";
 
@@ -26,14 +23,11 @@
 </script>
 
 {#if user}
-    <div class="flex min-w-0 items-center gap-4">
-        {#if groups && groups?.length > 1}
-            <GroupSelectChip {groups} {user} />
-        {/if}
+    <div class="flex min-w-0 items-center">
         <Popup zIndex="z-20!" bind:open>
             {#snippet trigger(props)}
-                <button class="size-10 md:size-12" {...props}>
-                    <Avatar class="size-10 text-xs md:size-12 md:text-sm" {user} />
+                <button class="paper-header-link" {...props}>
+                    <span aria-hidden="true">{$t("admin.account")}</span>
                     <span class="sr-only">User Menu</span>
                 </button>
             {/snippet}
@@ -48,6 +42,12 @@
                                 <a href="/account" onclick={closeMenu}>
                                     <iconify-icon icon="ion:person"></iconify-icon>
                                     <span class="flex-auto">{$t("admin.account")}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/claims" onclick={closeMenu}>
+                                    <iconify-icon icon="ion:albums"></iconify-icon>
+                                    <span class="flex-auto">{$t("app.my-claims")}</span>
                                 </a>
                             </li>
                             {#if user.roleId == Role.ADMIN}
@@ -78,24 +78,6 @@
                                 </li>
                             {/if}
                             <hr class="hr pb-1" />
-                            <li>
-                                <ChangeLanguageModal currentLanguage={user.preferredLanguage}>
-                                    {#snippet trigger(props)}
-                                        <button
-                                            {...props}
-                                            class="list-option w-full"
-                                            onclick={(e) => {
-                                                closeMenu();
-                                                props.onclick?.(e);
-                                            }}
-                                            type="button"
-                                        >
-                                            <iconify-icon icon="ion:language"></iconify-icon>
-                                            <p>{$t("general.language")}</p>
-                                        </button>
-                                    {/snippet}
-                                </ChangeLanguageModal>
-                            </li>
                             <li>
                                 <div class="flex w-full justify-around pt-1">
                                     <LightSwitch />

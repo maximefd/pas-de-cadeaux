@@ -530,3 +530,210 @@
     font-weight: 600;
     margin-top: 1rem;
 }
+
+/* --- Mise en page unique : une colonne de texte centrée, identique sur téléphone, tablette et ordinateur --- */
+.paper-page {
+    width: 100%;
+    max-width: 36rem;
+    min-height: 100vh;
+    margin-inline: auto;
+    padding-block: 0.5rem 6rem;
+    padding-inline: max(1.25rem, env(safe-area-inset-left, 0px)) max(1.25rem, env(safe-area-inset-right, 0px));
+}
+.paper-page > .h1 {
+    margin-top: 0.75rem;
+}
+.paper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 36rem;
+    min-height: 3.25rem;
+    margin-inline: auto;
+    padding-inline: max(1.25rem, env(safe-area-inset-left, 0px)) max(1.25rem, env(safe-area-inset-right, 0px));
+    background: var(--paper-bg);
+}
+header:has(> .paper-header) {
+    background: var(--paper-bg);
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-header-brand {
+    text-decoration: none;
+    color: var(--paper-fg);
+}
+.paper-header-link {
+    color: var(--paper-mute);
+    font-size: 0.9375rem;
+    min-height: 2.75rem;
+    padding-inline: 0.25rem;
+}
+.paper-header-link:hover {
+    color: var(--paper-fg);
+}
+.paper-bottom-tabs {
+    background: var(--paper-bg);
+    border-top: 1px solid var(--paper-line);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.paper-bottom-tabs > div {
+    display: flex;
+    max-width: 36rem;
+    margin-inline: auto;
+}
+.paper-bottom-tabs a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+    font-size: 0.9375rem;
+    color: var(--paper-mute);
+    text-decoration: none;
+}
+.paper-bottom-tabs a[aria-current="page"] {
+    color: var(--paper-fg);
+    font-weight: 600;
+}
+.paper-bottom-tabs a:hover {
+    color: var(--paper-fg);
+}
+
+/* Lien « ‹ Retour » au-dessus d'un titre */
+.paper-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.9375rem;
+    color: var(--paper-mute);
+    text-decoration: none;
+}
+.paper-back:hover {
+    color: var(--paper-fg);
+}
+.paper-title-block {
+    padding-top: 0.75rem;
+}
+.paper-back + .paper-title-block {
+    padding-top: 0;
+}
+.paper-title-block .h1 {
+    margin: 0 0 0.25rem;
+}
+.paper-sub {
+    color: var(--paper-mute);
+    font-size: 0.9375rem;
+    margin: 0 0 0.5rem;
+}
+
+/* Une personne par ligne */
+.paper-person {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    min-height: 3.375rem;
+    border-bottom: 1px solid var(--paper-line);
+    color: var(--paper-fg);
+    text-decoration: none;
+}
+.paper-person small {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--paper-mute);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+.paper-person .paper-person-name small {
+    display: block;
+}
+
+/* Petite phrase d'aide sous une liste */
+.paper-hint {
+    color: var(--paper-mute);
+    font-size: 0.875rem;
+    margin: 1rem 0 0;
+}
+.paper-coach {
+    margin: 1rem 0 0.375rem;
+    padding: 0.75rem 0.875rem;
+    border-left: 3px solid var(--paper-accent);
+    background: var(--paper-accent-bg);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-size: 0.9375rem;
+}
+
+/* Aide : questions dépliables */
+.paper-faq {
+    border-top: 1px solid var(--paper-line);
+}
+.paper-faq:last-of-type {
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-faq summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 0;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+}
+.paper-faq summary::-webkit-details-marker {
+    display: none;
+}
+.paper-faq summary::after {
+    content: "+";
+    color: var(--paper-mute);
+}
+.paper-faq[open] summary::after {
+    content: "−";
+}
+.paper-faq p {
+    margin: 0 0 0.875rem;
+}
+
+/* --- Formulaire d'idée (ajout / modification) --- */
+.paper-item-form {
+    max-width: 40rem;
+}
+.paper-item-form .paper-item-title {
+    font-size: 1.5rem;
+    min-height: 3.5rem;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-item-form .paper-item-note {
+    font-size: 1.0625rem;
+    min-height: 4rem;
+    padding-block: 0.5rem;
+    resize: vertical;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.paper-item-actions .paper-link {
+    font-size: 1.0625rem;
+}
+.paper-item-actions .paper-item-submit {
+    width: auto;
+    margin-top: 0;
+}
+
+/* Lien « ‹ Retour » au-dessus du titre */
+.paper-link.paper-back {
+    font-size: 0.9375rem;
+    padding-inline: 0;
+    min-height: 2rem;
+}
+.paper-link.paper-back:hover {
+    background: transparent;
+    color: var(--paper-fg);
+}

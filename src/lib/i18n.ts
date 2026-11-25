@@ -103,7 +103,7 @@ export const initLang = async (locale: string) => {
     supportedLangs.forEach((lang) => register(lang.code, lang.loader));
 
     await init({
-        fallbackLocale: dev ? "dev" : englishLang.code,
+        fallbackLocale: dev ? "dev" : defaultLang.code,
         initialLocale: locale
     });
 };

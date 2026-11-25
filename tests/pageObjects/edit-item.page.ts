@@ -7,20 +7,20 @@ interface Props {
 }
 
 export class EditItemPage extends BasePage {
-    private readonly header: Locator;
+    private readonly nameField: Locator;
     private readonly itemForm: ItemForm;
     private readonly saveButton: Locator;
 
     constructor(page: Page, props?: Props) {
         const itemId = props?.itemId ?? new URL(page.url()).pathname.split("/").at(-2);
         super(page, `/items/${itemId}/edit`);
-        this.header = page.getByRole("heading", { name: "Edit Wish" });
+        this.nameField = page.locator("#name");
         this.itemForm = new ItemForm(page);
         this.saveButton = page.getByRole("button", { name: "Save" });
     }
 
     async at() {
-        await expect(this.header).toBeVisible();
+        await expect(this.nameField).toBeVisible();
         return this;
     }
 

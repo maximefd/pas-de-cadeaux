@@ -2,22 +2,19 @@ import { expect, type Locator, type Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { ListCard } from "../modules/list-card";
 import { CreateListPage } from "./create-list.page";
-import { Chip } from "../modules/chip";
+import { ListPage } from "./list.page";
 
+// « Famille & amis » : une ligne par liste des AUTRES personnes du cercle (jamais les siennes).
 export class ListsPage extends BasePage {
     private readonly header: Locator;
-    private readonly createButton: Locator;
     private readonly listContainer: Locator;
     private readonly listItems: Locator;
-    private readonly listFilterChip: Chip;
 
     constructor(page: Page) {
         super(page, "/lists");
-        this.header = page.getByRole("heading", { name: "Lists" });
-        this.createButton = page.getByRole("button", { name: "Create List" });
+        this.header = page.getByRole("heading", { name: "Family & friends" });
         this.listContainer = page.getByTestId("list-container");
-        this.listItems = this.listContainer.locator("a.card");
-        this.listFilterChip = new Chip(page, "list-filter");
+        this.listItems = this.listContainer.locator("a.paper-person");
     }
 
     async at() {
@@ -25,9 +22,21 @@ export class ListsPage extends BasePage {
         return this;
     }
 
+    // Les listes personnelles s'ouvrent par l'onglet « Mes envies » (/wishlists/me)
+    async openMyList() {
+        // comme un utilisateur : clic sur l'onglet (un page.goto pouvait être interrompu par une navigation en cours)
+        await this.page.getByRole("link", { name: "My wishes" }).click();
+        await this.page.waitForURL(/\/lists\/(?!create)[^/]+$/);
+        const listPage = new ListPage(this.page, { name: "My wishes" });
+        await listPage.at();
+        return listPage;
+    }
+
+    // Le formulaire de création n'est plus proposé dans l'interface : on y va par l'URL
     async create() {
-        await this.createButton.click();
-        return new CreateListPage(this.page);
+        const createListPage = new CreateListPage(this.page);
+        await createListPage.goto();
+        return createListPage;
     }
 
     async expectListCount(count: number) {
@@ -44,23 +53,19 @@ export class ListsPage extends BasePage {
         return new ListCard(list);
     }
 
+    // Liste portant un nom personnalisé
     async getListByName(name: string) {
         const list = this.listItems.filter({ has: this.page.getByTestId("list-name").filter({ hasText: name }) });
         await expect(list).toBeVisible();
         return new ListCard(list);
     }
 
-    async filterLists(...options: string[]) {
-        await this.listFilterChip.open();
-        for (const opt of options) {
-            await this.listFilterChip.selectOption(opt);
-        }
-        await this.listFilterChip.applyFilter();
-    }
-
-    async clearFilter() {
-        await this.listFilterChip.open();
-        await this.listFilterChip.selectOption("All");
-        await this.listFilterChip.applyFilter();
+    // Liste « par défaut » (sans nom personnalisé) d'une personne
+    async getListByOwner(ownerName: string) {
+        const list = this.listItems
+            .filter({ has: this.page.getByTestId("list-owner").filter({ hasText: ownerName }) })
+            .filter({ hasNot: this.page.getByTestId("list-name") });
+        await expect(list).toBeVisible();
+        return new ListCard(list);
     }
 }

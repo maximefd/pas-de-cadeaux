@@ -2,8 +2,6 @@
     import { enhance } from "$app/forms";
     import { page } from "$app/state";
     import { getFormatter } from "$lib/i18n";
-    import { FileUpload } from "@skeletonlabs/skeleton-svelte";
-    import Avatar from "../Avatar.svelte";
     import { toaster } from "../toaster";
     import Label from "../Label.svelte";
     import Input from "../Input.svelte";
@@ -17,40 +15,10 @@
     let { user, disabled, autocomplete = true }: Props = $props();
     const t = getFormatter();
 
-    let submitButton: HTMLElement | undefined = $state();
+    const isPlaceholderEmail = $derived(!!user.email?.endsWith("@sans-email.invalid"));
 </script>
 
 <div class="paper-account">
-    <div class="relative m-auto h-full w-full max-w-37.5">
-        <Avatar class="size-32 text-3xl" {user} />
-        <form
-            class="absolute right-0 bottom-0 h-12 w-12"
-            action="?/profilePicture"
-            enctype="multipart/form-data"
-            method="POST"
-            use:enhance={() => {
-                return async ({ result, update }) => {
-                    if (result.type === "error") {
-                        toaster.error({ description: (result.error?.message as string) || $t("general.oops") });
-                        return;
-                    }
-                    toaster.info({ description: "Profile photo uploaded" });
-                    update({ invalidateAll: true });
-                };
-            }}
-        >
-            <FileUpload name="profilePic" accept="image/*" onFileAccept={() => submitButton?.click()}>
-                <FileUpload.Trigger class="btn-icon preset-tonal-secondary" title={$t("a11y.upload-profile-image")}>
-                    <iconify-icon class="text-lg" icon="ion:camera"></iconify-icon>
-                    <span class="sr-only">{$t("a11y.upload-profile-image")}</span>
-                </FileUpload.Trigger>
-                <FileUpload.HiddenInput />
-            </FileUpload>
-            <!-- svelte-ignore a11y_consider_explicit_label -->
-            <button bind:this={submitButton} hidden type="submit"></button>
-        </form>
-    </div>
-
     <form
         method="POST"
         use:enhance={() => {
@@ -93,18 +61,23 @@
                 />
             </Label>
 
-            <Label value={$t("auth.email")}>
-                <Input
-                    name="email"
-                    autocomplete={autocomplete ? "email" : "off"}
-                    {disabled}
-                    error={page.form?.errors?.email?.[0]}
-                    icon="ion:person"
-                    placeholder={user.email}
-                    type="text"
-                    value={user.email}
-                />
-            </Label>
+            {#if isPlaceholderEmail}
+                <!-- Compte créé sans e-mail : on ne montre pas l'adresse technique -->
+                <input name="email" type="hidden" value={user.email} />
+            {:else}
+                <Label value={$t("auth.email")}>
+                    <Input
+                        name="email"
+                        autocomplete={autocomplete ? "email" : "off"}
+                        {disabled}
+                        error={page.form?.errors?.email?.[0]}
+                        icon="ion:person"
+                        placeholder={user.email}
+                        type="text"
+                        value={user.email}
+                    />
+                </Label>
+            {/if}
 
             {#if disabled}
                 <span>{$t("admin.profile-disabled")}</span>
