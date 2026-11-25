@@ -115,12 +115,16 @@ export const load: PageServerLoad = async ({ url, cookies, depends }) => {
 
     depends("data:items");
 
-    const itemDTOs = items.map((item) => {
-        const claim = item.claims.find((c) => c.claimedBy?.id === user.id)!;
-        // sur ses propres idées, on ne voit que sa propre réservation (jamais celles des autres)
-        const visible = item.userId === user.id ? { ...item, offered: false, claims: [claim] } : item;
-        return toItemOnListDTO(visible, claim.listId);
-    });
+    const itemDTOs = items
+        // une idée offerte quitte la liste : elle n'a plus rien à faire dans les réservations
+        // (sauf sur ses propres idées, où l'on ne doit jamais savoir qu'elle a été offerte)
+        .filter((item) => !item.offered || item.userId === user.id)
+        .map((item) => {
+            const claim = item.claims.find((c) => c.claimedBy?.id === user.id)!;
+            // sur ses propres idées, on ne voit que sa propre réservation (jamais celles des autres)
+            const visible = item.userId === user.id ? { ...item, offered: false, offeredAt: null, claims: [claim] } : item;
+            return toItemOnListDTO(visible, claim.listId);
+        });
 
     return {
         user: {
@@ -129,6 +133,7 @@ export const load: PageServerLoad = async ({ url, cookies, depends }) => {
         },
         items: itemDTOs,
         initialViewPreference: viewPreference || "list",
-        config
+        config,
+        anyoneCanDeleteItems: config.anyoneCanDeleteItems
     };
 };

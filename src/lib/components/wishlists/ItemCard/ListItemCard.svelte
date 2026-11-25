@@ -2,7 +2,6 @@
     import type { InternalItemCardProps } from "./ItemCard.svelte";
     import ItemFooter from "./components/ItemFooter.svelte";
     import ClaimButtons from "./ClaimButtons.svelte";
-    import OfferedButton from "./OfferedButton.svelte";
     import ManageButtons from "./ManageButtons.svelte";
     import RemoveButton from "./RemoveButton.svelte";
     import Markdown from "$lib/components/Markdown.svelte";
@@ -17,10 +16,9 @@
 
     // « ajouté par X » uniquement quand l'idée n'a pas été ajoutée par la personne concernée
     const signedByOther = $derived(item.addedBy && item.addedBy.id !== item.user.id);
-    const showOffered = $derived(item.offered && props.user?.id !== item.userId);
 </script>
 
-<div class={["paper-body", showOffered && "paper-offered"]}>
+<div class="paper-body">
     <div class="paper-text">
         <div class="paper-title">
             {#if item.url}
@@ -67,7 +65,6 @@
         <ItemFooter {...props} noPadding />
     {:else}
         <div class="paper-actions print:hidden">
-            <OfferedButton isSelfClaimable={props.isSelfClaimable} {item} user={props.user} />
             {#if item.approved}
                 <RemoveButton {item} user={props.user} userCanManage={props.userCanManage} />
             {:else}

@@ -153,11 +153,6 @@
     margin-top: 0.25rem;
     font-size: 0.875rem;
 }
-.paper-offered .paper-title {
-    text-decoration: line-through;
-    text-decoration-color: var(--paper-mute);
-    opacity: 0.6;
-}
 
 /* Boutons d'action : du texte, pas des boutons */
 .paper-row .paper-actions .btn,
