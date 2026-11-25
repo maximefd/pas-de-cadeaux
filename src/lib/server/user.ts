@@ -25,7 +25,7 @@ export const createUser = async (user: UserMinimal, role: Role, password: string
                 }
             })
             .then((data) => data?.groupId);
-    } else if (userCount === 0) {
+    } else if (userCount === 0 && !groupId) {
         groupId = (
             await client.group.findFirst({
                 select: {

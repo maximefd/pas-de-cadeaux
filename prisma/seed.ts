@@ -72,6 +72,15 @@ const groups = async () => {
             });
         }
 
+        // Les nouveaux comptes (sans invitation) rejoignent « Famille » ; le premier compte aussi
+        if (process.env.SEED_DEFAULT_GROUP !== "false") {
+            await prisma.systemConfig.upsert({
+                where: { key_groupId: { key: "defaultGroup", groupId: "global" } },
+                create: { key: "defaultGroup", groupId: "global", value: defaultGroup.id },
+                update: { value: defaultGroup.id }
+            });
+        }
+
         console.log("created default group");
     } else {
         console.log("skipping default group creation");
