@@ -83,6 +83,7 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
         showPublicClaimName: config.claims.showNamePublic,
         requireClaimEmail: config.claims.requireEmail,
         suggestionsEnabled: config.suggestions.enable,
+        anyoneCanDeleteItems: config.anyoneCanDeleteItems,
         initialViewPreference: viewPreference || "list"
     };
 }) satisfies PageServerLoad;

@@ -12,7 +12,8 @@ import { logger } from "$lib/server/logger";
 
 const offeredSchema = z.object({ offered: z.boolean() });
 
-// Mark an item as offered (or not) in one click. No identity nor date is stored.
+// Mark an item as offered (or put it back on the list). The giver is never stored; only the date,
+// so that the gift history can be grouped by year.
 export const PUT: RequestHandler = async ({ request, params }) => {
     const user = await requireLoginOrError();
     const $t = await getFormatter();
@@ -56,7 +57,10 @@ export const PUT: RequestHandler = async ({ request, params }) => {
     }
 
     try {
-        await client.item.update({ where: { id: itemId }, data: { offered: body.data.offered } });
+        await client.item.update({
+            where: { id: itemId },
+            data: { offered: body.data.offered, offeredAt: body.data.offered ? new Date() : null }
+        });
         const updatedItem = await client.item.findUnique({ where: { id: itemId }, include: getItemInclusions() });
         if (updatedItem) itemEmitter.emit(ItemEvent.ITEM_UPDATE, updatedItem);
         return new Response();

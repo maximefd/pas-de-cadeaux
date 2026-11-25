@@ -12,9 +12,11 @@
 
     interface Props extends Pick<InternalItemCardProps, "item" | "user" | "userCanManage"> {
         onEdit?: VoidFunction;
+        // « Retirer » (avec le choix « C'est offert ») remplace alors la corbeille
+        hideDelete?: boolean;
     }
 
-    const { item, user, userCanManage, onEdit }: Props = $props();
+    const { item, user, userCanManage, onEdit, hideDelete = false }: Props = $props();
     const t = getFormatter();
     const listItemAPI = $derived(new ListItemAPI(item.list.id, item.id));
 
@@ -103,8 +105,10 @@
         >
             <iconify-icon icon="ion:edit"></iconify-icon>
         </button>
-        {@render deleteButton()}
-    {:else if userCanManage}
+        {#if !hideDelete}
+            {@render deleteButton()}
+        {/if}
+    {:else if userCanManage && !hideDelete}
         {@render deleteButton()}
     {/if}
 </div>

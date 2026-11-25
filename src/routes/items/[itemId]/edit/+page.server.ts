@@ -66,6 +66,7 @@ export const load: PageServerLoad = async ({ params }) => {
         user,
         item: {
             ...item,
+            offeredAt: null,
             offered: false, // never expose the offered state to someone who may be the recipient
             lists: item.lists.map(({ list, addedById }) => ({
                 id: list.id,
