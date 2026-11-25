@@ -122,7 +122,8 @@ export const load: PageServerLoad = async ({ url, cookies, depends }) => {
         .map((item) => {
             const claim = item.claims.find((c) => c.claimedBy?.id === user.id)!;
             // sur ses propres idées, on ne voit que sa propre réservation (jamais celles des autres)
-            const visible = item.userId === user.id ? { ...item, offered: false, offeredAt: null, claims: [claim] } : item;
+            const visible =
+                item.userId === user.id ? { ...item, offered: false, offeredAt: null, claims: [claim] } : item;
             return toItemOnListDTO(visible, claim.listId);
         });
 
