@@ -1,5 +1,6 @@
 <script lang="ts">
     import "../app.css";
+    import { APP_NAME } from "$lib/brand";
 
     import { afterNavigate, beforeNavigate } from "$app/navigation";
     import { page } from "$app/state";
@@ -128,5 +129,6 @@
 <Toaster yShift={toasterYShift} />
 
 <svelte:head>
+    <title>{APP_NAME}</title>
     {@html webManifestLink}
 </svelte:head>

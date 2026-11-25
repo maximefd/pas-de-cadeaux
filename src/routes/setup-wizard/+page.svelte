@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { APP_NAME } from "$lib/brand";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
@@ -8,7 +9,11 @@
     const t = getFormatter();
     let introStep = $state(0);
     let getStarted = false;
-    let statements = [$t("setup.hi"), $t("setup.welcome-to-wishlist"), $t("setup.lets-get-started")];
+    let statements = [
+        $t("setup.hi"),
+        $t("setup.welcome-to-app", { values: { name: APP_NAME } }),
+        $t("setup.lets-get-started")
+    ];
 
     onMount(() => {
         const incrementStep = () =>
