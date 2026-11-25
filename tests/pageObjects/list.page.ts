@@ -13,10 +13,6 @@ export class ListPage extends BasePage {
     private readonly id: string;
     private readonly name: string;
     private readonly header: Locator;
-    private readonly manageButton: Locator;
-    private readonly shareListButton: Locator;
-    private readonly copyToClipboardButton: Locator;
-    private readonly publicUrlLink: Locator;
     private readonly createItemButton: Locator;
     private readonly approvalsContainer: Locator;
     private readonly itemsContainer: Locator;
@@ -27,11 +23,7 @@ export class ListPage extends BasePage {
         super(page, `/lists/${id}`);
         this.id = id!;
         this.name = props.name;
-        this.header = page.getByRole("heading", { name: props.name });
-        this.manageButton = page.getByRole("button", { name: "Manage" });
-        this.shareListButton = page.getByRole("button", { name: "Share List" });
-        this.copyToClipboardButton = page.getByRole("button", { name: "Copy to clipboard" });
-        this.publicUrlLink = page.getByRole("link", { name: "Public URL" });
+        this.header = page.getByRole("heading", { level: 1, name: props.name });
         this.createItemButton = page.getByRole("button", { name: "add item" });
         this.noItemsText = page.getByTestId("list-empty");
         this.approvalsContainer = page.getByTestId("approvals-container");
@@ -56,20 +48,11 @@ export class ListPage extends BasePage {
         return this;
     }
 
+    // Le bouton « Gérer » n'est plus proposé sur la page : la page de gestion reste accessible par son URL
     async manage() {
-        await this.manageButton.click();
-        return await new ManageListPage(this.page, { id: this.id }).waitForNavigate();
-    }
-
-    async getShareListButton() {
-        return this.shareListButton;
-    }
-
-    async assertShareFunctionality() {
-        await this.shareListButton.click();
-        await expect(this.publicUrlLink).toBeVisible();
-        await expect(this.copyToClipboardButton).toBeVisible();
-        expect(await this.publicUrlLink.getAttribute("href")).toContain(this.getUrl());
+        const manageListPage = new ManageListPage(this.page, { id: this.id });
+        await manageListPage.goto();
+        return manageListPage;
     }
 
     async assertNoItems() {
@@ -79,7 +62,7 @@ export class ListPage extends BasePage {
 
     async createItem() {
         await this.createItemButton.click();
-        await this.page.waitForLoadState();
+        await this.page.waitForURL(/\/create-item/);
         return new CreateItemPage(this.page, { listId: this.id });
     }
 

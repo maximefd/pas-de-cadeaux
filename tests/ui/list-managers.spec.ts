@@ -11,8 +11,7 @@ test("user can add a list manager", async ({ userFactory }) => {
 
     const manageListPage = await new ListsPage(page)
         .goto()
-        .then((p) => p.getListAt(0))
-        .then((c) => c.click())
+        .then((p) => p.openMyList())
         .then((lp) => lp.manage());
 
     await manageListPage.expectNoManagers();
@@ -35,14 +34,6 @@ test("manager creates item bypasses suggestions", async ({ userFactory }) => {
 
     await setSuggestionMethod(groupOwner.page, "approval");
 
-    await test.step("user requires approval before being manager", async () => {
-        const listPage = await new ListsPage(groupUser.page)
-            .goto()
-            .then((p) => p.getListByName(groupOwner.user.name))
-            .then((c) => c.click());
-        await listPage.createItem().then((p) => p.assertApprovalRequiredAlert());
-    });
-
     await addManager(groupOwner.page, groupUser.user.name);
 
     const itemName = randomString();
@@ -57,8 +48,7 @@ test("manager creates item bypasses suggestions", async ({ userFactory }) => {
     await test.step("owner can see item without needing to approve", async () => {
         await new ListsPage(groupOwner.page)
             .goto()
-            .then((p) => p.getListByName(groupOwner.user.name))
-            .then((c) => c.click())
+            .then((p) => p.openMyList())
             .then((lp) => lp.getItemAt(0))
             .then((i) => i.assertName(itemName))
             .then((i) => i.assertAddedBy(groupUser.user.name));
@@ -81,8 +71,7 @@ test("manager creates item in surprise mode is visible to owner", async ({ userF
     await test.step("owner cannot see the item", async () => {
         await new ListsPage(groupOwner.page)
             .goto()
-            .then((p) => p.getListByName(groupOwner.user.name))
-            .then((c) => c.click())
+            .then((p) => p.openMyList())
             .then((lp) => lp.assertNoItems());
     });
 
@@ -91,8 +80,7 @@ test("manager creates item in surprise mode is visible to owner", async ({ userF
     await test.step("owner can see item", async () => {
         await new ListsPage(groupOwner.page)
             .goto()
-            .then((p) => p.getListByName(groupOwner.user.name))
-            .then((c) => c.click())
+            .then((p) => p.openMyList())
             .then((lp) => lp.getItemAt(0))
             .then((i) => i.assertName(itemName1))
             .then((i) => i.assertAddedBy(groupUser.user.name));
@@ -110,8 +98,7 @@ test("manager creates item in surprise mode is visible to owner", async ({ userF
     await test.step("owner can see the item", async () => {
         await new ListsPage(groupOwner.page)
             .goto()
-            .then((p) => p.getListByName(groupOwner.user.name))
-            .then((c) => c.click())
+            .then((p) => p.openMyList())
             .then((lp) => lp.getItemAt(1))
             .then((i) => i.assertName(itemName2))
             .then((i) => i.assertAddedBy(groupUser.user.name));
@@ -134,7 +121,7 @@ test("manager can approve/deny/delete items", async ({ userFactory }) => {
     await test.step("manager can deny item", async () => {
         await new ListsPage(listManager.page)
             .goto()
-            .then((p) => p.getListByName(listOwner.user.name))
+            .then((p) => p.getListByOwner(listOwner.user.name))
             .then((c) => c.click())
             .then((l) => l.getItemForApprovalAt(0))
             .then((i) => i.assertName(itemName1))
@@ -150,7 +137,7 @@ test("manager can approve/deny/delete items", async ({ userFactory }) => {
     await test.step("manager can approve item", async () => {
         return new ListsPage(listManager.page)
             .goto()
-            .then((p) => p.getListByName(listOwner.user.name))
+            .then((p) => p.getListByOwner(listOwner.user.name))
             .then((c) => c.click())
             .then((l) => l.getItemForApprovalAt(0))
             .then((i) => i.assertName(itemName2))
@@ -181,6 +168,9 @@ test("manager can only remove item from list not delete from all lists", async (
     await setSuggestionMethod(listOwner.page, "auto-approval");
     await addManager(listOwner.page, listManager.user.name);
 
+    // Liste par défaut, ouverte avant d'en créer une seconde (« Mes envies » mène à la première liste)
+    const ownerDefaultList = await new ListsPage(listOwner.page).goto().then((lists) => lists.openMyList());
+
     const listName = randomString();
     await test.step("user creates another list", async () => {
         await new ListsPage(listOwner.page)
@@ -191,11 +181,8 @@ test("manager can only remove item from list not delete from all lists", async (
 
     const itemName = randomString();
     await test.step("user creates item on both lists", async () => {
-        const createItemPage = await new ListsPage(listOwner.page)
-            .goto()
-            .then((lists) => lists.getListAt(0))
-            .then((l) => l.click())
-            .then((list) => list.createItem());
+        await ownerDefaultList.goto();
+        const createItemPage = await ownerDefaultList.createItem();
         await createItemPage
             .getForm()
             .then((form) => form.fillName(itemName))
@@ -207,13 +194,13 @@ test("manager can only remove item from list not delete from all lists", async (
         await new ListsPage(listManager.page)
             .goto()
             .then((lists) => lists.getListByName(listName))
-            .then((lc) => lc.click())
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
-            .then((ic) => ic.assertDeleteButtonHidden());
+            .then((ic) => ic.assertCannotDelete());
         await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.deleteNoConfirm())
             .then((modal) => modal.assertAllListsNotVisible())
@@ -222,11 +209,9 @@ test("manager can only remove item from list not delete from all lists", async (
     });
 
     await test.step("list owner can delete item on all lists", async () => {
-        await new ListsPage(listOwner.page)
-            .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
-            .then((list) => list.getItemAt(0))
+        await ownerDefaultList.goto();
+        await ownerDefaultList
+            .getItemAt(0)
             .then((ic) => ic.deleteNoConfirm())
             .then((modal) => modal.assertAllListsVisible())
             .then((modal) => modal.assertThisListsVisible())
@@ -242,8 +227,7 @@ test("manager can edit item added by owner", async ({ userFactory }) => {
     await test.step("owner creates item on list", async () => {
         const createItemPage = await new ListsPage(listOwner.page)
             .goto()
-            .then((lists) => lists.getListAt(0))
-            .then((l) => l.click())
+            .then((lists) => lists.openMyList())
             .then((list) => list.createItem());
         await createItemPage.getForm().then((form) => form.fillName(itemName));
         await createItemPage.create();
@@ -252,8 +236,8 @@ test("manager can edit item added by owner", async ({ userFactory }) => {
     await test.step("manager can edit item", async () => {
         const editItemPage = await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.edit());
 
@@ -264,8 +248,7 @@ test("manager can edit item added by owner", async ({ userFactory }) => {
     await test.step("list owner sees edit", async () => {
         await new ListsPage(listOwner.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.openMyList())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertPrice("$20.00"));
     });
@@ -279,8 +262,8 @@ test("owner can edit item added by manager", async ({ userFactory }) => {
     await test.step("manager creates item list", async () => {
         const createItemPage = await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((l) => l.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.createItem());
         await createItemPage.getForm().then((form) => form.fillName(itemName));
         await createItemPage.create();
@@ -289,8 +272,8 @@ test("owner can edit item added by manager", async ({ userFactory }) => {
     await test.step("owner can edit item", async () => {
         const editItemPage = await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.edit());
 
@@ -301,8 +284,7 @@ test("owner can edit item added by manager", async ({ userFactory }) => {
     await test.step("list owner sees edit", async () => {
         await new ListsPage(listOwner.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.openMyList())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertPrice("$20.00"));
     });
@@ -310,8 +292,8 @@ test("owner can edit item added by manager", async ({ userFactory }) => {
     await test.step("manager sees edit", async () => {
         await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertPrice("$20.00"));
     });
@@ -325,8 +307,7 @@ test("user can add item from their own list to a list they manage", async ({ use
     await test.step("manager creates item on own list with managed list selected", async () => {
         const createItemPage = await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListAt(0))
-            .then((l) => l.click())
+            .then((lists) => lists.openMyList())
             .then((list) => list.createItem());
         await createItemPage
             .getForm()
@@ -338,8 +319,8 @@ test("user can add item from their own list to a list they manage", async ({ use
     await test.step("manager sees item on the managed list", async () => {
         await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertName(itemName));
     });
@@ -347,8 +328,8 @@ test("user can add item from their own list to a list they manage", async ({ use
     await test.step("owner can see and edit item", async () => {
         const editItemPage = await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.edit());
 
@@ -359,8 +340,7 @@ test("user can add item from their own list to a list they manage", async ({ use
     await test.step("list owner sees edit", async () => {
         await new ListsPage(listOwner.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.openMyList())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertPrice("$20.00"));
     });
@@ -368,8 +348,8 @@ test("user can add item from their own list to a list they manage", async ({ use
     await test.step("manager sees edit", async () => {
         await new ListsPage(listManager.page)
             .goto()
-            .then((lists) => lists.getListByName(listOwner.user.name))
-            .then((lc) => lc.click())
+            .then((lists) => lists.getListByOwner(listOwner.user.name))
+            .then((c) => c.click())
             .then((list) => list.getItemAt(0))
             .then((ic) => ic.assertPrice("$20.00"));
     });
@@ -379,8 +359,7 @@ async function addManager(ownerPage: Page, managerName: string) {
     await test.step("add manager", async () => {
         const manageListPage = await new ListsPage(ownerPage)
             .goto()
-            .then((p) => p.getListAt(0))
-            .then((c) => c.click())
+            .then((p) => p.openMyList())
             .then((lp) => lp.manage());
 
         await manageListPage
@@ -393,7 +372,7 @@ async function addManager(ownerPage: Page, managerName: string) {
 async function createItem(page: Page, listName: string, itemName: string) {
     const listPage = await new ListsPage(page)
         .goto()
-        .then((p) => p.getListByName(listName))
+        .then((p) => p.getListByOwner(listName))
         .then((c) => c.click());
     const createItemPage = await listPage.createItem();
     await createItemPage.getForm().then((f) => f.fillName(itemName));

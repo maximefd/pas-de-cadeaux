@@ -11,18 +11,16 @@ test("add item to another users list - disabled", async ({ page: user1Page, user
 
     const user1ListsPage = new ListsPage(user1Page);
     await user1ListsPage.goto();
-
-    const user1List = await user1ListsPage.getListAt(0);
-    const user1ListPage = await user1List.click();
+    const user1ListPage = await user1ListsPage.openMyList();
 
     const user1ListWithUser2 = new ListPage(user2Page, {
         id: user1ListPage.getId(),
-        name: `${userData.name}'s Wishes`
+        name: userData.name
     });
     await user1ListWithUser2.goto();
     await user1ListWithUser2.assertCreateItemNotAvailable();
     await new CreateItemPage(user2Page, { listId: user1ListWithUser2.getId() }).goto({ skipAssert: true });
-    await expect(user2Page.getByText("Suggestions are disabled")).toBeVisible();
+    await expect(user2Page.getByRole("heading", { name: "Access denied" })).toBeVisible();
 });
 
 test("add item to another users list - surprise", async ({
@@ -35,17 +33,13 @@ test("add item to another users list - surprise", async ({
 
     const user1ListsPage = new ListsPage(user1Page);
     await user1ListsPage.goto();
-
-    // assert list has no items from user 1 perspective
-    const user1List = await user1ListsPage.getListAt(0);
-    await user1List.assertOwner(userData.name);
-    const user1ListPage = await user1List.click();
+    const user1ListPage = await user1ListsPage.openMyList();
     await user1ListPage.assertNoItems();
 
     // create new item on user 1's list
     const user1ListWithUser2 = new ListPage(user2Page, {
         id: user1ListPage.getId(),
-        name: `${userData.name}'s Wishes`
+        name: userData.name
     });
     const itemName = randomString();
     await createItemOnUser1List(user1ListWithUser2, itemName);
@@ -72,17 +66,13 @@ test("add item to another users list - auto-approval", async ({
 
     const user1ListsPage = new ListsPage(user1Page);
     await user1ListsPage.goto();
-
-    // assert list has no items from user 1 perspective
-    const user1List = await user1ListsPage.getListAt(0);
-    await user1List.assertOwner(userData.name);
-    const user1ListPage = await user1List.click();
+    const user1ListPage = await user1ListsPage.openMyList();
     await user1ListPage.assertNoItems();
 
     // create new item on user 1's list
     const user1ListWithUser2 = new ListPage(user2Page, {
         id: user1ListPage.getId(),
-        name: `${userData.name}'s Wishes`
+        name: userData.name
     });
     const itemName = randomString();
     await createItemOnUser1List(user1ListWithUser2, itemName);
@@ -111,28 +101,23 @@ test("add item to another users list - auto-approval", async ({
 
         const user1ListsPage = new ListsPage(user1Page);
         await user1ListsPage.goto();
-
-        // assert list has no items from user 1 perspective
-        const user1List = await user1ListsPage.getListAt(0);
-        await user1List.assertOwner(userData.name);
-        const user1ListPage = await user1List.click();
+        const user1ListPage = await user1ListsPage.openMyList();
         await user1ListPage.assertNoItems();
 
         // create new item on user 1's list
         const user1ListWithUser2 = new ListPage(user2Page, {
             id: user1ListPage.getId(),
-            name: `${userData.name}'s Wishes`
+            name: userData.name
         });
         const itemName = randomString();
-        await createItemOnUser1List(user1ListWithUser2, itemName, true);
+        await createItemOnUser1List(user1ListWithUser2, itemName);
 
         // item should not be visible yet
         await user1ListWithUser2.goto();
         await user1ListWithUser2.assertNoItems();
 
         // assert list has item added by user 2 that needs approval
-        await user1ListsPage.goto();
-        await user1List.assertApprovalBanner().then((c) => c.click());
+        await user1ListPage.goto();
         await user1ListPage
             .getItemForApprovalAt(0)
             .then((i) => i.assertName(itemName))
@@ -157,14 +142,10 @@ test("add item to another users list - auto-approval", async ({
     })
 );
 
-async function createItemOnUser1List(page: ListPage, itemName: string, approvalNeeded = false) {
+async function createItemOnUser1List(page: ListPage, itemName: string) {
     await page.goto();
     await page
         .createItem()
-        .then(async (p) => {
-            if (approvalNeeded) await p.assertApprovalRequiredAlert();
-            return p;
-        })
         .then(async (p) => {
             await p.getForm().then((f) => f.fillName(itemName));
             return p;

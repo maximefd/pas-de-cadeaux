@@ -8,17 +8,15 @@ import { randomString } from "../util";
 test("an offered idea moves to the gift history, hidden from the owner", async ({
     page: ownerPage,
     userData: owner,
-    additionalPage: otherPage,
-    baseURL
+    additionalPage: otherPage
 }) => {
     const itemName = randomString();
-    await otherPage.context().addCookies([{ name: "listViewPreference", value: "list", url: baseURL! }]);
 
     let listId = "";
     await test.step("owner creates an item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
         listId = ownerListPage.getId();
         const createItemPage = await ownerListPage.createItem();
         await createItemPage.getForm().then((f) => f.fillName(itemName));
@@ -32,13 +30,13 @@ test("an offered idea moves to the gift history, hidden from the owner", async (
         expect(response?.status()).toBe(404);
     });
 
-    const otherList = new ListPage(otherPage, { id: listId, name: `${owner.name}'s Wishes` });
+    const otherList = new ListPage(otherPage, { id: listId, name: owner.name });
 
     await test.step("another member marks the idea as given", async () => {
         await otherList.goto();
         const updated = otherPage.waitForResponse((r) => r.url().endsWith("/offered") && r.ok());
         await otherPage.getByRole("button", { name: "Remove" }).click();
-        await otherPage.getByTestId("remove-offered").click();
+        await otherPage.locator("[data-testid=remove-offered]:visible").click();
         await expect(otherPage.getByTestId("name").filter({ hasText: itemName })).toHaveCount(0);
         await updated;
         await otherPage.reload();
@@ -65,17 +63,12 @@ test("an offered idea moves to the gift history, hidden from the owner", async (
     });
 });
 
-test("marking an idea as given can be undone right away", async ({
-    page: ownerPage,
-    additionalPage: otherPage,
-    baseURL
-}) => {
+test("marking an idea as given can be undone right away", async ({ page: ownerPage, additionalPage: otherPage }) => {
     const itemName = randomString();
-    await otherPage.context().addCookies([{ name: "listViewPreference", value: "list", url: baseURL! }]);
 
     const ownerLists = new ListsPage(ownerPage);
     await ownerLists.goto();
-    const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+    const ownerListPage = await ownerLists.openMyList();
     const listId = ownerListPage.getId();
     const createItemPage = await ownerListPage.createItem();
     await createItemPage.getForm().then((f) => f.fillName(itemName));
@@ -85,7 +78,7 @@ test("marking an idea as given can be undone right away", async ({
     otherPage.on("request", (r) => r.url().endsWith("/offered") && requests.push(r.url()));
     await otherPage.goto(`/lists/${listId}`);
     await otherPage.getByRole("button", { name: "Remove" }).click();
-    await otherPage.getByTestId("remove-offered").click();
+    await otherPage.locator("[data-testid=remove-offered]:visible").click();
     await expect(otherPage.getByTestId("name").filter({ hasText: itemName })).toHaveCount(0);
     await otherPage
         .locator("[data-scope='toast'][data-part='root']")

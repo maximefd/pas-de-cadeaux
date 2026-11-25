@@ -1,51 +1,45 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { randomString } from "../util";
 
+// Le formulaire d'idée n'affiche que le nom et la précision. L'URL, le prix, la quantité, l'image, « le plus
+// souhaité » et les listes sont dans un bloc masqué, mais toujours envoyés : on les pilote directement dans le DOM.
 export class ItemForm {
     private readonly page: Page;
-    private readonly urlField: Locator;
     private readonly nameField: Locator;
-    private readonly priceField: Locator;
-    private readonly currencyField: Locator;
-    private readonly quantityField: Locator;
-    private readonly noLimitCheckbox: Locator;
-    private readonly uploadImageField: Locator;
-    private readonly uploadImageButton: Locator;
-    private readonly imageUrlField: Locator;
-    private readonly mostWantedCheckbox: Locator;
     private readonly notesField: Locator;
-    private readonly notesWriteTab: Locator;
-    private readonly notesPreviewTab: Locator;
-    private readonly notesPreviewContainer: Locator;
-    private readonly listSelectorField: Locator;
     private readonly hangTightBackdrop: Locator;
 
     constructor(page: Page) {
         this.page = page;
-        this.urlField = page.getByLabel("Item URL");
-        this.nameField = page.getByLabel("Item Name");
-        this.priceField = page.locator("#formatted-price");
-        this.currencyField = page.getByTestId("currency");
-        this.quantityField = page.getByLabel("Quantity");
-        this.noLimitCheckbox = page.getByLabel("No limit");
-        this.uploadImageField = page.getByLabel("Upload Image");
-        this.uploadImageButton = page.getByRole("button", { name: "Select File" });
-        this.mostWantedCheckbox = page.getByLabel("Most wanted");
-        this.imageUrlField = page.getByLabel("Image URL");
-        this.notesField = page.getByLabel("Notes");
-        this.notesWriteTab = page.getByRole("tab", { name: "Write" });
-        this.notesPreviewTab = page.getByRole("tab", { name: "Preview" });
-        this.notesPreviewContainer = page.getByTestId("markdown-preview");
-        this.listSelectorField = page.getByRole("group", { name: "Lists" });
+        this.nameField = page.locator("#name");
+        this.notesField = page.locator("#note");
         this.hangTightBackdrop = page.getByText("Hang tight, gathering product data");
     }
 
+    private async setHiddenValue(selector: string, value: string, ...events: string[]) {
+        await this.page.locator(selector).evaluate(
+            (el, { value, events }) => {
+                (el as HTMLInputElement).value = value;
+                for (const name of events) el.dispatchEvent(new Event(name, { bubbles: true }));
+            },
+            { value, events }
+        );
+    }
+
+    private async setHiddenChecked(selector: string, checked: boolean) {
+        await this.page.locator(selector).evaluate((el, checked) => {
+            const input = el as HTMLInputElement;
+            if (input.checked !== checked) input.click();
+        }, checked);
+    }
+
+    // L'import depuis une URL passe par le paramètre `productUrl` (même chemin que l'import de produit)
     async fillViaUrl(url: string) {
-        await this.urlField.focus();
-        await this.urlField.fill(url);
-        await this.nameField.focus();
-        await expect(this.hangTightBackdrop).toBeVisible();
-        await expect(this.hangTightBackdrop).not.toBeVisible({ timeout: 10000 });
+        const current = new URL(this.page.url());
+        current.searchParams.set("productUrl", url);
+        await this.page.goto(current.pathname + current.search);
+        await expect(this.nameField).toBeVisible();
+        await expect(this.hangTightBackdrop).not.toBeVisible({ timeout: 15000 });
         if (!(await this.nameField.inputValue())) {
             await this.fillName(randomString());
         }
@@ -57,71 +51,71 @@ export class ItemForm {
         return this;
     }
 
-    async fillPrice(price: number | string, currency?: string) {
-        await this.priceField.fill(price.toString());
-        if (currency) {
-            await this.currencyField.fill(currency);
-        }
+    async fillPrice(price: number | string) {
+        await this.setHiddenValue("#formatted-price", price.toString(), "input", "blur");
         return this;
     }
 
     async fillQuantity(quantity: number) {
-        await this.quantityField.fill(quantity.toString());
+        await this.setHiddenValue("#quantity", quantity.toString(), "input", "change");
         return this;
     }
 
     async checkNoLimit() {
-        await this.noLimitCheckbox.check();
+        await this.setHiddenChecked("#unlimited", true);
         return this;
     }
 
     async uncheckNoLimit() {
-        await this.noLimitCheckbox.uncheck();
-        return this;
-    }
-
-    async uploadImage() {
-        // todo
+        await this.setHiddenChecked("#unlimited", false);
         return this;
     }
 
     async checkMostWanted() {
-        await this.mostWantedCheckbox.check();
+        await this.setHiddenChecked("#mostWanted", true);
         return this;
     }
 
     async uncheckMostWanted() {
-        await this.mostWantedCheckbox.uncheck();
+        await this.setHiddenChecked("#mostWanted", false);
+        return this;
+    }
+
+    // Image envoyée comme fichier (champ masqué) : pas besoin d'accès réseau externe
+    async uploadImage(filePath: string) {
+        await this.page.locator("input[type=file][name=image]").setInputFiles(filePath);
         return this;
     }
 
     async fillImageUrl(url: string) {
-        await this.imageUrlField.fill(url);
+        await this.setHiddenValue("#imageUrl", url, "input");
         return this;
     }
 
     async fillNote(text: string) {
-        await this.notesWriteTab.click();
         await this.notesField.fill(text);
         return this;
     }
 
-    async viewNotePreview() {
-        await this.notesPreviewTab.click();
-        return this.notesPreviewContainer;
-    }
-
+    // Les cases des listes sont masquées : on les coche dans le DOM, par nom de liste
     async selectList(...lists: string[]) {
         for (const list of lists) {
-            await this.listSelectorField.getByLabel(list).check();
+            await this.listCheckbox(list).evaluate((el) => {
+                const input = el as HTMLInputElement;
+                if (!input.checked) input.click();
+            });
         }
         return this;
     }
 
     async assertListsSelected(...lists: string[]) {
         for (const list of lists) {
-            await expect(this.listSelectorField.getByLabel(list)).toBeChecked();
+            await expect(this.listCheckbox(list)).toBeChecked();
         }
         return this;
+    }
+
+    private listCheckbox(list: string) {
+        return this.page.locator("label", { hasText: list }).locator("input[name='lists']");
     }
 }

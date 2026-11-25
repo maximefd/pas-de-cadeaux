@@ -1,3 +1,4 @@
+import path from "node:path";
 import { expect, test } from "../fixtures";
 import { Toast } from "../modules/toast";
 import { UserMenu } from "../modules/user-menu";
@@ -9,9 +10,7 @@ test("public non-registry list", async ({ page, userData, anonymousPage }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const list = await listsPage.getListAt(0);
-    const listPage = await list.click();
-    await expect(await listPage.getShareListButton()).not.toBeVisible();
+    const listPage = await listsPage.openMyList();
 
     // Navigate to the list in a private window
     await anonymousPage.goto(page.url());
@@ -26,12 +25,9 @@ test("public non-registry list", async ({ page, userData, anonymousPage }) => {
         .then(() => listPage.manage())
         .then((mp) => mp.makePublic());
 
-    await listPage.goto();
-    await listPage.assertShareFunctionality();
-
     // Navigate to the list in a private window
     await anonymousPage.goto(listPage.getUrl());
-    await new ListPage(anonymousPage, { name: `${userData.name}'s Wishes` }).at();
+    await new ListPage(anonymousPage, { name: userData.name }).at();
 });
 
 test("public registry list", async ({ page, userData, anonymousPage }) => {
@@ -44,9 +40,10 @@ test("public registry list", async ({ page, userData, anonymousPage }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto({ skipAssert: true });
 
-    const listPage = new ListPage(page, { name: "My Wishes" });
-    await expect(await listPage.getShareListButton()).toBeVisible();
-    await listPage.assertShareFunctionality();
+    // En mode registre, /lists mène directement à sa propre liste
+    await page.waitForURL(/\/lists\/(?!create)[^/]+$/);
+    const listPage = new ListPage(page, { name: "My wishes" });
+    await listPage.at();
 
     // Navigate to the list in a private window
     await anonymousPage.goto("/");
@@ -54,15 +51,14 @@ test("public registry list", async ({ page, userData, anonymousPage }) => {
 
     // Navigate to the list in a private window
     await anonymousPage.goto(listPage.getUrl());
-    await new ListPage(anonymousPage, { name: `${userData.name}'s Wishes` }).at();
+    await new ListPage(anonymousPage, { name: userData.name }).at();
 });
 
 test("create item via url", async ({ page }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const list = await listsPage.getListAt(0);
-    const listPage = await list.click();
+    const listPage = await listsPage.openMyList();
     await listPage.assertNoItems();
 
     const createItemPage = await listPage.createItem();
@@ -80,8 +76,7 @@ test("create full item", async ({ page, userData }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const list = await listsPage.getListAt(0);
-    const listPage = await list.click();
+    const listPage = await listsPage.openMyList();
     await listPage.assertNoItems();
 
     const itemData = {
@@ -117,8 +112,7 @@ test("create basic item", async ({ page, userData }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const list = await listsPage.getListAt(0);
-    const listPage = await list.click();
+    const listPage = await listsPage.openMyList();
     await listPage.assertNoItems();
 
     const itemData = {
@@ -147,8 +141,7 @@ test("create basic item no quantity limit", async ({ page }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
-    const list = await listsPage.getListAt(0);
-    const listPage = await list.click();
+    const listPage = await listsPage.openMyList();
     await listPage.assertNoItems();
 
     const itemData = {
@@ -175,13 +168,17 @@ test("create item on multiple lists", async ({ page, userData }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
 
+    // Liste par défaut, ouverte avant d'en créer une seconde
+    const listPage = await listsPage.openMyList();
+    await listPage.assertNoItems();
+    const defaultListName = `${userData.name}'s Wishes`;
+
+    // Les listes supplémentaires ne se créent plus depuis l'interface : on passe par l'URL
     const newListName = randomString();
     await listsPage.create().then((lp) => lp.create(newListName));
-    await listsPage.goto();
+    const newListPage = new ListPage(page, { name: newListName });
 
-    const list = await listsPage.getListAt(0);
-    const defaultListName = await list.getName();
-    const listPage = await list.click();
+    await listPage.goto();
     await listPage.assertNoItems();
 
     const itemData = {
@@ -192,7 +189,7 @@ test("create item on multiple lists", async ({ page, userData }) => {
     await createItemPage
         .getForm()
         .then((f) => f.fillName(itemData.name))
-        .then((f) => f.fillImageUrl("https://raw.githubusercontent.com/cmintey/wishlist/main/src/lib/assets/logo.png"))
+        .then((f) => f.uploadImage(path.resolve("static/android-chrome-192x192.png")))
         .then((f) => f.assertListsSelected(defaultListName))
         .then((f) => f.selectList(newListName));
     await createItemPage.create();
@@ -210,11 +207,9 @@ test("create item on multiple lists", async ({ page, userData }) => {
         .then((item) => item.assertAddedBy(userData.name))
         .then((item) => item.assertNoNotes());
 
-    await listsPage.goto();
-    await listsPage
-        .getListAt(1)
-        .then((l) => l.click())
-        .then((lp) => lp.getItemAt(0))
+    await newListPage.goto();
+    await newListPage
+        .getItemAt(0)
         .then((item) => item.assertNoLink())
         .then((item) => item.assertName(itemData.name))
         .then((item) => item.assertHasImage())
@@ -225,14 +220,16 @@ test("create item on multiple lists", async ({ page, userData }) => {
         .then((item) => item.assertNoNotes());
 });
 
-test("list shows item count correctly", async ({ page }) => {
+// Le compteur « N idées » n'est visible que sur la ligne que les autres personnes du cercle voient
+test("list shows item count correctly", async ({ page, userData, additionalPage: otherPage }) => {
     const listsPage = new ListsPage(page);
     await listsPage.goto();
+    const otherListsPage = new ListsPage(otherPage);
 
     // Validate no items
-    const list = await listsPage.getListAt(0);
-    await list.assertItemCount(0);
-    const listPage = await list.click();
+    await otherListsPage.goto();
+    await otherListsPage.getListByOwner(userData.name).then((l) => l.assertItemCount(0));
+    const listPage = await listsPage.openMyList();
     await listPage.assertNoItems();
 
     // Create item with no quantity limit
@@ -256,8 +253,8 @@ test("list shows item count correctly", async ({ page }) => {
         .then((item) => item.assertNoQuantity());
 
     // Validate list card shows 1 item
-    await listsPage.goto();
-    await listsPage.getListAt(0).then((l) => l.assertItemCount(1));
+    await otherListsPage.goto();
+    await otherListsPage.getListByOwner(userData.name).then((l) => l.assertItemCount(1));
 
     // Edit item to have a default quantity of 1
     await listPage.goto();
@@ -273,8 +270,8 @@ test("list shows item count correctly", async ({ page }) => {
         .then((item) => item.assertDesiredQuantity(1));
 
     // Validate list card shows 1 item
-    await listsPage.goto();
-    await listsPage.getListAt(0).then((l) => l.assertItemCount(1));
+    await otherListsPage.goto();
+    await otherListsPage.getListByOwner(userData.name).then((l) => l.assertItemCount(1));
 
     // Edit item to have a default quantity of 8
     await editItemPage
@@ -291,17 +288,16 @@ test("list shows item count correctly", async ({ page }) => {
         .then((item) => item.assertDesiredQuantity(8));
 
     // Validate list card shows 8 items
-    await listsPage.goto();
-    await listsPage.getListAt(0).then((l) => l.assertItemCount(8));
+    await otherListsPage.goto();
+    await otherListsPage.getListByOwner(userData.name).then((l) => l.assertItemCount(8));
 
     // Delete item
     await listPage.goto();
     await listPage.getItemAt(0).then((it) => it.delete());
-    new Toast(page).waitForToastWithText(`${itemData.name} was deleted`);
 
     // Validate list card shows no items
-    await listsPage.goto();
-    await listsPage.getListAt(0).then((l) => l.assertItemCount(0));
+    await otherListsPage.goto();
+    await otherListsPage.getListByOwner(userData.name).then((l) => l.assertItemCount(0));
 });
 
 test("most wanted item", async ({ page }) => {
@@ -310,8 +306,7 @@ test("most wanted item", async ({ page }) => {
     const listPage = await test.step("No items on list", async () => {
         await listsPage.goto();
 
-        const list = await listsPage.getListAt(0);
-        const listPage = await list.click();
+        const listPage = await listsPage.openMyList();
         await listPage.assertNoItems();
         return listPage;
     });

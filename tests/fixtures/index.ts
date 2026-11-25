@@ -14,12 +14,6 @@ interface Fixtures {
     _testCleanup: undefined;
 }
 
-// Les tests d'ItemCard vérifient la carte d'origine (image, prix, quantité) : on la force via le cookie
-// de préférence d'affichage. Le look « Papier » (mode liste, par défaut) est couvert par papier.spec.ts.
-const useTileView = async (context: BrowserContext, baseURL: string) => {
-    await context.addCookies([{ name: "listViewPreference", value: "tile", url: baseURL }]);
-};
-
 type UserPageData = {
     user: UserData;
     page: BasePage;
@@ -53,7 +47,6 @@ class UserFactory {
 
             const context = await this.browser.newContext();
             this.contexts.push(context);
-            await useTileView(context, this.baseURL);
 
             const page = await context.newPage();
             await page.request.post("/login", {
@@ -114,7 +107,6 @@ export const test = base.extend<Fixtures>({
         await use(userData);
     },
     page: async ({ page, userData, baseURL }, use) => {
-        await useTileView(page.context(), baseURL!);
         await page.request.post("/login", {
             form: { username: userData.username, password: userData.password },
             headers: {
@@ -130,7 +122,6 @@ export const test = base.extend<Fixtures>({
     },
     additionalPage: async ({ browser, additionalUserData: userData, baseURL }, use) => {
         const context = await browser.newContext();
-        await useTileView(context, baseURL!);
         const page = await context.newPage();
         await page.request.post("/login", {
             form: { username: userData.username, password: userData.password },

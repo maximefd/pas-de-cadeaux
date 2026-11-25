@@ -1,34 +1,44 @@
-import { test } from "../fixtures";
+import { expect, test } from "../fixtures";
 import { GroupSettingsPage } from "../pageObjects/group-settings.page";
 import { ListPage } from "../pageObjects/list.page";
 import { ListsPage } from "../pageObjects/lists.page";
 import { randomString } from "../util";
 
+// La ligne de « Famille & amis » n'affiche plus le nombre d'idées encore disponibles : on vérifie les réservations
+// sur la page de la liste (détail de l'idée) et dans « Mes réservations ».
+
 test("claim single", async ({ page: ownerPage, userData: owner, additionalPage: claimerPage }) => {
+    const itemName = randomString();
     await test.step("create item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
 
         const createItemPage = await ownerListPage.createItem();
-        await createItemPage.getForm().then((f) => f.fillName(randomString()));
+        await createItemPage.getForm().then((f) => f.fillName(itemName));
         await createItemPage.create();
     });
 
     const claimerLists = new ListsPage(claimerPage);
+    let listPage: ListPage;
     await test.step("user claims item", async () => {
         await claimerLists.goto();
-        await claimerLists
-            .getListByName(`${owner.name}'s Wishes`)
-            .then((card) => card.click())
-            .then((listPage) => listPage.getItemAt(0))
-            .then((item) => item.claimSingle());
+        listPage = await claimerLists.getListByOwner(owner.name).then((card) => card.click());
+        await listPage.getItemAt(0).then((item) => item.claimSingle());
     });
 
-    await test.step("list card shows none available", async () => {
-        await claimerLists.goto();
+    await test.step("item shows as claimed by me, none left to claim", async () => {
+        await listPage.goto();
+        await listPage.getItemAt(0).then((item) => item.assertMyClaimText("You're getting it"));
+        await listPage.getItemAt(0).then((item) => item.assertNoClaimButton());
+        await listPage.getItemAt(0).then((item) => item.assertClaimedQuantity(1));
+    });
 
-        await claimerLists.getListByName(`${owner.name}'s Wishes`).then((card) => card.assertAvailableCount(0));
+    await test.step("item is in my claims", async () => {
+        await claimerPage.goto("/claims");
+        await expect(
+            claimerPage.getByTestId("claims-container").getByTestId("name").filter({ hasText: itemName })
+        ).toBeVisible();
     });
 });
 
@@ -38,7 +48,7 @@ test("partial claim", async ({ page: ownerPage, userData: owner, additionalPage:
     await test.step("create item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
 
         const createItemPage = await ownerListPage.createItem();
         await createItemPage
@@ -49,21 +59,17 @@ test("partial claim", async ({ page: ownerPage, userData: owner, additionalPage:
     });
 
     const claimerLists = new ListsPage(claimerPage);
+    let listPage: ListPage;
     await test.step("user claims half items", async () => {
         await claimerLists.goto();
-        await claimerLists
-            .getListByName(`${owner.name}'s Wishes`)
-            .then((card) => card.click())
-            .then((listPage) => listPage.getItemAt(0))
-            .then((item) => item.claimAmount(quantity / 2));
+        listPage = await claimerLists.getListByOwner(owner.name).then((card) => card.click());
+        await listPage.getItemAt(0).then((item) => item.claimAmount(quantity / 2));
     });
 
-    await test.step("list card shows half available", async () => {
-        await claimerLists.goto();
-
-        await claimerLists
-            .getListByName(`${owner.name}'s Wishes`)
-            .then((card) => card.assertAvailableCount(quantity / 2));
+    await test.step("half of the items are claimed", async () => {
+        await listPage.goto();
+        await listPage.getItemAt(0).then((item) => item.assertClaimedQuantity(quantity / 2));
+        await listPage.getItemAt(0).then((item) => item.assertDesiredQuantity(quantity));
     });
 });
 
@@ -71,7 +77,7 @@ test("claim unlimited item", async ({ page: ownerPage, userData: owner, addition
     await test.step("create item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
 
         const createItemPage = await ownerListPage.createItem();
         await createItemPage
@@ -82,18 +88,17 @@ test("claim unlimited item", async ({ page: ownerPage, userData: owner, addition
     });
 
     const claimerLists = new ListsPage(claimerPage);
+    let listPage: ListPage;
     await test.step("user claims many items", async () => {
         await claimerLists.goto();
-        await claimerLists
-            .getListByName(`${owner.name}'s Wishes`)
-            .then((card) => card.click())
-            .then((listPage) => listPage.getItemAt(0))
-            .then((item) => item.claimAmount(100));
+        listPage = await claimerLists.getListByOwner(owner.name).then((card) => card.click());
+        await listPage.getItemAt(0).then((item) => item.claimAmount(100));
     });
 
-    await test.step("list card shows one available", async () => {
-        await claimerLists.goto();
-        await claimerLists.getListByName(`${owner.name}'s Wishes`).then((card) => card.assertAvailableCount(1)); // unlimited shows as one item available
+    await test.step("an unlimited item stays claimable", async () => {
+        await listPage.goto();
+        await listPage.getItemAt(0).then((item) => item.assertClaimedQuantity(100));
+        await listPage.getItemAt(0).then((item) => item.assertNoQuantity());
     });
 });
 
@@ -101,16 +106,15 @@ test("claim item on own list", async ({ page: ownerPage, userData: owner, additi
     await test.step("create item", async () => {
         const ownerLists = new ListsPage(ownerPage);
         await ownerLists.goto();
-        const ownerListPage = await ownerLists.getListAt(0).then((list) => list.click());
+        const ownerListPage = await ownerLists.openMyList();
 
         const createItemPage = await ownerListPage.createItem();
         await createItemPage.getForm().then((f) => f.fillName(randomString()));
         await createItemPage.create();
     });
 
-    const listPage = new ListPage(ownerPage, { name: owner.name });
+    const listPage = new ListPage(ownerPage, { name: "My wishes" });
     await test.step("validate claim button is missing", async () => {
-        const listPage = new ListPage(ownerPage, { name: owner.name });
         await listPage.getItemAt(0).then((item) => item.assertNoClaimButton());
     });
 
@@ -163,7 +167,7 @@ test("claim item on own list", async ({ page: ownerPage, userData: owner, additi
         const claimerLists = new ListsPage(claimerPage);
         await claimerLists.goto();
         await claimerLists
-            .getListByName(`${owner.name}'s Wishes`)
+            .getListByOwner(owner.name)
             .then((card) => card.click())
             .then((listPage) => listPage.getItemAt(0))
             .then((item) => item.claimSingle());

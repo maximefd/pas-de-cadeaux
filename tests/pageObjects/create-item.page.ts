@@ -8,24 +8,20 @@ interface Props {
 }
 
 export class CreateItemPage extends BasePage {
-    private readonly header: Locator;
+    private readonly nameField: Locator;
     private readonly itemForm: ItemForm;
     private readonly createButton: Locator;
-    private readonly createAndStayButton: Locator;
-    private readonly approvalRequiredAlert: Locator;
 
     constructor(page: Page, props?: Props) {
         const listId = props?.listId ?? new URL(page.url()).pathname.split("/").at(-2);
         super(page, `/lists/${listId}/create-item`);
-        this.header = page.getByRole("heading", { name: "Create Wish" });
+        this.nameField = page.locator("#name");
         this.itemForm = new ItemForm(page);
-        this.createButton = page.getByRole("button", { name: "Create item" });
-        this.createAndStayButton = page.getByRole("button", { name: "Create and add another" });
-        this.approvalRequiredAlert = page.getByText("Heads up!");
+        this.createButton = page.locator("#submit");
     }
 
     async at() {
-        await expect(this.header).toBeVisible();
+        await expect(this.nameField).toBeVisible();
         return this;
     }
 
@@ -36,19 +32,7 @@ export class CreateItemPage extends BasePage {
     async create() {
         await this.createButton.click();
         await new Toast(this.page).waitForToastWithText("Item created");
-    }
-
-    async createAndStay() {
-        await this.createAndStayButton.click();
-    }
-
-    async assertApprovalRequiredAlert() {
-        await expect(this.approvalRequiredAlert).toBeVisible();
-        return this;
-    }
-
-    async assertApprovalRequiredAlertNotVisible() {
-        await expect(this.approvalRequiredAlert).not.toBeVisible();
-        return this;
+        // On quitte le formulaire (retour à la liste) avant de rendre la main
+        await this.page.waitForURL((url) => !url.pathname.endsWith("/create-item"));
     }
 }
