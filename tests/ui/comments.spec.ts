@@ -33,25 +33,25 @@ test("comments are signed, visible to other members and hidden from the list own
         await expect(otherPage).toHaveURL(/item-id=\d+/);
         itemId = new URL(otherPage.url()).searchParams.get("item-id")!;
 
-        const dialog = otherPage.getByRole("dialog");
-        await dialog.getByRole("button", { name: "Comment", exact: true }).click();
-        await dialog.getByPlaceholder("Your comment (size, link, price…)").fill(commentText);
-        await dialog.getByRole("button", { name: "Post" }).click();
+        const detail = otherPage.getByTestId("item-detail");
+        await detail.getByRole("button", { name: "Comment", exact: true }).click();
+        await detail.getByPlaceholder("Your comment (size, link, price…)").fill(commentText);
+        await detail.getByRole("button", { name: "Post" }).click();
 
-        const comment = dialog.getByTestId("comment").filter({ hasText: commentText });
+        const comment = detail.getByTestId("comment").filter({ hasText: commentText });
         await expect(comment).toBeVisible();
         await expect(comment).toContainText(`— ${other.name}`);
     });
 
     await test.step("the comment is still there after a reload", async () => {
         await otherPage.reload();
-        const comment = otherPage.getByRole("dialog").getByTestId("comment").filter({ hasText: commentText });
+        const comment = otherPage.getByTestId("item-detail").getByTestId("comment").filter({ hasText: commentText });
         await expect(comment).toBeVisible();
     });
 
     await test.step("the owner never sees the comment, neither in the page nor through the API", async () => {
         await ownerPage.goto(`/lists/${listId}?item-id=${itemId}`);
-        await expect(ownerPage.getByRole("dialog")).toBeVisible();
+        await expect(ownerPage.getByTestId("item-detail")).toBeVisible();
         await expect(ownerPage.getByTestId("comments")).toHaveCount(0);
         await expect(ownerPage.getByText(commentText)).toHaveCount(0);
 
@@ -65,9 +65,9 @@ test("comments are signed, visible to other members and hidden from the list own
     });
 
     await test.step("another member can remove the comment", async () => {
-        const dialog = otherPage.getByRole("dialog");
-        await dialog.getByTestId("comment").filter({ hasText: commentText }).getByRole("button").click();
-        await expect(dialog.getByTestId("comment").filter({ hasText: commentText })).toHaveCount(0);
+        const detail = otherPage.getByTestId("item-detail");
+        await detail.getByTestId("comment").filter({ hasText: commentText }).getByRole("button").click();
+        await expect(detail.getByTestId("comment").filter({ hasText: commentText })).toHaveCount(0);
 
         const response = await otherPage.request.get(`/pdc/lists/${listId}/items/${itemId}/comments`);
         expect(response.status()).toBe(200);

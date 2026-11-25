@@ -6,13 +6,16 @@
     import RemoveButton from "./RemoveButton.svelte";
     import Markdown from "$lib/components/Markdown.svelte";
     import { getFormatter } from "$lib/i18n";
+    import { page } from "$app/state";
 
     // Look « Papier » : une ligne de texte par idée, sans carte, image ni prix.
-    // Le détail complet (image, prix, quantité...) reste disponible dans le tiroir au clic.
+    // Au clic, le détail (commentaires, Modifier) se déplie sous la ligne.
     const { defaultImage: _defaultImage, ...props }: InternalItemCardProps = $props();
     const t = getFormatter();
 
     const item = $derived(props.item);
+    // Idée dépliée : la précision s'affiche en entier
+    const expanded = $derived(page.url.searchParams.get("item-id") === props.item.id.toString());
 
     // « ajouté par X » uniquement quand l'idée n'a pas été ajoutée par la personne concernée
     const signedByOther = $derived(item.addedBy && item.addedBy.id !== item.user.id);
@@ -37,7 +40,10 @@
             {/if}
         </div>
         {#if item.note}
-            <div class="paper-note line-clamp-2 whitespace-pre-wrap print:line-clamp-none" data-testid="notes">
+            <div
+                class={["paper-note whitespace-pre-wrap print:line-clamp-none", !expanded && "line-clamp-2"]}
+                data-testid="notes"
+            >
                 <Markdown source={item.note} />
             </div>
         {/if}

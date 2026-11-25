@@ -5,8 +5,9 @@ import { Toast } from "./toast";
 import { DeleteItemModal } from "./delete-item-modal";
 import { ClaimItemModal } from "./claim-item-modal";
 
-// Look « Papier » : la ligne de la liste ne montre que le nom, la précision et la réservation.
-// Image, prix, quantité et « ajouté par » sont dans le tiroir de détail, qui s'ouvre au clic sur la ligne.
+// Look « Papier » : la ligne de la liste montre le nom, la précision, « ajouté par » et la réservation.
+// Au clic, le détail se déplie sous la ligne (pas de fenêtre, pas d'image) : prix éventuel,
+// quantité quand elle n'est pas 1, commentaires, « Modifier ».
 export class ItemCard {
     private readonly card: Locator;
     private readonly name: Locator;
@@ -31,7 +32,7 @@ export class ItemCard {
         this.unclaimButton = card.getByRole("button", { name: "Cancel", exact: true });
         this.joinButton = card.getByTestId("join-claim");
         this.myClaim = card.getByTestId("my-claim");
-        this.drawer = card.page().getByRole("dialog");
+        this.drawer = card.getByTestId("item-detail");
     }
 
     async openDrawer() {
@@ -41,7 +42,7 @@ export class ItemCard {
     }
 
     async closeDrawer() {
-        await this.drawer.getByRole("button", { name: "close" }).click();
+        await this.drawer.getByRole("button", { name: "Close", exact: true }).click();
         await expect(this.drawer).toBeHidden();
     }
 
@@ -52,8 +53,10 @@ export class ItemCard {
         return this;
     }
 
-    async assertDefaultImage() {
-        return this.inDrawer((d) => expect(d.getByTestId("image")).toHaveAccessibleName("default item image"));
+    // Jamais d'image ni de carré d'illustration
+    async assertNoImage() {
+        await expect(this.card.getByTestId("image")).toHaveCount(0);
+        return this.inDrawer((d) => expect(d.getByTestId("image")).toHaveCount(0));
     }
 
     async assertHasLink() {
@@ -71,10 +74,6 @@ export class ItemCard {
         return this;
     }
 
-    async assertHasImage() {
-        return this.inDrawer((d) => expect(d.getByTestId("image")).toHaveAttribute("src"));
-    }
-
     async assertPrice(price: string) {
         return this.inDrawer((d) => expect(d.getByTestId("price")).toHaveText(price));
     }
@@ -87,20 +86,42 @@ export class ItemCard {
         return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText("No limit"));
     }
 
+    // Une quantité de 1 n'est pas affichée (c'est le cas normal)
     async assertDesiredQuantity(quantity: number) {
-        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText(`${quantity} desired`));
+        return this.inDrawer((d) =>
+            quantity === 1
+                ? expect(d.getByTestId("quantity-desired")).toHaveCount(0)
+                : expect(d.getByTestId("quantity-desired")).toHaveText(`${quantity} desired`)
+        );
     }
 
+    // Idée à un seul exemplaire : pas de compteur, on vérifie qu'elle est encore réservable (0) ou plus (1)
     async assertClaimedQuantity(quantity: number) {
-        return this.inDrawer((d) => expect(d.getByTestId("quantity-claimed")).toHaveText(`${quantity} claimed`));
+        return this.inDrawer(async (d) => {
+            const counter = d.getByTestId("quantity-claimed");
+            if ((await counter.count()) > 0) {
+                await expect(counter).toHaveText(`${quantity} claimed`);
+            } else if (quantity === 0) {
+                await expect(this.claimButton).toBeVisible();
+            } else {
+                await expect(this.claimButton).toHaveCount(0);
+            }
+        });
     }
 
     async assertClaimedQuantityHidden() {
         return this.inDrawer((d) => expect(d.getByTestId("quantity-claimed")).toHaveCount(0));
     }
 
+    // « Ajouté par X » est sur la ligne, seulement quand l'idée a été ajoutée par quelqu'un d'autre
     async assertAddedBy(addedBy: string) {
-        return this.inDrawer((d) => expect(d.getByTestId("added-by")).toHaveText(`Added by ${addedBy}`));
+        await expect(this.card.getByTestId("added-by")).toHaveText(`Added by ${addedBy}`);
+        return this;
+    }
+
+    async assertNotSignedByOther() {
+        await expect(this.card.getByTestId("added-by")).toHaveCount(0);
+        return this;
     }
 
     async assertNotes(notes: string) {

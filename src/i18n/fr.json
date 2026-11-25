@@ -214,7 +214,7 @@
     },
     "auth": {
         "password": "Mot de passe",
-        "name": "Nom",
+        "name": "Prénom",
         "confirm-password": "Confirme le mot de passe",
         "contact-admin": "Demande à l'administrateur de réinitialiser ton mot de passe.",
         "create-an-account": "Créer un compte",
@@ -248,7 +248,9 @@
         "or": "ou",
         "sign-in-with": "Se connecter avec {provider}",
         "unlink-oauth": "Dissocier {providerName}",
-        "your-account-is-currently-linked-with-oauth": "Ton compte est relié à {providerName}"
+        "your-account-is-currently-linked-with-oauth": "Ton compte est relié à {providerName}",
+        "name-hint": "C'est ce que tes proches verront.",
+        "username-hint": "Il te sert à te connecter, avec ton mot de passe. Choisis quelque chose de simple à retenir."
     },
     "a11y": {
         "decrease-priority": "diminuer la priorité pour {name}",
@@ -375,7 +377,8 @@
         "light": "Clair",
         "no-results": "Aucun résultat.",
         "system": "Système",
-        "back": "Retour"
+        "back": "Retour",
+        "close-detail": "Fermer"
     },
     "setup": {
         "global-settings": "Réglages généraux",
@@ -424,7 +427,7 @@
         "add-idea": "Ajouter une idée",
         "circles": "Cercles",
         "back-to-list": "‹ Retour",
-        "claimed-item": "Idée {claimed, select, true {réservée} other {non réservée}}",
+        "claimed-item": "{claimed, select, true {Réservé : les autres voient que tu t'en occupes} other {Réservation annulée}}",
         "create-for": "Ajouter une idée pour {listOwner}",
         "default-sort": "Priorité",
         "delete": "Supprimer",
@@ -570,8 +573,9 @@
         "idea-count": "{count, plural, one {# idée} other {# idées}}",
         "nothing-yet": "Rien encore",
         "new-ideas": "Nouvelles idées",
-        "other-list-hint": "{name} ne voit pas les idées ajoutées par les autres. Quand tu as offert un cadeau, clique sur « Retirer » puis sur « C'est offert » : les autres sauront qu'il est déjà pris.",
-        "my-list-hint": "Les idées et les commentaires de tes proches ne s'affichent pas ici : la surprise reste entière."
+        "other-list-hint": "{name} ne voit pas les idées ajoutées par les autres. Quand tu comptes offrir une idée, clique sur « Réserver » : les autres verront que tu t'en occupes et pourront cliquer sur « Je participe ». Une fois le cadeau offert, clique sur « Retirer » puis sur « C'est offert ».",
+        "my-list-hint": "Les idées et les commentaires de tes proches ne s'affichent pas ici : la surprise reste entière.",
+        "claims-intro": "Les idées que tu as réservées. Tes proches voient que tu t'en occupes, ils ne les achèteront pas mais peuvent participer avec toi. La personne concernée, elle, n'en sait rien."
     },
     "unable-to-load-icons": "Impossible de charger les icônes.",
     "help": {
@@ -581,6 +585,8 @@
         "q2": "Tu t’es trompé ?",
         "a2": "Clique sur « Annuler » juste après. Tu peux aussi retirer une idée quand tu veux.",
         "q3": "Tu as oublié ton mot de passe ?",
-        "a3": "Demande à la personne qui t’a invité : elle t’en donnera un nouveau."
+        "a3": "Demande à la personne qui t’a invité : elle t’en donnera un nouveau.",
+        "q-claim": "À quoi sert « Réserver » ?",
+        "a-claim": "À prévenir les autres que tu comptes offrir cette idée. Ils ne l'achèteront pas, mais ils peuvent cliquer sur « Je participe » pour l'offrir avec toi. La personne concernée ne voit jamais les réservations."
     }
 }

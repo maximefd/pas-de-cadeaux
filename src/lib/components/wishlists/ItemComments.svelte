@@ -68,15 +68,15 @@
 </script>
 
 {#if canSee}
-    <section class="border-surface-300-700 flex flex-col gap-2 border-t pt-3" data-testid="comments">
+    <section class="flex flex-col gap-2" data-testid="comments">
         {#each comments as comment (comment.id)}
-            <div class="border-surface-300-700 flex items-start gap-2 border-s-2 ps-3" data-testid="comment">
+            <div class="flex items-start gap-2" data-testid="comment">
                 <p class="grow wrap-break-word whitespace-pre-wrap">
                     {comment.text}
-                    <strong class="whitespace-nowrap">— {comment.authorName}</strong>
+                    <span class="paper-detail-fact whitespace-nowrap">— {comment.authorName}</span>
                 </p>
                 <button
-                    class="btn btn-sm text-surface-700-300"
+                    class="paper-link"
                     aria-label={$t("wishes.comment-delete")}
                     onclick={() => remove(comment.id)}
                     type="button"
@@ -98,15 +98,15 @@
                     type="text"
                     bind:value={draft}
                 />
-                <button class="btn preset-filled" disabled={sending} type="submit">
+                <button class="btn preset-filled btn-sm" disabled={sending} type="submit">
                     {$t("wishes.comment-publish")}
                 </button>
             </form>
         {:else}
-            <button class="anchor self-start" onclick={() => (editing = true)} type="button">
+            <button class="paper-link -ms-2 self-start" onclick={() => (editing = true)} type="button">
                 {$t("wishes.comment-add")}
             </button>
         {/if}
-        <p class="text-surface-700-300 text-sm">{$t("wishes.comment-hidden-hint")}</p>
+        <p class="paper-detail-fact">{$t("wishes.comment-hidden-hint")}</p>
     </section>
 {/if}

@@ -12,7 +12,10 @@ export class Toast {
     }
 
     async waitForToastWithText(text: string) {
-        await expect(this.toast.filter({ hasText: new RegExp(text) })).toBeVisible();
+        // Un message précédent identique peut encore être en train de se fermer : on vise celui qui est ouvert
+        await expect(
+            this.toast.and(this.page.locator("[data-state='open']")).filter({ hasText: new RegExp(text) })
+        ).toBeVisible();
         return this;
     }
 

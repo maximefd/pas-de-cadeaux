@@ -99,3 +99,12 @@
         font-display: swap;
     }
 }
+
+/* Titan One (SIL Open Font License, voir static/fonts/TitanOne-OFL.txt) : seulement pour le nom de l'appli */
+@font-face {
+    font-family: "Titan One";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/TitanOne-Regular.woff2") format("woff2");
+}

@@ -29,7 +29,8 @@
             id="name"
             name="name"
             class={["input", formData?.errors?.name && "input-invalid"]}
-            autocomplete="name"
+            aria-describedby="name-hint"
+            autocomplete="given-name"
             enterkeyhint="next"
             required
             type="text"
@@ -38,6 +39,7 @@
             <span class="text-invalid">{formData.errors.name[0]}</span>
         {/if}
     </label>
+    <small id="name-hint" class="paper-field-hint">{$t("auth.name-hint")}</small>
 
     <div class="paper-fields">
         <label class="label" for="username">
@@ -46,6 +48,7 @@
                 id="username"
                 name="username"
                 class={["input", formData?.errors?.username && "input-invalid"]}
+                aria-describedby="username-hint"
                 autocapitalize="off"
                 autocomplete="username"
                 autocorrect="off"
@@ -57,6 +60,7 @@
                 <span class="text-invalid">{formData.errors.username[0]}</span>
             {/if}
         </label>
+        <small id="username-hint" class="paper-field-hint">{$t("auth.username-hint")}</small>
         <label class="label" for="email">
             <span>
                 {$t("auth.email")}

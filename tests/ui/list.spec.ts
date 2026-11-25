@@ -100,11 +100,11 @@ test("create full item", async ({ page, userData }) => {
         .getItemAt(0)
         .then((item) => item.assertNoLink())
         .then((item) => item.assertName(itemData.name))
-        .then((item) => item.assertDefaultImage())
+        .then((item) => item.assertNoImage())
         .then((item) => item.assertPrice(itemData.formattedPrice))
         .then((item) => item.assertDesiredQuantity(itemData.quantity))
         .then((item) => item.assertClaimedQuantityHidden())
-        .then((item) => item.assertAddedBy(userData.name))
+        .then((item) => item.assertNotSignedByOther())
         .then((item) => item.assertNotes(itemData.notes));
 });
 
@@ -129,11 +129,11 @@ test("create basic item", async ({ page, userData }) => {
         .getItemAt(0)
         .then((item) => item.assertNoLink())
         .then((item) => item.assertName(itemData.name))
-        .then((item) => item.assertDefaultImage())
+        .then((item) => item.assertNoImage())
         .then((item) => item.assertNoPrice())
         .then((item) => item.assertDesiredQuantity(itemData.quantity))
         .then((item) => item.assertClaimedQuantityHidden())
-        .then((item) => item.assertAddedBy(userData.name))
+        .then((item) => item.assertNotSignedByOther())
         .then((item) => item.assertNoNotes());
 });
 
@@ -200,11 +200,11 @@ test("create item on multiple lists", async ({ page, userData }) => {
         .getItemAt(0)
         .then((item) => item.assertNoLink())
         .then((item) => item.assertName(itemData.name))
-        .then((item) => item.assertHasImage())
+        .then((item) => item.assertNoImage())
         .then((item) => item.assertNoPrice())
         .then((item) => item.assertDesiredQuantity(itemData.quantity))
         .then((item) => item.assertClaimedQuantityHidden())
-        .then((item) => item.assertAddedBy(userData.name))
+        .then((item) => item.assertNotSignedByOther())
         .then((item) => item.assertNoNotes());
 
     await newListPage.goto();
@@ -212,11 +212,11 @@ test("create item on multiple lists", async ({ page, userData }) => {
         .getItemAt(0)
         .then((item) => item.assertNoLink())
         .then((item) => item.assertName(itemData.name))
-        .then((item) => item.assertHasImage())
+        .then((item) => item.assertNoImage())
         .then((item) => item.assertNoPrice())
         .then((item) => item.assertDesiredQuantity(itemData.quantity))
         .then((item) => item.assertClaimedQuantityHidden())
-        .then((item) => item.assertAddedBy(userData.name))
+        .then((item) => item.assertNotSignedByOther())
         .then((item) => item.assertNoNotes());
 });
 

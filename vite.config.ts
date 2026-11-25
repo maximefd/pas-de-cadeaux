@@ -31,8 +31,8 @@ const config: UserConfig = {
                 lang: "fr",
                 start_url: "/",
                 display: "standalone",
-                background_color: "#423654",
-                theme_color: "#423654",
+                background_color: "#f9f5ee",
+                theme_color: "#f9f5ee",
                 icons: [
                     {
                         src: "/android-chrome-192x192.png",
@@ -45,10 +45,10 @@ const config: UserConfig = {
                         type: "image/png"
                     },
                     {
-                        src: "/android-chrome-512x512.png",
+                        src: "/maskable-512x512.png",
                         sizes: "512x512",
                         type: "image/png",
-                        purpose: "any maskable"
+                        purpose: "maskable"
                     }
                 ],
                 share_target: {
