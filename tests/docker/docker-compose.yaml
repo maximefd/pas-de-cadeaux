@@ -7,3 +7,5 @@ services:
         network_mode: host
         environment:
             ORIGIN: http://localhost:3280
+            # les tests créent leurs propres groupes : pas de groupe par défaut au premier démarrage
+            SEED_DEFAULT_GROUP: "false"
