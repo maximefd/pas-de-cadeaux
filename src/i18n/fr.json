@@ -532,7 +532,16 @@
         "you-claim-with": "Tu le réserves avec {names}",
         "you-claim-with-others": "Tu le réserves avec d'autres",
         "cancel-claim": "Annuler",
-        "join-claim": "Je participe"
+        "join-claim": "Je participe",
+        "welcome-title": "Bienvenue.",
+        "welcome-text": "Chacun note ce qui lui ferait plaisir. Quand tu veux faire un cadeau, tu peux facilement piocher parmi une liste d’idées.",
+        "welcome-start": "C’est parti",
+        "my-empty-title": "Qu’est-ce qui te ferait plaisir ?",
+        "my-empty-text": "Note ce que tu aimerais recevoir. Tes proches le verront et sauront quoi t’offrir.",
+        "add-my-wish": "Ajouter une envie",
+        "other-empty-title": "{name} n’a encore rien noté.",
+        "other-empty-text": "Si tu as une ou plusieurs idées de cadeaux qui lui feraient plaisir, ajoute-les à sa liste. Bien sûr, {name} ne les verra pas.",
+        "add-idea-for": "Ajouter une idée pour {name}"
     },
     "unable-to-load-icons": "Impossible de charger les icônes."
 }

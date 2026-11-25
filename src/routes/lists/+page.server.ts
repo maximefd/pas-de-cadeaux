@@ -5,9 +5,15 @@ import { getActiveMembership } from "$lib/server/group-membership";
 import { getConfig } from "$lib/server/config";
 import { decodeMultiValueFilter } from "$lib/server/sort-filter-util";
 import { requireLogin } from "$lib/server/auth";
+import { needsWelcome } from "$lib/server/onboarding";
 
 export const load = (async ({ url }) => {
     const user = requireLogin();
+
+    // Première connexion : écran de bienvenue.
+    if (needsWelcome(user)) {
+        redirect(302, "/bienvenue");
+    }
 
     const activeMembership = await getActiveMembership(user);
     const config = await getConfig(activeMembership.groupId);

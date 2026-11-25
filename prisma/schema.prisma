@@ -27,6 +27,7 @@ model User {
     preferredLanguage   String?
     managedLists        ListManager[]
     itemComments        ItemComment[]
+    onboardedAt         DateTime?
 
     @@map("user")
 }

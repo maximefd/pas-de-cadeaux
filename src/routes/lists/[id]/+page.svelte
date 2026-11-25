@@ -8,7 +8,6 @@
     import { flip } from "svelte/animate";
     import { quintOut } from "svelte/easing";
     import { crossfade } from "svelte/transition";
-    import empty from "$lib/assets/no_wishes.svg";
     import SortBy from "$lib/components/wishlists/chips/SortBy.svelte";
     import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
     import { getListViewPreference, initListViewPreference } from "$lib/stores/list-view-preference.svelte";
@@ -341,9 +340,14 @@
 {/if}
 
 {#if items.length === 0}
-    <div class="flex flex-col items-center justify-center space-y-4 pt-2">
-        <img class="w-3/4 md:w-1/3" alt={$t("a11y.two-people-looking-in-an-empty-box")} src={empty} />
-        <p class="text-2xl">{$t("wishes.no-wishes-yet")}</p>
+    <div class="paper-empty" data-testid="list-empty">
+        {#if data.list.owner.isMe}
+            <h2>{$t("wishes.my-empty-title")}</h2>
+            <p>{$t("wishes.my-empty-text")}</p>
+        {:else}
+            <h2>{$t("wishes.other-empty-title", { values: { name: data.list.owner.name } })}</h2>
+            <p>{$t("wishes.other-empty-text", { values: { name: data.list.owner.name } })}</p>
+        {/if}
     </div>
 {:else}
     <!-- items -->
@@ -424,7 +428,11 @@
         onclick={() => goto(`${page.url.pathname}/create-item?redirectTo=${page.url.pathname}`, { replaceState: true })}
     >
         <b aria-hidden="true">+</b>
-        <span>{$t("wishes.add-idea")}</span>
+        <span>
+            {data.list.owner.isMe
+                ? $t("wishes.add-my-wish")
+                : $t("wishes.add-idea-for", { values: { name: data.list.owner.name } })}
+        </span>
     </button>
 {/if}
 
