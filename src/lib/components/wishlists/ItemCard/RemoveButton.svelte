@@ -106,10 +106,17 @@
 </script>
 
 {#if canMarkOffered}
+    <!-- Bouton simple (pas Dialog.Trigger) : le clic ne doit pas remonter jusqu'à la ligne, qui ouvrirait le tiroir -->
+    <button
+        class="btn btn-sm paper-quiet"
+        onclick={(e) => {
+            e.stopPropagation();
+            askWhy = true;
+        }}
+    >
+        {$t("wishes.remove")}
+    </button>
     <Dialog onOpenChange={(e) => (askWhy = e.open)} open={askWhy}>
-        <Dialog.Trigger class="btn btn-sm paper-quiet" onclick={(e: MouseEvent) => e.stopPropagation()}>
-            {$t("wishes.remove")}
-        </Dialog.Trigger>
         <Portal>
             <ModalBackdrop />
             <Dialog.Positioner class="fixed inset-0 z-50 mx-4 flex items-center justify-center">
