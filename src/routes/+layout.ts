@@ -1,16 +1,10 @@
 import type { LayoutLoad } from "./$types";
-import { getClosestAvailableLocale, getClosestAvailablePreferredLanguage, initFormatter, initLang } from "$lib/i18n";
-import { browser } from "$app/environment";
+import { defaultLang, initFormatter, initLang } from "$lib/i18n";
 
+// Fork "Pas de cadeaux !" : l'appli est toujours en français, quels que soient le navigateur
+// et la langue enregistrée sur le compte.
 export const load = (async ({ data }) => {
-    let locale: string;
-    if (data.user?.preferredLanguage) {
-        locale = getClosestAvailablePreferredLanguage(data.user.preferredLanguage)?.code ?? data.locale;
-    } else if (browser) {
-        locale = getClosestAvailableLocale(window.navigator.languages).code;
-    } else {
-        locale = data.locale;
-    }
+    const locale = defaultLang.code;
     await initLang(locale);
 
     return {

@@ -198,7 +198,12 @@
         "show-name-publicly-tooltip": "Une fois activé, le nom fourni sur une demande publique est indiqué à tous ceux qui regardent la liste publique.",
         "oidc-claim-name-description": "Le champ à utiliser pour définir le nom d'utilisateur.",
         "oidc-claim-username-description": "Le champ à utiliser pour définir le nom d'utilisateur.",
-        "clear-sessions-success": "Les sessions de cet utilisateur ont été supprimées. L'utilisateur devra s'authentifier à nouveau."
+        "clear-sessions-success": "Les sessions de cet utilisateur ont été supprimées. L'utilisateur devra s'authentifier à nouveau.",
+        "oidc-admin-group": "Groupe administrateur",
+        "oidc-admin-group-description": "Les personnes de ce groupe deviennent administrateurs à chaque connexion, et les autres perdent ce rôle. Laisse vide pour gérer les administrateurs directement dans l'appli.",
+        "oidc-env-managed": "Certains de ces réglages sont définis par des variables d'environnement et ne peuvent pas être modifiés ici.",
+        "oidc-groups-claim": "Attribut des groupes",
+        "oidc-groups-claim-description": "L'attribut qui liste les groupes de la personne. La permission « groups » est demandée dès qu'un groupe administrateur est indiqué."
     },
     "auth": {
         "password": "Mot de passe",

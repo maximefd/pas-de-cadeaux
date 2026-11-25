@@ -5,7 +5,6 @@
     import GroupSubMenu from "./GroupSubMenu.svelte";
     import { getFormatter } from "$lib/i18n";
     import GroupSelectChip from "$lib/components/wishlists/chips/GroupSelectChip.svelte";
-    import ChangeLanguageModal from "$lib/components/modals/ChangeLanguageModal.svelte";
     import LightSwitch from "./LightSwitch.svelte";
     import Popup from "$lib/components/Popup.svelte";
 
@@ -78,24 +77,6 @@
                                 </li>
                             {/if}
                             <hr class="hr pb-1" />
-                            <li>
-                                <ChangeLanguageModal currentLanguage={user.preferredLanguage}>
-                                    {#snippet trigger(props)}
-                                        <button
-                                            {...props}
-                                            class="list-option w-full"
-                                            onclick={(e) => {
-                                                closeMenu();
-                                                props.onclick?.(e);
-                                            }}
-                                            type="button"
-                                        >
-                                            <iconify-icon icon="ion:language"></iconify-icon>
-                                            <p>{$t("general.language")}</p>
-                                        </button>
-                                    {/snippet}
-                                </ChangeLanguageModal>
-                            </li>
                             <li>
                                 <div class="flex w-full justify-around pt-1">
                                     <LightSwitch />
