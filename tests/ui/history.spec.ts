@@ -38,7 +38,7 @@ test("an offered idea moves to the gift history, hidden from the owner", async (
         await otherList.goto();
         const updated = otherPage.waitForResponse((r) => r.url().endsWith("/offered") && r.ok());
         await otherPage.getByRole("button", { name: "Remove" }).click();
-        await otherPage.getByTestId("remove-offered").click();
+        await otherPage.getByRole("button", { name: /^It was given/ }).click();
         await expect(otherPage.getByTestId("name").filter({ hasText: itemName })).toHaveCount(0);
         await updated;
         await otherPage.reload();
@@ -85,7 +85,7 @@ test("marking an idea as given can be undone right away", async ({
     otherPage.on("request", (r) => r.url().endsWith("/offered") && requests.push(r.url()));
     await otherPage.goto(`/lists/${listId}`);
     await otherPage.getByRole("button", { name: "Remove" }).click();
-    await otherPage.getByTestId("remove-offered").click();
+    await otherPage.getByRole("button", { name: /^It was given/ }).click();
     await expect(otherPage.getByTestId("name").filter({ hasText: itemName })).toHaveCount(0);
     await otherPage
         .locator("[data-scope='toast'][data-part='root']")
