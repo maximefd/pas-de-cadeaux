@@ -142,7 +142,7 @@ const getDefaultConfig = (): Config => ({
     },
     enableDefaultListCreation: true,
     allowPublicLists: false,
-    anyoneCanDeleteItems: false,
+    anyoneCanDeleteItems: true,
     oidc: {
         enable: false
     }

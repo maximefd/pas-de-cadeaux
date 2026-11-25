@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { displayEmail } from "$lib/email";
     import { invalidateAll } from "$app/navigation";
     import { page } from "$app/state";
     import { GroupAPI } from "$lib/api/groups";
@@ -75,7 +76,7 @@
                     <tr aria-rowindex={row}>
                         {#each dataKeys as key, col}
                             <td aria-colindex={col} tabindex={col === 0 ? 0 : -1}>
-                                {user[key]}
+                                {key === "email" ? displayEmail(user.email) : user[key]}
                             </td>
                         {/each}
                         <td>

@@ -40,7 +40,7 @@
             <ModalContent
                 class="max-h-3/4 data-[state=closed]:scale-90 data-[state=open]:scale-100 starting:data-[state=closed]:scale-100 starting:data-[state=open]:scale-90"
             >
-                <Dialog.Title class="text-xl font-bold capitalize md:text-2xl">
+                <Dialog.Title class="text-xl font-bold md:text-2xl">
                     {title}
                 </Dialog.Title>
                 <Dialog.Description>
