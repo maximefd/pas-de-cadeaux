@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { APP_NAME } from "$lib/brand";
     import { defaultLang, getFormatter, getLocale } from "$lib/i18n";
     import { getDateFormatter } from "svelte-i18n";
 
@@ -16,7 +17,13 @@
 </script>
 
 <div class="flex flex-col space-y-2">
-    <h2 class="h2">Wishlist</h2>
+    <h2 class="h2">{APP_NAME}</h2>
+    <span>
+        {$t("admin.based-on")}
+        <a class="anchor" href="https://github.com/cmintey/wishlist" rel="noopener noreferrer" target="_blank">
+            Wishlist
+        </a>
+    </span>
     <span>
         {@html $t("admin.version", { values: { version, href: versionHref, class: "anchor" } })}
     </span>

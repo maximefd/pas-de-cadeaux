@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import { getFormatter } from "$lib/i18n";
-    import logo from "$lib/assets/logo.png";
+    import BrandMark from "../BrandMark.svelte";
     import { Dialog, Portal, type DialogTriggerProps } from "@skeletonlabs/skeleton-svelte";
     import ModalBackdrop from "../modals/parts/ModalBackdrop.svelte";
     import ModalContent from "../modals/parts/ModalContent.svelte";
@@ -28,8 +28,7 @@
             >
                 <header class="flex items-center justify-between">
                     <Dialog.Title class="flex flex-row items-center gap-2">
-                        <img class="h-10 md:h-12" alt="Wishlist Logo" src={logo} />
-                        <span class="text-primary-950-50 text-2xl font-bold">Wishlist</span>
+                        <BrandMark />
                     </Dialog.Title>
                     <Dialog.CloseTrigger class="btn-icon preset-tonal">
                         <iconify-icon icon="ion:close"></iconify-icon>

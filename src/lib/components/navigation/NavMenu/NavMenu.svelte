@@ -108,5 +108,5 @@
         </Popup>
     </div>
 {:else}
-    <LightSwitch sizeClass="w-10" />
+    <LightSwitch />
 {/if}

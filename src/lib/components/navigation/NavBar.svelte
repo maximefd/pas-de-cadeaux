@@ -1,5 +1,5 @@
 <script lang="ts">
-    import logo from "$lib/assets/logo.png";
+    import BrandMark from "../BrandMark.svelte";
     import { page } from "$app/state";
     import NavMenu from "./NavMenu/NavMenu.svelte";
     import { isInstalled } from "$lib/stores/is-installed";
@@ -20,15 +20,7 @@
 
 {#snippet wishlistHeader()}
     <a class="flex flex-row items-center gap-x-2" href="/">
-        <img class="size:h-12 aspect-square size-10 object-scale-down" alt="Wishlist Logo" src={logo} />
-        <span
-            class={[
-                "text-primary-950-50 text-2xl font-bold md:text-3xl",
-                groups && groups.length > 1 ? "hidden sm:block" : "block"
-            ]}
-        >
-            Wishlist
-        </span>
+        <BrandMark hideText={!!(groups && groups.length > 1)} />
     </a>
 {/snippet}
 

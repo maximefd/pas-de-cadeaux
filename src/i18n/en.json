@@ -41,6 +41,7 @@
         "anyone-can-delete-items-tooltip": "Let any group member who can see an item delete it, not only its creator, its owner or a list manager. Items that are hidden from their owner stay hidden.",
         "allow-public-lists-tooltip": "Allow users to make a list public. Has no effect if the group is in 'Registry' mode.",
         "build": "Build: <a class=\"{class}\" href=\"{href}\">{sha}</a>",
+        "based-on": "Based on",
         "build-date": "Build Date: {buildDate}",
         "claims": "Claims",
         "claims-name-tooltip": "Show the name of the user who claimed the item on the item card.",
@@ -379,6 +380,7 @@
         "lets-get-started": "Let's get started",
         "next": "Next",
         "unable-to-update-password": "Unable to update password",
+        "welcome-to-app": "Welcome to {name}",
         "welcome-to-wishlist": "Welcome to Wishlist"
     },
     "unable-to-load-icons": "Unable to load icons.",

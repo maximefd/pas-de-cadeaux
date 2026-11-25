@@ -69,7 +69,7 @@
             />
             <button
                 id="showpassword"
-                class="ig-cell border-l-0!"
+                class="ig-cell"
                 aria-label={$t("a11y.toggle-password-visibility")}
                 onclick={handleClick}
                 onkeypress={(e) => e.preventDefault()}

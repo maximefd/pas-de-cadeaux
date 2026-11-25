@@ -1,22 +1,14 @@
 <script lang="ts">
     import { getFormatter } from "$lib/i18n";
     import { LocalStorage } from "$lib/local-storage.svelte";
-    import { SegmentedControl, type SegmentedControlRootProps } from "@skeletonlabs/skeleton-svelte";
     import { onMount } from "svelte";
-    import type { ClassValue } from "svelte/elements";
-
-    interface Props {
-        sizeClass?: ClassValue;
-    }
-
-    let props: Props = $props();
 
     const t = getFormatter();
 
     const options = [
-        { value: "system", icon: "ion:desktop-outline", text: $t("general.system") },
-        { value: "light", icon: "ion:sunny-outline", text: $t("general.light") },
-        { value: "dark", icon: "ion:moon-outline", text: $t("general.dark") }
+        { value: "system", text: $t("general.system") },
+        { value: "light", text: $t("general.light") },
+        { value: "dark", text: $t("general.dark") }
     ];
 
     const modeLocalStorage = new LocalStorage<string>("mode", "system");
@@ -44,27 +36,21 @@
             }
         });
     });
-
-    const onValueChange: SegmentedControlRootProps["onValueChange"] = (details) => {
-        modeLocalStorage.current = details.value || "system";
-    };
 </script>
 
-<SegmentedControl {onValueChange} {value}>
-    <SegmentedControl.Label>{$t("general.mode")}</SegmentedControl.Label>
-    <SegmentedControl.Control class="rounded-container border-surface-300-700 gap-0 p-0.5">
-        <SegmentedControl.Indicator class="rounded-container" />
-        {#each options as { value, icon, text } (value)}
-            <SegmentedControl.Item class={props?.sizeClass} {value}>
-                <SegmentedControl.ItemText class="flex size-4" title={text}>
-                    <iconify-icon {icon}></iconify-icon>
-                    <span class="sr-only">{text}</span>
-                </SegmentedControl.ItemText>
-                <SegmentedControl.ItemHiddenInput />
-            </SegmentedControl.Item>
-        {/each}
-    </SegmentedControl.Control>
-</SegmentedControl>
+<div class="paper-mode" aria-label={$t("general.mode")} role="radiogroup">
+    {#each options as { value: optionValue, text } (optionValue)}
+        <button
+            class="paper-mode-option"
+            aria-checked={value === optionValue}
+            onclick={() => (modeLocalStorage.current = optionValue)}
+            role="radio"
+            type="button"
+        >
+            {text}
+        </button>
+    {/each}
+</div>
 
 <svelte:head>
     <script>
