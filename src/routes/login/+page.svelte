@@ -36,7 +36,6 @@
 </script>
 
 <div class="paper-auth">
-    <img class="paper-auth-logo" alt="" height="256" src="/logo.webp" width="230" />
     <h1 class="h1">{$t("auth.sign-in")}</h1>
 
     <form
