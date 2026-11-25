@@ -6,7 +6,7 @@
         "forbidden-text": "Tu n'as pas le droit de voir cette page.",
         "error-title": "Oups",
         "error-text": "Quelque chose s'est mal passé.",
-        "invite-code-invalid": "Ce code d'invitation n'est pas valable ou a déjà servi.",
+        "invite-code-invalid": "Ce lien d'invitation a déjà servi ou n'est plus valable. Demande-en un nouveau à la personne qui te l'a envoyé.",
         "item-name-required": "Donne un nom à l'idée.",
         "item-id-must-be-a-number": "L'identifiant doit être un nombre",
         "incorrect-password": "Mot de passe incorrect",
@@ -48,7 +48,7 @@
         "name-must-not-be-blank": "Le nom ne peut pas être vide",
         "suggestions-are-disabled": "Les suggestions sont désactivées",
         "the-page-you-were-looking-for-wasnt-found": "La page que tu cherches est introuvable",
-        "this-instance-is-invite-only": "Cet espace est réservé aux personnes invitées",
+        "this-instance-is-invite-only": "Pour créer ton compte, ouvre le lien d'invitation qu'on t'a envoyé. Si tu ne l'as plus, demande-le à la personne qui t'a parlé de Pas de cadeaux !",
         "user-already-exists": "Quelqu'un utilise déjà ce nom ou cet email",
         "reset-token-not-found": "Ce lien de réinitialisation n'est plus valable",
         "something-went-wrong": "Quelque chose n'a pas marché",
@@ -83,7 +83,8 @@
         "this-list-is-not-part-of-your-active-group": "Cette liste ne fait pas partie de ton cercle actuel",
         "user-is-not-allowed-to-edit-this-item": "Tu n'as pas le droit de modifier cette idée",
         "nothing-to-join": "Personne n'a encore réservé cette idée.",
-        "already-claimed": "Tu as déjà réservé cette idée."
+        "already-claimed": "Tu as déjà réservé cette idée.",
+        "invite-title": "Il te faut un lien d'invitation"
     },
     "admin": {
         "version": "Version : <a class=\"{class}\" href=\"{href}\">{version}</a>",
@@ -275,7 +276,9 @@
         "unpurchase": "Marquer l'idée comme non achetée",
         "user-menu": "Menu utilisateur",
         "remove-manager-name": "Retirer {name}",
-        "claimed-progress": "Avancement des réservations"
+        "claimed-progress": "Avancement des réservations",
+        "more-info": "plus d'informations",
+        "add-item": "ajouter une idée"
     },
     "app": {
         "my-claims": "Mes réservations",

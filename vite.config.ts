@@ -21,6 +21,9 @@ const config: UserConfig = {
         sveltekit(),
         SvelteKitPWA({
             registerType: "autoUpdate",
+            // Chemins absolus : sinon les pages profondes (/admin/...) cherchent /admin/sw.js (404)
+            base: "/",
+            scope: "/",
             manifest: {
                 name: "Pas de cadeaux !",
                 short_name: "Pas de cadeaux",

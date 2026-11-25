@@ -28,7 +28,7 @@
             {#snippet trigger(props)}
                 <button class="paper-header-link" {...props}>
                     <span aria-hidden="true">{$t("admin.account")}</span>
-                    <span class="sr-only">User Menu</span>
+                    <span class="sr-only">{$t("a11y.user-menu")}</span>
                 </button>
             {/snippet}
             {#snippet content(props)}

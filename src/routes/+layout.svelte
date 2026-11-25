@@ -1,5 +1,6 @@
 <script lang="ts">
     import "../app.css";
+    import "$lib/icons";
     import { APP_NAME } from "$lib/brand";
 
     import { afterNavigate, beforeNavigate } from "$app/navigation";

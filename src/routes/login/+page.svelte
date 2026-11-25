@@ -36,7 +36,7 @@
 </script>
 
 <div class="paper-auth">
-    <h1 class="h1 capitalize">{$t("auth.sign-in")}</h1>
+    <h1 class="h1">{$t("auth.sign-in")}</h1>
 
     <form
         class="paper-form"

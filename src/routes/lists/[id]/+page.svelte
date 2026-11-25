@@ -207,7 +207,7 @@
 {#if data.loggedInUser && (data.list.owner.isMe || data.list.isManager || data.suggestionsEnabled)}
     <button
         class="paper-add print:hidden"
-        aria-label="add item"
+        aria-label={$t("a11y.add-item")}
         onclick={() => goto(`${page.url.pathname}/create-item?redirectTo=${page.url.pathname}`, { replaceState: true })}
     >
         <b aria-hidden="true">+</b>

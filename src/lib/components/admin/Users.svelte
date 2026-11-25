@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { displayEmail } from "$lib/email";
     import { goto } from "$app/navigation";
     import Search from "../Search.svelte";
     import InviteUser from "./InviteUser.svelte";
@@ -56,7 +57,7 @@
                 <tr onclick={() => selectionHandler(user)}>
                     <td class="text-nowrap">{user.name}</td>
                     <td>{user.username}</td>
-                    <td>{user.email}</td>
+                    <td>{displayEmail(user.email)}</td>
                     <td class="text-center">
                         {#if user.isAdmin}
                             <iconify-icon class="text-lg" icon="ion:checkmark"></iconify-icon>

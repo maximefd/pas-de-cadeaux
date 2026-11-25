@@ -8,7 +8,7 @@ export class Toast {
     constructor(page: Page) {
         this.page = page;
         this.toast = page.locator("[data-scope='toast'][data-part='root']");
-        this.dismissToastButton = this.toast.getByRole("button", { name: "Dismiss notification" });
+        this.dismissToastButton = this.toast.getByRole("button", { name: "close" });
     }
 
     async waitForToastWithText(text: string) {

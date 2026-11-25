@@ -1,6 +1,9 @@
 <script lang="ts">
     import { Toast } from "@skeletonlabs/skeleton-svelte";
     import { toaster } from ".";
+    import { getFormatter } from "$lib/i18n";
+
+    const t = getFormatter();
 
     interface Props {
         yShift: number | undefined;
@@ -21,7 +24,7 @@
             {#if toast.action}
                 <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             {/if}
-            <Toast.CloseTrigger />
+            <Toast.CloseTrigger aria-label={$t("a11y.close")} />
         </Toast>
     {/snippet}
 </Toast.Group>

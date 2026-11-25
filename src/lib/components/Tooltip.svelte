@@ -2,6 +2,7 @@
     import { Popover, Portal } from "@skeletonlabs/skeleton-svelte";
     import type { Snippet } from "svelte";
     import type { ClassValue } from "svelte/elements";
+    import { getFormatter } from "$lib/i18n";
 
     interface Props {
         label: Snippet;
@@ -11,12 +12,13 @@
     }
 
     const props: Props = $props();
+    const t = getFormatter();
 </script>
 
 <div class="flex items-center gap-2">
     {@render props.label()}
     <Popover>
-        <Popover.Trigger aria-label="tooltip" type="button">
+        <Popover.Trigger aria-label={$t("a11y.more-info")} type="button">
             <span class="flex content-center items-center">
                 {#if props.icon}
                     {@render props.icon()}
