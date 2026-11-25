@@ -72,11 +72,17 @@ RUN chmod +x entrypoint.sh && \
 COPY --from=build /usr/src/app/build ./build/
 COPY --from=build /usr/src/app/src/lib/generated/prisma ./src/lib/generated/prisma
 
+# Volumes created with the right owner, then run as the unprivileged "node" user (uid 1000)
+RUN mkdir -p /usr/src/app/uploads /usr/src/app/data && chown node:node /usr/src/app/uploads /usr/src/app/data
 VOLUME /usr/src/app/uploads
 VOLUME /usr/src/app/data
 
 ENV DEFAULT_CURRENCY=USD \
     TOKEN_TIME=72 \
-    COREPACK_ENABLE_NETWORK=0
+    COREPACK_ENABLE_NETWORK=0 \
+    XDG_CONFIG_HOME=/tmp/.config \
+    XDG_DATA_HOME=/tmp/.local
+
+USER node
 
 ENTRYPOINT [ "sh", "entrypoint.sh" ]
