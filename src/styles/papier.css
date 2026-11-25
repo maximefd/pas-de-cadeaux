@@ -469,25 +469,21 @@
 .paper-brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1.1rem;
     color: var(--paper-fg);
 }
 .paper-brand-icon {
     width: auto;
-    height: 2rem;
+    height: 2.8rem;
     flex: none;
 }
-.paper-auth-logo {
-    width: auto;
-    height: 5rem;
-    margin-bottom: 1rem;
-}
+
 .paper-brand-name {
     font-family: "Titan One", Georgia, "Times New Roman", serif;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 400;
     letter-spacing: 0.01em;
-    line-height: 1.1;
+    line-height: 1;
     white-space: nowrap;
 }
 
