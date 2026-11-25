@@ -7,10 +7,10 @@ import { requireLogin } from "$lib/server/auth";
 import { getConfig } from "$lib/server/config";
 import { getItems } from "$lib/server/list";
 
-// "Received" tab: items marked as offered on a person's lists.
+// "Historique des cadeaux": ideas marked as offered on a person's lists, grouped by year.
 // Visibility is delegated to getItems(), so a recipient never sees ideas hidden from them (surprise mode)
 // nor the identity/date of the giver (neither is stored).
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, depends }) => {
     const user = requireLogin();
     const $t = await getFormatter();
 
@@ -39,7 +39,8 @@ export const load: PageServerLoad = async ({ params }) => {
         error(404, $t("errors.list-not-found"));
     }
 
-    const received = new Map<number, { id: number; name: string; url: string | null; imageUrl: string | null }>();
+    type GiftItem = { id: number; name: string; url: string | null; listId: string; year: number; offeredAt: number };
+    const received = new Map<number, GiftItem>();
     for (const list of lists) {
         const items = await getItems(list.id, {
             filter: null,
@@ -48,18 +49,35 @@ export const load: PageServerLoad = async ({ params }) => {
             suggestionMethod: config.suggestions.method,
             listOwnerId: list.owner.id,
             listManagers: new Set(list.managers.map(({ userId }) => userId)),
-            loggedInUserId: user.id
+            loggedInUserId: user.id,
+            includeOffered: true
         });
         for (const item of items) {
             if (item.offered && !received.has(item.id)) {
-                received.set(item.id, { id: item.id, name: item.name, url: item.url, imageUrl: item.imageUrl });
+                const offeredAt = item.offeredAt ?? new Date();
+                received.set(item.id, {
+                    id: item.id,
+                    name: item.name,
+                    url: item.url,
+                    listId: list.id,
+                    year: offeredAt.getFullYear(),
+                    offeredAt: offeredAt.getTime()
+                });
             }
         }
     }
 
+    // Most recent year first, and within a year the most recent gift first
+    const years = new Map<number, GiftItem[]>();
+    for (const item of [...received.values()].sort((a, b) => b.offeredAt - a.offeredAt)) {
+        years.set(item.year, [...(years.get(item.year) ?? []), item]);
+    }
+
+    depends("data:items");
+
     return {
         owner: { ...lists[0].owner, isMe: false },
         listId: lists[0].id,
-        items: [...received.values()]
+        years: [...years.entries()].map(([year, items]) => ({ year, items }))
     };
 };

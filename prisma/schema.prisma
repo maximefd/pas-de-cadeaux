@@ -132,6 +132,7 @@ model Item {
     quantity    Int?
     mostWanted  Boolean     @default(false)
     offered     Boolean     @default(false)
+    offeredAt   DateTime?
     user        User        @relation(name: "MyItems", fields: [userId], references: [id], onDelete: Cascade)
     userId      String
     createdBy   User        @relation(name: "CreatedItems", fields: [createdById], references: [id], onDelete: Cascade)

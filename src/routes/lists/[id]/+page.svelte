@@ -33,7 +33,8 @@
     let reordering = $state(false);
     let publicListUrl: URL | undefined = $state();
     let approvals = $derived(allItems.filter((item) => !item.approved));
-    let items = $derived(allItems.filter((item) => item.approved));
+    // une idée offerte quitte la liste (elle part dans l'historique des cadeaux)
+    let items = $derived(allItems.filter((item) => item.approved && !item.offered));
     let listName = $derived.by(() => {
         if (data.list.name) {
             return data.list.name;
@@ -278,8 +279,8 @@
         {/if}
         <SortBy />
         {#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
-            <a class="paper-link" href={`/wishlists/${data.list.owner.username}/received`}>
-                {$t("wishes.received")}
+            <a class="paper-link" href={`/wishlists/${data.list.owner.username}/history`}>
+                {$t("wishes.history")}
             </a>
         {/if}
     </div>
