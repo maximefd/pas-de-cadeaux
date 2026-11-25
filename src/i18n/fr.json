@@ -85,7 +85,7 @@
         "default-group": "Groupe par défaut",
         "wishlist-mode-alert": "Il y a {memberCount} membres et {listCount} listes dans ce groupe, vous ne pouvez pas changer de mode tant que vous n'avez pas supprimé tous les membres et listes sauf un.",
         "about": "À propos",
-        "account": "Compte",
+        "account": "Mon compte",
         "actions": "Actions",
         "add-member": "Ajouter membre",
         "delete-group-message": "Êtes-vous sûr de vouloir supprimer ce groupe ? Cela supprimera toutes les listes dans ce groupe et tout élément associé qui ne figure pas dans un autre groupe. <b>Cette action est irréversible</b>  !",
@@ -273,7 +273,8 @@
     },
     "app": {
         "my-claims": "Mes réservations",
-        "home": "Accueil"
+        "home": "Proches",
+        "help": "Aide"
     },
     "email": {
         "invite-fallback-text": "Quelqu'un vous a invité à rejoindre sa Wishlist ! Cliquez sur le lien pour vous enregistrer : {url}",
@@ -364,7 +365,8 @@
         "dark": "Sombre",
         "light": "Clair",
         "no-results": "Aucun résultat.",
-        "system": "Système"
+        "system": "Système",
+        "back": "Retour"
     },
     "setup": {
         "global-settings": "Paramètres Globaux",
@@ -462,7 +464,7 @@
         "unclaim": "Annuler la réservation",
         "create-list": "Créer une liste",
         "delete-list-confirmation": "Êtes-vous sûr de vouloir supprimer cette liste ? Tous les éléments qui ne sont pas associés à une autre liste seront aussi supprimés.",
-        "my-lists": "Mes listes",
+        "my-lists": "Mes envies",
         "no-lists-yet": "Aucune liste pour le moment",
         "unclaimed": "Non réservé",
         "nothing-claimed-yet": "Aucune réservation pour le moment",
@@ -547,7 +549,23 @@
         "add-my-wish": "Ajouter une envie",
         "other-empty-title": "{name} n’a encore rien noté.",
         "other-empty-text": "Si tu as une ou plusieurs idées de cadeaux qui lui feraient plaisir, ajoute-les à sa liste. Bien sûr, {name} ne les verra pas.",
-        "add-idea-for": "Ajouter une idée pour {name}"
+        "add-idea-for": "Ajouter une idée pour {name}",
+        "my-relatives": "Mes proches",
+        "no-relatives-yet": "Personne d'autre n'est encore dans ce cercle. Quand tes proches auront créé leur compte, leurs listes apparaîtront ici.",
+        "idea-count": "{count, plural, one {# idée} other {# idées}}",
+        "nothing-yet": "Rien encore",
+        "new-ideas": "Nouvelles idées",
+        "other-list-hint": "{name} ne voit pas les idées ajoutées par les autres. Quand tu as offert un cadeau, clique sur « Retirer » puis « C'est offert » : les autres sauront qu'il est déjà pris.",
+        "my-list-hint": "Les idées et les commentaires de tes proches ne s'affichent pas ici. La surprise reste entière."
     },
-    "unable-to-load-icons": "Impossible de charger les icônes."
+    "unable-to-load-icons": "Impossible de charger les icônes.",
+    "help": {
+        "title": "Aide",
+        "q1": "Qui voit ce que j’ajoute ?",
+        "a1": "Tu vois les listes de tes proches. Eux ne voient pas ce que tu ajoutes pour eux : la surprise reste entière.",
+        "q2": "Tu t’es trompé ?",
+        "a2": "Clique sur « Annuler » juste après. Tu peux aussi retirer une idée quand tu veux.",
+        "q3": "Tu as oublié ton mot de passe ?",
+        "a3": "Demande à la personne qui t’a invité : elle t’en donnera un nouveau."
+    }
 }

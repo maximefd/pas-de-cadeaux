@@ -29,7 +29,7 @@
     },
     "admin": {
         "about": "About",
-        "account": "Account",
+        "account": "My account",
         "actions": "Actions",
         "add-member": "Add Member",
         "add-remove-manager-message": "Are you sure you want to {isManager, select, true {add} other {remove}} this user as group manager?",
@@ -154,8 +154,9 @@
         "wishlist-mode-wishlist-tooltip": "Multiple users and multiple lists with claiming and item suggestions. Lists can be made public if permitted by the group."
     },
     "app": {
-        "home": "Home",
-        "my-claims": "My Claims"
+        "home": "Family & friends",
+        "my-claims": "My Claims",
+        "help": "Help"
     },
     "auth": {
         "account-is-not-linked-with-oauth": "Your account is not linked with {providerName}. To link your account, sign out and click 'Sign in with {providerName}'.",
@@ -364,7 +365,8 @@
         "very-strong": "Very Strong",
         "very-weak": "Very Weak",
         "weak": "Weak",
-        "wishlists-cleared": "Wishlists cleared."
+        "wishlists-cleared": "Wishlists cleared.",
+        "back": "Back"
     },
     "setup": {
         "back": "Back",
@@ -488,7 +490,7 @@
         "manage-list": "Manage List",
         "most-wanted": "Most wanted",
         "most-wanted-description": "Highlight this item to let others know this is a highly desired item.",
-        "my-lists": "My Lists",
+        "my-lists": "My wishes",
         "my-wishes": "My Wishes",
         "no-limit": "No limit",
         "no-lists-yet": "No lists yet",
@@ -548,6 +550,22 @@
         "add-my-wish": "Add a wish",
         "other-empty-title": "{name} hasn’t added anything yet.",
         "other-empty-text": "If you have one or more gift ideas that {name} would enjoy, add them to the list. Of course, {name} won’t see them.",
-        "add-idea-for": "Add an idea for {name}"
+        "add-idea-for": "Add an idea for {name}",
+        "my-relatives": "Family & friends",
+        "no-relatives-yet": "Nobody else is in this circle yet. Their lists will show up here once they sign up.",
+        "idea-count": "{count, plural, one {# idea} other {# ideas}}",
+        "nothing-yet": "Nothing yet",
+        "new-ideas": "New ideas",
+        "other-list-hint": "{name} can't see ideas added by others. Once you've given a gift, click “Remove” then “It's been given” so others know it's taken.",
+        "my-list-hint": "Ideas and comments from your family and friends don't show here. The surprise stays intact."
+    },
+    "help": {
+        "title": "Help",
+        "q1": "Who sees what I add?",
+        "a1": "You see your family's lists. They don't see what you add for them.",
+        "q2": "Made a mistake?",
+        "a2": "Click “Undo” right after. You can also remove an idea any time.",
+        "q3": "Forgot your password?",
+        "a3": "Ask the person who invited you: they will give you a new one."
     }
 }

@@ -1,71 +1,21 @@
 <script lang="ts">
     import BrandMark from "../BrandMark.svelte";
-    import { page } from "$app/state";
     import NavMenu from "./NavMenu/NavMenu.svelte";
-    import { isInstalled } from "$lib/stores/is-installed";
-    import BackButton from "../BackButton.svelte";
-    import { getFormatter } from "$lib/i18n";
-    import NavigationDrawer from "./NavigationDrawer.svelte";
 
     interface Props {
-        navItems: NavItem[];
         user: LocalUser | null;
         groups: GroupInformation[] | null;
         isProxyUser: boolean;
     }
 
-    const { navItems, user, groups, isProxyUser }: Props = $props();
-    const t = getFormatter();
+    const { user, groups, isProxyUser }: Props = $props();
 </script>
 
-{#snippet wishlistHeader()}
-    <a class="flex flex-row items-center gap-x-2" href="/">
-        <BrandMark hideText={!!(groups && groups.length > 1)} />
+<!-- Fork "Pas de cadeaux !" : en-tête sobre, identique sur téléphone, tablette et ordinateur.
+     La navigation se fait par les onglets du bas. -->
+<div class="paper-header">
+    <a class="paper-header-brand" href="/">
+        <BrandMark />
     </a>
-{/snippet}
-
-<div class="bg-surface-200-800 flex gap-4 px-4 py-2 md:py-4">
-    <!-- Header -->
-    <div class="flex shrink-0 grow content-center items-center gap-x-2 md:grow-0">
-        {#if user}
-            {#if !$isInstalled}
-                <NavigationDrawer {navItems} {user}>
-                    {#snippet trigger(props)}
-                        <button {...props} class="btn btn-sm p-0! md:hidden" aria-label={$t("a11y.menu")}>
-                            <iconify-icon class="mt-1 text-2xl" icon="ion:menu"></iconify-icon>
-                        </button>
-                    {/snippet}
-                </NavigationDrawer>
-
-                {@render wishlistHeader()}
-            {:else}
-                <BackButton header={wishlistHeader} />
-            {/if}
-        {:else}
-            {@render wishlistHeader()}
-        {/if}
-    </div>
-
-    <!-- Nav items -->
-    {#if user}
-        <div class="hidden flex-row items-center pt-0.5 pl-4 md:flex md:grow">
-            {#each navItems as navItem}
-                <a
-                    class={[
-                        "list-option font-bold",
-                        page.url.pathname + page.url.search === navItem.href(user) && "preset-filled-primary-500"
-                    ]}
-                    data-sveltekit-preload-data
-                    href={navItem.href(user)}
-                >
-                    {$t(navItem.labelKey)}
-                </a>
-            {/each}
-        </div>
-    {:else}
-        <div class="md:flex md:grow"></div>
-    {/if}
-
-    <!-- Trail -->
     <NavMenu {groups} {isProxyUser} {user} />
 </div>

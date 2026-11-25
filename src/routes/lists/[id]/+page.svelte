@@ -1,28 +1,18 @@
 <script lang="ts">
     import type { PageProps } from "./$types";
     import ItemCard from "$lib/components/wishlists/ItemCard/ItemCard.svelte";
-    import ClaimFilterChip from "$lib/components/wishlists/chips/ClaimFilter.svelte";
     import { goto, invalidate } from "$app/navigation";
+    import { resolve } from "$app/paths";
     import { page } from "$app/state";
     import { onMount } from "svelte";
     import { flip } from "svelte/animate";
     import { quintOut } from "svelte/easing";
     import { crossfade } from "svelte/transition";
-    import SortBy from "$lib/components/wishlists/chips/SortBy.svelte";
     import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
-    import { getListViewPreference, initListViewPreference } from "$lib/stores/list-view-preference.svelte";
-    import { ListAPI } from "$lib/api/lists";
-    import TokenCopy from "$lib/components/TokenCopy.svelte";
-    import { dragHandleZone, type DndZoneAttributes, type Item, type Options } from "svelte-dnd-action";
-    import ReorderChip from "$lib/components/wishlists/chips/ReorderChip.svelte";
-    import ManageListChip from "$lib/components/wishlists/chips/ManageListChip.svelte";
     import type { ItemOnListDTO } from "$lib/dtos/item-dto";
     import { ItemCreateHandler, ItemDeleteHandler, ItemsUpdateHandler, ItemUpdateHandler } from "$lib/events";
     import { getFormatter } from "$lib/i18n";
     import Markdown from "$lib/components/Markdown.svelte";
-    import ListStatistics from "$lib/components/wishlists/ListStatistics.svelte";
-    import type { ActionReturn } from "svelte/action";
-    import { toaster } from "$lib/components/toaster";
     import { itemSorter } from "$lib/comparators";
 
     const { data }: PageProps = $props();
@@ -30,30 +20,15 @@
 
     // svelte-ignore state_referenced_locally
     let allItems: ItemOnListDTO[] = $state(data.list.items);
-    let reordering = $state(false);
-    let publicListUrl: URL | undefined = $state();
     let approvals = $derived(allItems.filter((item) => !item.approved));
     // une idée offerte quitte la liste (elle part dans l'historique des cadeaux)
     let items = $derived(allItems.filter((item) => item.approved && !item.offered));
-    let listName = $derived.by(() => {
-        if (data.list.name) {
-            return data.list.name;
-        } else if (data.list.owner.isMe) {
-            return $t("wishes.my-wishes");
-        } else {
-            return $t("wishes.wishes-for", { values: { listOwner: data.list.owner.name } });
-        }
-    });
-    let hideDescription = $state(false);
-
-    // Initialize from server data (cookie) to prevent flicker
-    // This value comes from the server, so SSR renders the correct view
-    // svelte-ignore state_referenced_locally
-    initListViewPreference(data.initialViewPreference);
-    let isTileView = $derived(getListViewPreference() === "tile");
+    // Titre de la maquette : « Mes envies » chez soi, le prénom chez les autres (le nom de la liste s'il est personnalisé)
+    let pageTitle = $derived(
+        data.list.owner.isMe ? data.list.name || $t("wishes.my-lists") : data.list.name || data.list.owner.name
+    );
 
     const flipDurationMs = 200;
-    const listAPI = $derived(new ListAPI(data.list.id));
 
     const [send, receive] = crossfade({
         duration: (d) => Math.sqrt(d * 200),
@@ -150,179 +125,30 @@
         }
         allItems = sortItems([...allItems, addedItem]);
     };
-
-    const getOrCreatePublicList = async () => {
-        if (!data.list.public) {
-            const listApi = new ListAPI(data.list.id);
-            const resp = await listApi.makePublic();
-            if (!resp.ok) {
-                const description = await resp.text();
-                toaster.error({ description });
-                return;
-            }
-        }
-        publicListUrl = new URL(`/lists/${data.list.id}`, window.location as unknown as URL);
-    };
-
-    // custom dnd action to remove the aria disabled flag
-    function dndZone<T extends Item>(
-        node: HTMLElement,
-        options: Options<T>
-    ): ActionReturn<Options<T>, DndZoneAttributes<T>> {
-        const zone = dragHandleZone(node, options);
-        node.setAttribute("aria-disabled", "false");
-        return {
-            update(newOptions) {
-                zone.update?.(newOptions);
-                node.setAttribute("aria-disabled", "false");
-            },
-            destroy: zone.destroy
-        };
-    }
-
-    const updateDisplayOrder = (items: ItemOnListDTO[]) => {
-        items.forEach((it, idx) => (it.displayOrder = idx));
-    };
-    const handleDnd = (e: CustomEvent) => {
-        allItems = e.detail.items;
-        updateDisplayOrder(allItems);
-    };
-    const swap = (arr: ItemOnListDTO[], a: number, b: number) => {
-        const swapped = arr.with(a, arr[b]).with(b, arr[a]);
-        updateDisplayOrder(swapped);
-        return swapped;
-    };
-    const handleIncreasePriority = (itemId: number) => {
-        const itemIdx = allItems.findIndex((item) => item.id === itemId);
-        if (itemIdx > 0) {
-            allItems = swap(allItems, itemIdx, itemIdx - 1);
-        }
-    };
-    const handleDecreasePriority = (itemId: number) => {
-        const itemIdx = allItems.findIndex((item) => item.id === itemId);
-        if (itemIdx < allItems.length - 1) {
-            allItems = swap(allItems, itemIdx, itemIdx + 1);
-        }
-    };
-    const handlePriorityInput = (item: ItemOnListDTO, idxString: string) => {
-        const targetIdx = Number.parseInt(idxString) - 1;
-        const currentIdx = allItems.findIndex((it) => it.id === item.id);
-
-        if (Number.isNaN(targetIdx) || targetIdx < 0 || targetIdx > allItems.length - 1) {
-            toaster.error({
-                description: $t("errors.display-order-invalid", { values: { min: 1, max: allItems.length } })
-            });
-            if (item.displayOrder) {
-                const el = document.getElementById(`${item.id}-displayOrder`) as HTMLInputElement;
-                el.value = (item.displayOrder + 1).toString();
-            }
-            return;
-        }
-        if (currentIdx !== targetIdx) {
-            const resortedItems: ItemOnListDTO[] = [];
-            let displayOrder = 0;
-            for (let i = 0; i < allItems.length; i++) {
-                if (i === currentIdx) {
-                    continue;
-                }
-                if (i === targetIdx) {
-                    if (targetIdx < currentIdx) {
-                        resortedItems.push(allItems[currentIdx]);
-                        resortedItems.push(allItems[i]);
-                    } else {
-                        resortedItems.push(allItems[i]);
-                        resortedItems.push(allItems[currentIdx]);
-                    }
-
-                    resortedItems.at(-2)!.displayOrder = displayOrder++;
-                } else {
-                    resortedItems.push(allItems[i]);
-                }
-                resortedItems.at(-1)!.displayOrder = displayOrder++;
-            }
-            allItems = resortedItems;
-        }
-    };
-    const handleReorderFinalize = async () => {
-        reordering = false;
-        const displayOrderUpdate = allItems.map((item, idx) => ({
-            itemId: item.id,
-            displayOrder: idx
-        }));
-        const response = await listAPI.updateItems(displayOrderUpdate);
-        if (!response.ok) {
-            toaster.error({ description: $t("wishes.unable-to-update-item-ordering") });
-            allItems = data.list.items;
-        }
-    };
 </script>
 
-{#if data.list.description}
-    <div class="w-full pb-4">
-        {#if !hideDescription}
-            <Markdown source={data.list.description} />
-        {/if}
-        <button
-            class="text-primary-700 dark:text-primary-500 text-sm print:hidden"
-            onclick={() => (hideDescription = !hideDescription)}
-        >
-            {hideDescription ? $t("wishes.show-description") : $t("wishes.hide-description")}
-        </button>
-    </div>
+<!-- Maquette « Papier » : retour, titre, idées en lignes de texte, « + Ajouter » en bas. Rien d'autre. -->
+{#if data.loggedInUser && !data.list.owner.isMe}
+    <a class="paper-back print:hidden" href={resolve("/lists")}>‹ {$t("general.back")}</a>
 {/if}
-
-<!-- chips -->
-<div class="flex flex-wrap items-end justify-between gap-2 pb-4 print:hidden">
-    <div class="flex flex-row flex-wrap items-end gap-2">
-        {#if !data.list.owner.isMe || data.list.isSelfClaimable}
-            <ClaimFilterChip />
-        {/if}
-        <SortBy />
-        {#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
-            <a class="paper-link" href={`/wishlists/${data.list.owner.username}/history`}>
-                {$t("wishes.history")}
-            </a>
-        {/if}
-    </div>
-    <div class="flex flex-row flex-wrap items-end gap-2">
-        {#if data.list.owner.isMe || data.list.isManager}
-            <ReorderChip onFinalize={handleReorderFinalize} bind:reordering />
-            <ManageListChip onclick={() => goto(`${new URL(page.url).pathname}/manage`)} />
-        {/if}
-    </div>
+<div class="paper-title-block">
+    <h1 class="h1">{pageTitle}</h1>
+    {#if data.list.description}
+        <div class="paper-sub">
+            <Markdown source={data.list.description} />
+        </div>
+    {/if}
 </div>
 
-{#if data.list.owner.isMe || data.list.isManager}
-    <div class="flex flex-wrap-reverse items-start justify-between gap-2 pb-4 print:hidden">
-        <ListStatistics {items} />
-        {#if data.listMode === "registry" || data.list.public}
-            <div class="flex flex-row gap-x-2">
-                {#if publicListUrl}
-                    <TokenCopy btnStyle="btn-xs" url={publicListUrl?.href}>
-                        <span class="text-sm">{$t("wishes.public-url")}</span>
-                    </TokenCopy>
-                {:else}
-                    <button class="btn btn-xs inset-ring-surface-500 inset-ring" onclick={getOrCreatePublicList}>
-                        {$t("wishes.share")}
-                    </button>
-                {/if}
-            </div>
-        {/if}
-    </div>
-{/if}
-
 {#if (data.list.owner.isMe || data.list.isManager) && approvals.length > 0}
-    <div class="flex flex-col space-y-4 pb-4 print:hidden">
-        <h2 class="h2">{$t("wishes.approvals")}</h2>
-        <div
-            class={isTileView ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "paper-list"}
-            data-testid="approvals-container"
-        >
+    <div class="pb-4 print:hidden">
+        <h2 class="paper-section">{$t("wishes.approvals")}</h2>
+        <div class="paper-list" data-testid="approvals-container">
             {#each approvals as item (item.id)}
                 <div in:receive={{ key: item.id }} out:send|local={{ key: item.id }} animate:flip={{ duration: 200 }}>
                     <ItemCard
                         groupId={data.list.groupId}
-                        {isTileView}
+                        isTileView={false}
                         {item}
                         onPublicList={!data.loggedInUser && data.list.public}
                         requireClaimEmail={data.requireClaimEmail}
@@ -336,7 +162,6 @@
                 </div>
             {/each}
         </div>
-        <hr class="hr" />
     </div>
 {/if}
 
@@ -351,77 +176,34 @@
         {/if}
     </div>
 {:else}
-    <!-- items -->
-    <div
-        class={isTileView ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "paper-list"}
-        data-testid="items-container"
-        onconsider={handleDnd}
-        onfinalize={handleDnd}
-        use:dndZone={{
-            items,
-            flipDurationMs,
-            dragDisabled: false,
-            dropTargetClasses: ["preset-outlined-primary-500"],
-            dropTargetStyle: {}
-        }}
-    >
-        <!-- Workaround for svelte-dnd not playing nicely with transitions -->
-        {#if reordering}
-            {#each items as item (item.id)}
-                <div animate:flip={{ duration: flipDurationMs }}>
-                    <ItemCard
-                        groupId={data.list.groupId}
-                        {isTileView}
-                        {item}
-                        onDecreasePriority={handleDecreasePriority}
-                        onIncreasePriority={handleIncreasePriority}
-                        onPriorityChange={handlePriorityInput}
-                        onPublicList={!data.loggedInUser && data.list.public}
-                        reorderActions
-                        requireClaimEmail={data.requireClaimEmail}
-                        showClaimForOwner={data.showClaimForOwner}
-                        showClaimedName={data.showClaimedName}
-                        showNameAcrossGroups={data.showNameAcrossGroups}
-                        showPublicClaimName={data.showPublicClaimName}
-                        user={data.loggedInUser}
-                        userCanManage={data.list.isManager}
-                    />
-                </div>
-            {/each}
-        {:else}
-            {#each items as item (item.id)}
-                <div
-                    id="item-{item.id}-wrapper"
-                    in:receive={{ key: item.id }}
-                    out:send={{ key: item.id }}
-                    animate:flip={{ duration: flipDurationMs }}
-                >
-                    <ItemCard
-                        groupId={data.list.groupId}
-                        isSelfClaimable={data.list.isSelfClaimable}
-                        {isTileView}
-                        {item}
-                        onPublicList={!data.loggedInUser && data.list.public}
-                        requireClaimEmail={data.requireClaimEmail}
-                        showClaimForOwner={data.showClaimForOwner}
-                        showClaimedName={data.showClaimedName}
-                        showNameAcrossGroups={data.showNameAcrossGroups}
-                        showPublicClaimName={data.showPublicClaimName}
-                        user={data.loggedInUser}
-                        userCanManage={data.list.isManager}
-                    />
-                </div>
-            {/each}
-        {/if}
+    <div class="paper-list" data-testid="items-container">
+        {#each items as item (item.id)}
+            <div
+                id="item-{item.id}-wrapper"
+                in:receive={{ key: item.id }}
+                out:send={{ key: item.id }}
+                animate:flip={{ duration: flipDurationMs }}
+            >
+                <ItemCard
+                    groupId={data.list.groupId}
+                    isSelfClaimable={data.list.isSelfClaimable}
+                    isTileView={false}
+                    {item}
+                    onPublicList={!data.loggedInUser && data.list.public}
+                    requireClaimEmail={data.requireClaimEmail}
+                    showClaimForOwner={data.showClaimForOwner}
+                    showClaimedName={data.showClaimedName}
+                    showNameAcrossGroups={data.showNameAcrossGroups}
+                    showPublicClaimName={data.showPublicClaimName}
+                    user={data.loggedInUser}
+                    userCanManage={data.list.isManager}
+                />
+            </div>
+        {/each}
     </div>
-
-    <!-- spacer -->
-    <footer class="print:hidden">
-        <div class="h-2"></div>
-    </footer>
 {/if}
 
-<!-- Add Item button -->
+<!-- Ligne « + Ajouter » -->
 {#if data.loggedInUser && (data.list.owner.isMe || data.list.isManager || data.suggestionsEnabled)}
     <button
         class="paper-add print:hidden"
@@ -437,6 +219,19 @@
     </button>
 {/if}
 
+{#if data.loggedInUser && !data.list.owner.isMe && !data.list.isManager}
+    {#if items.length > 0}
+        <p class="paper-hint">{$t("wishes.other-list-hint", { values: { name: data.list.owner.name } })}</p>
+    {/if}
+    <p class="paper-hint print:hidden">
+        <a class="paper-link" href={`/wishlists/${data.list.owner.username}/history`}>
+            {$t("wishes.history")} ›
+        </a>
+    </p>
+{:else if data.list.owner.isMe && items.length > 0}
+    <p class="paper-hint">{$t("wishes.my-list-hint")}</p>
+{/if}
+
 <svelte:head>
-    <title>{listName}</title>
+    <title>{pageTitle}</title>
 </svelte:head>
