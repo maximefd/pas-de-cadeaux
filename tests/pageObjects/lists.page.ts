@@ -24,7 +24,8 @@ export class ListsPage extends BasePage {
 
     // Les listes personnelles s'ouvrent par l'onglet « Mes envies » (/wishlists/me)
     async openMyList() {
-        await this.page.goto("/wishlists/me");
+        // comme un utilisateur : clic sur l'onglet (un page.goto pouvait être interrompu par une navigation en cours)
+        await this.page.getByRole("link", { name: "My wishes" }).click();
         await this.page.waitForURL(/\/lists\/(?!create)[^/]+$/);
         const listPage = new ListPage(this.page, { name: "My wishes" });
         await listPage.at();

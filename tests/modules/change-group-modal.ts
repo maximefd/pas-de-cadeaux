@@ -3,7 +3,7 @@ import { Modal } from "./modal";
 
 export class ChangeGroupModal extends Modal {
     constructor(page: Page) {
-        super(page, { submitButtonText: "Change Group" });
+        super(page, { modalName: "Select Group", submitButtonText: "Change Group" });
     }
 
     async selectGroup(name: string) {
