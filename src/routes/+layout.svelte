@@ -30,6 +30,7 @@
         "/forgot-password",
         "/reset-password",
         "/group-error",
+        "/bienvenue",
         /\/setup-wizard\/?.*/
     ];
 
