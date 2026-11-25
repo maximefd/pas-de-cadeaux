@@ -9,3 +9,5 @@ services:
             ORIGIN: http://localhost:3280
             # les tests créent leurs propres groupes : pas de groupe par défaut au premier démarrage
             SEED_DEFAULT_GROUP: "false"
+            # les comptes de test ne passent pas par l'écran de bienvenue (testé à part)
+            SKIP_WELCOME: "true"

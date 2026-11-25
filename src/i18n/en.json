@@ -533,6 +533,15 @@
         "you-claim-with": "You're getting it with {names}",
         "you-claim-with-others": "You're getting it with others",
         "cancel-claim": "Cancel",
-        "join-claim": "Chip in"
+        "join-claim": "Chip in",
+        "welcome-title": "Welcome.",
+        "welcome-text": "Everyone writes down what they would like. When you want to give a gift, you can easily pick from a list of ideas.",
+        "welcome-start": "Let’s go",
+        "my-empty-title": "What would you like?",
+        "my-empty-text": "Write down what you would like to receive. Your loved ones will see it and know what to give you.",
+        "add-my-wish": "Add a wish",
+        "other-empty-title": "{name} hasn’t added anything yet.",
+        "other-empty-text": "If you have one or more gift ideas that {name} would enjoy, add them to the list. Of course, {name} won’t see them.",
+        "add-idea-for": "Add an idea for {name}"
     }
 }
