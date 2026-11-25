@@ -1,6 +1,6 @@
 import type { RouteId } from "$app/types";
 import { env } from "$env/dynamic/private";
-import { defaultLang, type Lang } from "$lib/i18n";
+import { defaultLang, getClosestAvailableLocale, type Lang } from "$lib/i18n";
 import {
     deleteSessionTokenCookie,
     sessionCookieName,
@@ -13,7 +13,8 @@ import type { Handle, HandleServerError } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
     // Fork "Pas de cadeaux !" : tout le monde voit l'appli en français, quel que soit le navigateur
-    const lang = defaultLang;
+    // (PDC_LOCALE permet aux tests automatiques, écrits en anglais, de garder l'anglais)
+    const lang = env.PDC_LOCALE ? getClosestAvailableLocale([env.PDC_LOCALE]) : defaultLang;
 
     const sessionToken = event.cookies.get(sessionCookieName);
     if (!sessionToken) {

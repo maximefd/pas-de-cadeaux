@@ -13,7 +13,7 @@ export class ListsPage extends BasePage {
 
     constructor(page: Page) {
         super(page, "/lists");
-        this.header = page.getByRole("heading", { name: "Lists" });
+        this.header = page.getByRole("heading", { name: "Family & friends" });
         this.createButton = page.getByRole("button", { name: "Create List" });
         this.listContainer = page.getByTestId("list-container");
         this.listItems = this.listContainer.locator("a.card");
