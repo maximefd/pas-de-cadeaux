@@ -431,7 +431,7 @@
         "comment-add": "Add a comment",
         "comment-title": "Comments",
         "comment-empty": "Nobody has commented on this idea yet.",
-        "comment-delete": "Delete",
+        "comment-delete": "Delete my comment",
         "comment-hidden-hint": "Comments are never visible to the person the list is for.",
         "comment-placeholder": "Your comment (size, link, price…)",
         "comment-publish": "Post",

@@ -17,8 +17,8 @@
     const { item, user, isSelfClaimable, showClaimForOwner, onClose }: Props = $props();
     const t = getFormatter();
 
-    // La quantité n'a de sens que si plusieurs exemplaires sont souhaités (ou sans limite)
-    const showQuantity = $derived(item.quantity !== 1);
+    // On n'affiche la quantité que si plusieurs exemplaires sont souhaités, et le nombre de réservés que s'il y en a
+    const showQuantity = $derived((item.quantity ?? 1) > 1);
     const showClaimed = $derived(user?.id !== item.userId || showClaimForOwner);
 
     const edit = () =>
@@ -32,15 +32,16 @@
     {#if item.price || item.itemPrice}
         <p class="paper-detail-fact" data-testid="price">{formatPrice(item)}</p>
     {/if}
-    {#if showQuantity}
+    {#if showQuantity || (showClaimed && item.claimedQuantity > 0)}
         <p class="paper-detail-fact">
-            <span data-testid="quantity-desired">
-                {item.quantity
-                    ? $t("wishes.quantity-desired", { values: { quantity: item.quantity } })
-                    : $t("wishes.no-limit")}
-            </span>
-            {#if showClaimed}
-                · <span data-testid="quantity-claimed">
+            {#if showQuantity}
+                <span data-testid="quantity-desired">
+                    {$t("wishes.quantity-desired", { values: { quantity: item.quantity } })}
+                </span>
+            {/if}
+            {#if showQuantity && showClaimed && item.claimedQuantity > 0}·{/if}
+            {#if showClaimed && item.claimedQuantity > 0}
+                <span data-testid="quantity-claimed">
                     {$t("wishes.quantity-claimed", { values: { quantity: item.claimedQuantity } })}
                 </span>
             {/if}

@@ -83,7 +83,7 @@ export class ItemCard {
     }
 
     async assertNoQuantity() {
-        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText("No limit"));
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveCount(0));
     }
 
     // Une quantité de 1 n'est pas affichée (c'est le cas normal)

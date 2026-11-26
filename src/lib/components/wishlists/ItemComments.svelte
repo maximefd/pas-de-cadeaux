@@ -82,8 +82,13 @@
                     <span class="whitespace-pre-wrap">{comment.text}</span>
                 </p>
                 {#if comment.mine}
-                    <button class="paper-link paper-comment-delete" onclick={() => remove(comment.id)} type="button">
-                        {$t("wishes.comment-delete")}
+                    <button
+                        class="paper-link paper-comment-delete"
+                        aria-label={$t("wishes.comment-delete")}
+                        onclick={() => remove(comment.id)}
+                        type="button"
+                    >
+                        <iconify-icon icon="ion:close"></iconify-icon>
                     </button>
                 {/if}
             </div>
