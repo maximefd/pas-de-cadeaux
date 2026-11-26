@@ -24,6 +24,7 @@
         isTileView?: boolean;
         isSelfClaimable?: boolean;
         isNew?: boolean;
+        commentCount?: number;
     }
 
     export interface InternalItemCardProps {
@@ -46,6 +47,7 @@
         defaultImage: Snippet<[MessageFormatter, classes?: ClassValue]>;
         isSelfClaimable: boolean;
         isNew: boolean;
+        commentCount: number;
     }
 </script>
 
@@ -80,7 +82,8 @@
         onPriorityChange,
         isTileView = false,
         isSelfClaimable = false,
-        isNew = false
+        isNew = false,
+        commentCount = 0
     }: ItemCardProps = $props();
 
     const id = $props.id();
@@ -127,6 +130,7 @@
         >
             <ItemCard
                 {id}
+                {commentCount}
                 {defaultImage}
                 {groupId}
                 {isNew}

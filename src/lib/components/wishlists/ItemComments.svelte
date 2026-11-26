@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { invalidate } from "$app/navigation";
     import type { InternalItemCardProps } from "./ItemCard/ItemCard.svelte";
     import { getFormatter } from "$lib/i18n";
     import { toaster } from "$lib/components/toaster";
@@ -50,6 +51,7 @@
         sending = false;
         if (resp.ok) {
             comments = [...comments, await resp.json()];
+            await invalidate("data:items");
             draft = "";
             editing = false;
         } else {
@@ -61,6 +63,7 @@
         const resp = await fetch(`${url}/${id}`, { method: "DELETE" });
         if (resp.ok || resp.status === 404) {
             comments = comments.filter((c) => c.id !== id);
+            await invalidate("data:items");
         } else {
             toaster.error({ description: await resp.text() });
         }

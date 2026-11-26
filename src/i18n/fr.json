@@ -586,7 +586,8 @@
         "new-idea": "Nouvelle idée",
         "other-list-hint": "{name} ne voit pas les idées ajoutées par les autres. Quand tu comptes offrir une idée, clique sur « Réserver » : les autres verront que tu t'en occupes et pourront cliquer sur « Je participe ». Une fois le cadeau offert, clique sur « Retirer » puis sur « C'est offert ».",
         "my-list-hint": "Les idées et les commentaires de tes proches ne s'affichent pas ici : la surprise reste entière.",
-        "claims-intro": "Les idées que tu as réservées. Tes proches voient que tu t'en occupes, ils ne les achèteront pas mais peuvent participer avec toi. La personne concernée, elle, n'en sait rien."
+        "comment-count": "{count, plural, one {# commentaire} other {# commentaires}}",
+        "claims-intro": "Les idées que tu as réservées. Tes proches voient que tu t'en occupes et peuvent participer avec toi. La personne concernée, elle, n'en sait rien."
     },
     "unable-to-load-icons": "Impossible de charger les icônes.",
     "help": {
@@ -595,9 +596,11 @@
         "a1": "Tu vois les listes de tes proches. Eux ne voient pas ce que tu ajoutes pour eux : la surprise reste entière.",
         "q2": "Tu t’es trompé ?",
         "a2": "Clique sur « Annuler » juste après. Tu peux aussi retirer une idée quand tu veux.",
+        "q-visible": "Si j'ajoute une idée, les autres membres du groupe la voient ?",
+        "a-visible": "Oui, tout le monde voit l'idée que tu as proposée, sauf la personne concernée.",
         "q3": "Tu as oublié ton mot de passe ?",
         "a3": "Demande à la personne qui t’a invité : elle t’en donnera un nouveau.",
         "q-claim": "À quoi sert « Réserver » ?",
-        "a-claim": "À prévenir les autres que tu comptes offrir cette idée. Ils ne l'achèteront pas, mais ils peuvent cliquer sur « Je participe » pour l'offrir avec toi. La personne concernée ne voit jamais les réservations."
+        "a-claim": "À prévenir les autres que tu comptes offrir cette idée. Ils peuvent cliquer sur « Je participe » pour l'offrir avec toi. La personne concernée ne voit jamais les réservations."
     }
 }

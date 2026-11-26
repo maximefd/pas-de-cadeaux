@@ -101,17 +101,6 @@
             toaster.error({ description: $t("general.oops") });
         }
     };
-
-    const handlePurchased = async (purchased: boolean) => {
-        if (userClaim && isClaimOnList) {
-            const claimAPI = new ClaimAPI(userClaim?.claimId);
-            const resp = await (purchased ? claimAPI.purchase() : claimAPI.unpurchase());
-            if (resp.ok) {
-                toaster.info({ description: $t("wishes.purchased-toast", { values: { purchased } }) });
-                userClaim.purchased = purchased;
-            }
-        }
-    };
 </script>
 
 {#if isOwnItem && !showClaimForOwner}
@@ -137,24 +126,6 @@
                         <button {...props} class="btn btn-sm">{$t("wishes.update-claim")}</button>
                     {/snippet}
                 </ClaimItemModal>
-            {/if}
-            {#if showFor && userClaim.quantity > 0}
-                <!-- Dans « Mes réservations » seulement : noter que c'est acheté -->
-                <button
-                    class={[
-                        "btn btn-icon btn-icon-sm md:btn-icon-base",
-                        userClaim.purchased && "preset-tonal-secondary inset-ring-secondary-500 inset-ring",
-                        !userClaim.purchased && "inset-ring-secondary-500 inset-ring"
-                    ]}
-                    aria-label={userClaim.purchased ? $t("a11y.unpurchase") : $t("wishes.purchase")}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        handlePurchased?.(!userClaim.purchased);
-                    }}
-                    title={userClaim.purchased ? $t("a11y.unpurchase") : $t("wishes.purchase")}
-                >
-                    <iconify-icon icon={userClaim.purchased ? "ion:bag-check" : "ion:bag"}></iconify-icon>
-                </button>
             {/if}
         </div>
     {:else}
