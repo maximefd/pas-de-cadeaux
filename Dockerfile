@@ -1,4 +1,4 @@
-FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS base
+FROM node:24.22.3-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS base
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     COREPACK_HOME=/usr/bin/corepack
 RUN corepack enable pnpm
@@ -8,9 +8,7 @@ WORKDIR /usr/src/app
 # Build step
 FROM base AS build
 # Deps for prisma and building packages
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential python3 openssl git \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache build-base python3 openssl git
 
 # Build flags for compatibility on older systems
 ENV RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=-sse4.1,-sse4.2,-avx,-avx2" \
@@ -18,8 +16,9 @@ ENV RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=-sse4.1,-sse4.2,-avx,-avx2
     CXXFLAGS="-march=x86-64 -mtune=generic"
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-# Image Linux x64 uniquement : on n'installe pas les binaires macOS/arm64 prévus pour le développement
+# Image Alpine (musl) x64 uniquement : on n'installe pas les binaires macOS/arm64/glibc prévus pour le développement
 RUN sed -i '/darwin/d;/- arm64/d' pnpm-workspace.yaml \
+    && printf '    libc:\n        - musl\n' >> pnpm-workspace.yaml \
     && pnpm install --frozen-lockfile
 COPY prisma/ ./prisma/
 RUN pnpm prisma generate
@@ -63,9 +62,7 @@ ENV NODE_ENV=production \
     BODY_SIZE_LIMIT=5000000 \
     PRISMA_HIDE_UPDATE_MESSAGE=1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends openssl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache openssl
 
 COPY --from=caddy --chmod=755 /caddy /usr/bin/caddy
 COPY ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "entrypoint.sh", "prisma.config.ts", "Caddyfile", "./"]
