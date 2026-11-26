@@ -68,12 +68,18 @@
 </script>
 
 {#if canSee}
-    <section class="flex flex-col gap-2" data-testid="comments">
+    <section class="paper-comments" data-testid="comments">
+        <h3 class="paper-comments-title">
+            {$t("wishes.comment-title")}{comments.length ? ` (${comments.length})` : ""}
+        </h3>
+        {#if comments.length === 0}
+            <p class="paper-detail-fact">{$t("wishes.comment-empty")}</p>
+        {/if}
         {#each comments as comment (comment.id)}
-            <div class="flex items-start gap-2" data-testid="comment">
+            <div class="paper-comment" data-testid="comment">
                 <p class="grow wrap-break-word whitespace-pre-wrap">
+                    <strong class="paper-comment-author">{comment.authorName}</strong>
                     {comment.text}
-                    <span class="paper-detail-fact whitespace-nowrap">— {comment.authorName}</span>
                 </p>
                 <button
                     class="paper-link"
@@ -103,7 +109,7 @@
                 </button>
             </form>
         {:else}
-            <button class="paper-link -ms-2 self-start" onclick={() => (editing = true)} type="button">
+            <button class="paper-link paper-comment-add" onclick={() => (editing = true)} type="button">
                 {$t("wishes.comment-add")}
             </button>
         {/if}

@@ -799,3 +799,39 @@ header:has(> .paper-header) {
     margin: 0 0 0.5rem;
     max-width: 40rem;
 }
+
+/* Zone des commentaires d'une idée : un titre, un filet au-dessus, un commentaire par ligne signé en gras */
+.paper-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem 0 0.25rem;
+    border-top: 1px solid var(--paper-line);
+}
+.paper-comments-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--paper-mute);
+}
+.paper-comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--paper-accent-bg);
+    border-radius: 0.5rem;
+}
+.paper-comment-author {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9375rem;
+}
+.paper-comments .paper-comment-add {
+    align-self: flex-start;
+    color: var(--paper-accent);
+    font-weight: 600;
+}

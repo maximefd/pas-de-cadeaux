@@ -34,7 +34,7 @@ test("comments are signed, visible to other members and hidden from the list own
         itemId = new URL(otherPage.url()).searchParams.get("item-id")!;
 
         const detail = otherPage.getByTestId("item-detail");
-        await detail.getByRole("button", { name: "Comment", exact: true }).click();
+        await detail.getByRole("button", { name: "Add a comment", exact: true }).click();
         await detail.getByPlaceholder("Your comment (size, link, price…)").fill(commentText);
         await detail.getByRole("button", { name: "Post" }).click();
 
