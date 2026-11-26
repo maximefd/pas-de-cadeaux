@@ -4,6 +4,7 @@ import { getConfig } from "$lib/server/config";
 import { getFormatter } from "$lib/server/i18n";
 import { getById, getItems, type GetItemsOptions } from "$lib/server/list";
 import { getActiveMembership } from "$lib/server/group-membership";
+import { getNewItemIds, markListVisited } from "$lib/server/visits";
 import type { UserGroupMembership } from "$lib/generated/prisma/client";
 
 export const load = (async ({ params, url, locals, depends, cookies }) => {
@@ -53,6 +54,15 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
 
     depends("data:items");
 
+    // Idées arrivées depuis ta dernière visite (jamais sur ta propre liste), puis on note cette visite.
+    // Seules les idées déjà visibles pour toi sont comptées.
+    let newItemIds: number[] = [];
+    if (locals.user && list.owner.id !== locals.user.id) {
+        const visible = new Set(items.map((item) => item.id));
+        newItemIds = (await getNewItemIds(locals.user.id, list.id)).filter((id) => visible.has(id));
+        await markListVisited(locals.user.id, list.id);
+    }
+
     // Read view preference from cookie (for SSR to prevent flicker)
     const viewPreference = cookies.get("listViewPreference") as "list" | "tile" | undefined;
 
@@ -76,6 +86,7 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
                   activeGroupId: activeMembership!.groupId
               }
             : undefined,
+        newItemIds,
         listMode: config.listMode,
         showClaimedName: config.claims.showName,
         showNameAcrossGroups: config.claims.showNameAcrossGroups,

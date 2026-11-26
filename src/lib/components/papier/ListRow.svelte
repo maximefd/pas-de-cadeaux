@@ -24,14 +24,16 @@
 <a class="paper-person" href={`/lists/${list.id}`}>
     <span class="paper-person-name">
         <span data-testid="list-owner">{list.owner.name}</span>
+        {#if hasNewItems}
+            <span class="paper-new-dot" data-testid="new-ideas" title={$t("wishes.new-ideas")}>
+                <span class="sr-only">{$t("wishes.new-ideas")}</span>
+            </span>
+        {/if}
         {#if list.name}
             <small data-testid="list-name">{list.name}</small>
         {/if}
     </span>
     <small data-testid="item-count">
-        {#if hasNewItems}
-            <span class="paper-new-dot" aria-label={$t("wishes.new-ideas")}></span>
-        {/if}
         {count > 0 ? $t("wishes.idea-count", { values: { count } }) : $t("wishes.nothing-yet")}
         <span aria-hidden="true">›</span>
     </small>
