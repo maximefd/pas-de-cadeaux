@@ -573,6 +573,7 @@
         "idea-count": "{count, plural, one {# idée} other {# idées}}",
         "nothing-yet": "Rien encore",
         "new-ideas": "Nouvelles idées",
+        "new-idea": "Nouvelle idée",
         "other-list-hint": "{name} ne voit pas les idées ajoutées par les autres. Quand tu comptes offrir une idée, clique sur « Réserver » : les autres verront que tu t'en occupes et pourront cliquer sur « Je participe ». Une fois le cadeau offert, clique sur « Retirer » puis sur « C'est offert ».",
         "my-list-hint": "Les idées et les commentaires de tes proches ne s'affichent pas ici : la surprise reste entière.",
         "claims-intro": "Les idées que tu as réservées. Tes proches voient que tu t'en occupes, ils ne les achèteront pas mais peuvent participer avec toi. La personne concernée, elle, n'en sait rien."
