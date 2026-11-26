@@ -831,6 +831,7 @@ header:has(> .paper-header) {
     font-size: 0.9375rem;
 }
 .paper-comments .paper-comment-add {
+    margin-inline-start: -0.5rem;
     align-self: flex-start;
     color: var(--paper-accent);
     font-weight: 600;

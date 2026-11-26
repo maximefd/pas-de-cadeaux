@@ -77,9 +77,9 @@
         {/if}
         {#each comments as comment (comment.id)}
             <div class="paper-comment" data-testid="comment">
-                <p class="grow wrap-break-word whitespace-pre-wrap">
+                <p class="grow wrap-break-word">
                     <strong class="paper-comment-author">{comment.authorName}</strong>
-                    {comment.text}
+                    <span class="whitespace-pre-wrap">{comment.text}</span>
                 </p>
                 <button
                     class="paper-link"
