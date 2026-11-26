@@ -51,7 +51,7 @@ test("comments are signed, visible to other members and hidden from the list own
 
     await test.step("the owner never sees the comment, neither in the page nor through the API", async () => {
         await ownerPage.goto(`/lists/${listId}?item-id=${itemId}`);
-        await expect(ownerPage.getByTestId("item-detail")).toBeVisible();
+        await expect(ownerPage.getByTestId("item-detail")).toBeAttached();
         await expect(ownerPage.getByTestId("comments")).toHaveCount(0);
         await expect(ownerPage.getByText(commentText)).toHaveCount(0);
 

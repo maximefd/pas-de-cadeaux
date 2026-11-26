@@ -37,14 +37,15 @@ export class ItemCard {
 
     async openDrawer() {
         await this.card.click({ position: { x: 4, y: 4 } });
-        await expect(this.drawer).toBeVisible();
+        // Le détail peut être vide (rien à montrer au propriétaire) : on vérifie qu'il est présent
+        await expect(this.drawer).toBeAttached();
         return this.drawer;
     }
 
     async closeDrawer() {
         // Un second clic sur la ligne referme le détail
         await this.card.click({ position: { x: 4, y: 4 } });
-        await expect(this.drawer).toBeHidden();
+        await expect(this.drawer).toHaveCount(0);
     }
 
     private async inDrawer(check: (drawer: Locator) => Promise<void>) {
