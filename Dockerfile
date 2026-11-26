@@ -36,8 +36,7 @@ RUN pnpm build && pnpm prune --prod
 RUN P=node_modules/.pnpm \
     && rm -rf $P/@types+* $P/@electric-sql+pglite* \
     && find $P -path '*query_compiler_*' \( -name '*cockroachdb*' -o -name '*mysql*' -o -name '*postgresql*' -o -name '*sqlserver*' \) -delete \
-    && find node_modules/.pnpm \( -name '*.map' -o -name '*.d.ts' -o -name '*.d.mts' -o -name '*.d.cts' -o -iname '*.md' \) -type f -delete \
-    && find node_modules -xtype l -delete
+    && find node_modules/.pnpm \( -name '*.map' -o -name '*.d.ts' -o -name '*.d.mts' -o -name '*.d.cts' -o -iname '*.md' \) -type f -delete
 
 # Download Caddy from github
 FROM --platform=$BUILDPLATFORM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS caddy
