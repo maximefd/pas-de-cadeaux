@@ -18,7 +18,9 @@ ENV RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=-sse4.1,-sse4.2,-avx,-avx2
     CXXFLAGS="-march=x86-64 -mtune=generic"
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+# Image Linux x64 uniquement : on n'installe pas les binaires macOS/arm64 prévus pour le développement
+RUN sed -i '/darwin/d;/- arm64/d' pnpm-workspace.yaml \
+    && pnpm install --frozen-lockfile
 COPY prisma/ ./prisma/
 RUN pnpm prisma generate
 COPY src/ ./src
@@ -30,6 +32,13 @@ ARG SHA="unk"
 ENV VERSION=${VERSION}
 ENV SHA=${SHA}
 RUN pnpm build && pnpm prune --prod
+
+# Allègement des dépendances de production (la base est SQLite : on retire le reste)
+RUN P=node_modules/.pnpm \
+    && rm -rf $P/@types+* $P/@electric-sql+pglite* \
+    && find $P -path '*query_compiler_*' \( -name '*cockroachdb*' -o -name '*mysql*' -o -name '*postgresql*' -o -name '*sqlserver*' \) -delete \
+    && find node_modules/.pnpm \( -name '*.map' -o -name '*.d.ts' -o -name '*.d.mts' -o -name '*.d.cts' -o -iname '*.md' \) -type f -delete \
+    && find node_modules -xtype l -delete
 
 # Download Caddy from github
 FROM --platform=$BUILDPLATFORM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS caddy
@@ -64,10 +73,7 @@ COPY ./templates/ ./templates
 COPY ./prisma/ ./prisma/
 
 COPY --from=build /usr/src/app/node_modules ./node_modules
-RUN chmod +x entrypoint.sh && \
-    chmod +x /usr/bin/caddy && \
-    echo "verifyDepsBeforeRun: false" >> pnpm-workspace.yaml && \
-    pnpm install --frozen-lockfile --prod
+RUN chmod +x entrypoint.sh /usr/bin/caddy
 
 COPY --from=build /usr/src/app/build ./build/
 COPY --from=build /usr/src/app/src/lib/generated/prisma ./src/lib/generated/prisma
