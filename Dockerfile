@@ -67,13 +67,13 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends openssl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=caddy /caddy /usr/bin/caddy
+COPY --from=caddy --chmod=755 /caddy /usr/bin/caddy
 COPY ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "entrypoint.sh", "prisma.config.ts", "Caddyfile", "./"]
 COPY ./templates/ ./templates
 COPY ./prisma/ ./prisma/
 
 COPY --from=build /usr/src/app/node_modules ./node_modules
-RUN chmod +x entrypoint.sh /usr/bin/caddy
+RUN chmod +x entrypoint.sh
 
 COPY --from=build /usr/src/app/build ./build/
 COPY --from=build /usr/src/app/src/lib/generated/prisma ./src/lib/generated/prisma
