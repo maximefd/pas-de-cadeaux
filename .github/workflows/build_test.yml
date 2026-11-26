@@ -31,9 +31,15 @@ jobs:
                   file: ./Dockerfile
                   platforms: linux/amd64
                   push: false
+                  load: true
                   tags: wishlist:test
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+
+            - name: Taille de l'image
+              run: |
+                  docker image ls wishlist:test --format '{{.Repository}}:{{.Tag}} {{.Size}}'
+                  echo "Taille de l'image : $(docker image ls wishlist:test --format '{{.Size}}')" >> "$GITHUB_STEP_SUMMARY"
 
             - uses: pnpm/action-setup@v6
               name: Install pnpm
