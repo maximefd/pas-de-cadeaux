@@ -8,7 +8,6 @@
     import { flip } from "svelte/animate";
     import { quintOut } from "svelte/easing";
     import { crossfade } from "svelte/transition";
-    import { hash, hashItems, viewedItems } from "$lib/stores/viewed-items";
     import type { ItemOnListDTO } from "$lib/dtos/item-dto";
     import { ItemCreateHandler, ItemDeleteHandler, ItemsUpdateHandler, ItemUpdateHandler } from "$lib/events";
     import { getFormatter } from "$lib/i18n";
@@ -48,8 +47,19 @@
         }
     });
 
-    onMount(async () => {
-        await updateHash();
+    // Les idées « nouvelles » le restent tant que tu es sur la liste, même quand la visite est enregistrée
+    // (la page se recharge toute seule quand quelqu'un ajoute une idée).
+    // svelte-ignore state_referenced_locally
+    let newIds: Set<number> = $state(new Set(data.newItemIds));
+    // svelte-ignore state_referenced_locally
+    let newIdsListId = data.list.id;
+    $effect(() => {
+        if (newIdsListId !== data.list.id) {
+            newIdsListId = data.list.id;
+            newIds = new Set(data.newItemIds);
+        } else if (data.newItemIds.some((id) => !newIds.has(id))) {
+            newIds = new Set([...newIds, ...data.newItemIds]);
+        }
     });
 
     onMount(() => {
@@ -73,29 +83,20 @@
         );
     };
 
-    const updateHash = async () => {
-        const userHash = await hash(data.list.id);
-        viewedItems.current[userHash] = await hashItems(allItems);
-    };
-
     const subscribeToEvents = () => {
         const eventSource = new EventSource(`${page.url.pathname}/events`);
         ItemUpdateHandler.listen(eventSource, (data) => {
             updateItem(data);
-            updateHash();
         });
         ItemCreateHandler.listen(eventSource, (data) => {
             addItem(data);
-            updateHash();
         });
         ItemDeleteHandler.listen(eventSource, (data) => {
             removeItem(data);
-            updateHash();
         });
         ItemsUpdateHandler.listen(eventSource, () => {
             if (!data.list.owner.isMe) {
                 invalidate("data:items");
-                updateHash();
             }
         });
         return eventSource;
@@ -189,6 +190,7 @@
                     isSelfClaimable={data.list.isSelfClaimable}
                     isTileView={false}
                     {item}
+                    isNew={newIds.has(item.id)}
                     onPublicList={!data.loggedInUser && data.list.public}
                     requireClaimEmail={data.requireClaimEmail}
                     showClaimForOwner={data.showClaimForOwner}

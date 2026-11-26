@@ -23,6 +23,7 @@
         onPriorityChange?: (item: ItemOnListDTO, idx: string) => void;
         isTileView?: boolean;
         isSelfClaimable?: boolean;
+        isNew?: boolean;
     }
 
     export interface InternalItemCardProps {
@@ -44,6 +45,7 @@
         onPriorityChange?: (item: ItemOnListDTO, idx: string) => void;
         defaultImage: Snippet<[MessageFormatter, classes?: ClassValue]>;
         isSelfClaimable: boolean;
+        isNew: boolean;
     }
 </script>
 
@@ -77,7 +79,8 @@
         onDecreasePriority = undefined,
         onPriorityChange,
         isTileView = false,
-        isSelfClaimable = false
+        isSelfClaimable = false,
+        isNew = false
     }: ItemCardProps = $props();
 
     const id = $props.id();
@@ -126,6 +129,7 @@
                 {id}
                 {defaultImage}
                 {groupId}
+                {isNew}
                 {isSelfClaimable}
                 {item}
                 {onDecreasePriority}

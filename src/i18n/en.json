@@ -582,6 +582,7 @@
         "idea-count": "{count, plural, one {# idea} other {# ideas}}",
         "nothing-yet": "Nothing yet",
         "new-ideas": "New ideas",
+        "new-idea": "New idea",
         "other-list-hint": "{name} can't see ideas added by others. Once you've given a gift, click “Remove” then “It's been given” so others know it's taken.",
         "my-list-hint": "Ideas and comments from your family and friends don't show here. The surprise stays intact.",
         "claims-intro": "The ideas you claimed. Others see you are taking care of them and can join in. The person concerned never knows."

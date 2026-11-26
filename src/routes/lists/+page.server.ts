@@ -5,6 +5,7 @@ import { getActiveMembership } from "$lib/server/group-membership";
 import { getConfig } from "$lib/server/config";
 import { decodeMultiValueFilter } from "$lib/server/sort-filter-util";
 import { requireLogin } from "$lib/server/auth";
+import { getListIdsWithNews } from "$lib/server/visits";
 import { needsWelcome } from "$lib/server/onboarding";
 
 export const load = (async ({ url }) => {
@@ -149,6 +150,11 @@ export const load = (async ({ url }) => {
 
     const [myLists, otherLists] = await Promise.all([userListsQuery, otherListsQuery]);
 
+    const listsWithNews = await getListIdsWithNews(
+        user.id,
+        otherLists.map((list) => list.id)
+    );
+
     const users = [
         {
             id: user.id,
@@ -203,7 +209,8 @@ export const load = (async ({ url }) => {
                     owner: list.owner,
                     claimedCount,
                     itemCount,
-                    items
+                    items,
+                    hasNewItems: listsWithNews.has(list.id)
                 };
             }),
         users

@@ -16,3 +16,4 @@ playwright*
 .github
 .vscode
 dev-dist
+.git

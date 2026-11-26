@@ -28,6 +28,7 @@ model User {
     managedLists        ListManager[]
     itemComments        ItemComment[]
     onboardedAt         DateTime?
+    listVisits          ListVisit[]
 
     @@map("user")
 }
@@ -102,6 +103,7 @@ model List {
     items           ListItem[]
     claims          ItemClaim[]
     description     String?
+    visits          ListVisit[]
 
     @@index([ownerId])
     @@index([groupId])
@@ -159,6 +161,19 @@ model ItemComment {
     @@map("item_comment")
 }
 
+// Dernière visite d'une personne sur la liste d'un proche : sert à signaler les idées ajoutées depuis.
+model ListVisit {
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+    list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+    listId    String
+    visitedAt DateTime
+
+    @@id([userId, listId])
+    @@index([listId])
+    @@map("list_visit")
+}
+
 model ItemPrice {
     id       String @id @unique @default(uuid())
     value    Int
@@ -178,6 +193,8 @@ model ListItem {
     addedById    String
     approved     Boolean @default(true)
     displayOrder Int?
+    // Date d'ajout à la liste (vide pour les idées d'avant son introduction : jamais signalées comme nouvelles)
+    createdAt    DateTime? @default(now())
 
     @@unique([listId, itemId])
     @@index([listId])

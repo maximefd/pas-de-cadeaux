@@ -305,6 +305,10 @@
     line-height: 1;
 }
 .paper-new-dot {
+    display: inline-block;
+    vertical-align: middle;
+    margin-inline-start: 0.5rem;
+    flex: none;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
