@@ -237,6 +237,9 @@ model SignupToken {
     hashedToken String
     redeemed    Boolean  @default(false)
     groupId     String   @default("global")
+    // Lien de groupe : réutilisable, le jeton en clair est gardé pour pouvoir le réafficher à l'admin.
+    reusable    Boolean  @default(false)
+    token       String?
 
     @@index([hashedToken])
     @@map("signup_tokens")

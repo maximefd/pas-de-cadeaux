@@ -35,7 +35,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         if (isTokenTimeValid(signup.createdAt)) {
             return { valid: true, id: signup.id };
         }
-        error(400, $t("errors.invite-code-invalid"));
+        error(400, $t("errors.invite-code-expired"));
     }
     if (!config.enableSignup) {
         error(401, $t("errors.this-instance-is-invite-only"));
