@@ -34,13 +34,13 @@ test("comments are signed, visible to other members and hidden from the list own
         itemId = new URL(otherPage.url()).searchParams.get("item-id")!;
 
         const detail = otherPage.getByTestId("item-detail");
-        await detail.getByRole("button", { name: "Comment", exact: true }).click();
+        await detail.getByRole("button", { name: "Add a comment", exact: true }).click();
         await detail.getByPlaceholder("Your comment (size, link, price…)").fill(commentText);
         await detail.getByRole("button", { name: "Post" }).click();
 
         const comment = detail.getByTestId("comment").filter({ hasText: commentText });
         await expect(comment).toBeVisible();
-        await expect(comment).toContainText(`— ${other.name}`);
+        await expect(comment).toContainText(other.name);
     });
 
     await test.step("the comment is still there after a reload", async () => {
@@ -51,7 +51,7 @@ test("comments are signed, visible to other members and hidden from the list own
 
     await test.step("the owner never sees the comment, neither in the page nor through the API", async () => {
         await ownerPage.goto(`/lists/${listId}?item-id=${itemId}`);
-        await expect(ownerPage.getByTestId("item-detail")).toBeVisible();
+        await expect(ownerPage.getByTestId("item-detail")).toBeAttached();
         await expect(ownerPage.getByTestId("comments")).toHaveCount(0);
         await expect(ownerPage.getByText(commentText)).toHaveCount(0);
 
@@ -64,7 +64,7 @@ test("comments are signed, visible to other members and hidden from the list own
         expect(postResponse.status()).toBe(403);
     });
 
-    await test.step("another member can remove the comment", async () => {
+    await test.step("the author can remove the comment", async () => {
         const detail = otherPage.getByTestId("item-detail");
         await detail.getByTestId("comment").filter({ hasText: commentText }).getByRole("button").click();
         await expect(detail.getByTestId("comment").filter({ hasText: commentText })).toHaveCount(0);

@@ -37,13 +37,15 @@ export class ItemCard {
 
     async openDrawer() {
         await this.card.click({ position: { x: 4, y: 4 } });
-        await expect(this.drawer).toBeVisible();
+        // Le détail peut être vide (rien à montrer au propriétaire) : on vérifie qu'il est présent
+        await expect(this.drawer).toBeAttached();
         return this.drawer;
     }
 
     async closeDrawer() {
-        await this.drawer.getByRole("button", { name: "Close", exact: true }).click();
-        await expect(this.drawer).toBeHidden();
+        // Un second clic sur la ligne referme le détail
+        await this.card.click({ position: { x: 4, y: 4 } });
+        await expect(this.drawer).toHaveCount(0);
     }
 
     private async inDrawer(check: (drawer: Locator) => Promise<void>) {
@@ -83,7 +85,7 @@ export class ItemCard {
     }
 
     async assertNoQuantity() {
-        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveText("No limit"));
+        return this.inDrawer((d) => expect(d.getByTestId("quantity-desired")).toHaveCount(0));
     }
 
     // Une quantité de 1 n'est pas affichée (c'est le cas normal)
@@ -180,10 +182,9 @@ export class ItemCard {
         return this;
     }
 
-    // Modifier : bouton du pied du tiroir de détail
+    // Modifier : bouton de la ligne, à côté de « Retirer »
     async edit() {
-        const drawer = await this.openDrawer();
-        await drawer.getByRole("button", { name: "Edit" }).click();
+        await this.card.getByRole("button", { name: "Edit", exact: true }).click();
         await this.card.page().waitForURL(/\/items\/\d+\/edit/);
         return new EditItemPage(this.card.page());
     }

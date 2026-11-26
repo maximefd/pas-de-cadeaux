@@ -16,7 +16,9 @@ export const DELETE: RequestHandler = async ({ params }) => {
     }
     await requireCommentAccess(user, params.listId, itemId);
 
-    const { count } = await client.itemComment.deleteMany({ where: { id: params.commentId, itemId } });
+    const { count } = await client.itemComment.deleteMany({
+        where: { id: params.commentId, itemId, authorId: user.id }
+    });
     if (count === 0) {
         error(404, $t("errors.item-not-found"));
     }
