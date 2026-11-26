@@ -66,9 +66,11 @@ export const createUser = async (user: UserMinimal, role: Role, password: string
     }
 
     if (signupTokenId) {
-        await client.signupToken.update({
+        // Un lien de groupe (réutilisable) reste valable pour les inscriptions suivantes.
+        await client.signupToken.updateMany({
             where: {
-                id: signupTokenId
+                id: signupTokenId,
+                reusable: false
             },
             data: {
                 redeemed: true

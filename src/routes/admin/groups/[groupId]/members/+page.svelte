@@ -4,7 +4,7 @@
     import { page } from "$app/state";
     import { GroupAPI } from "$lib/api/groups";
     import type { PageData, PageProps } from "./$types";
-    import InviteUser from "$lib/components/admin/InviteUser.svelte";
+    import TokenCopy from "$lib/components/TokenCopy.svelte";
     import ClearListsButton from "$lib/components/admin/Actions/ClearListsButton.svelte";
     import { enhance } from "$app/forms";
     import Alert from "$lib/components/Alert.svelte";
@@ -45,10 +45,49 @@
                 </button>
             {/snippet}
         </AddUserModal>
+    </div>
 
-        <form method="POST" use:enhance>
-            <InviteUser config={data.config} defaultGroup={data.group} />
-        </form>
+    <div class="flex flex-col gap-2 pb-4">
+        <h2 class="h5">{$t("admin.group-invite-title")}</h2>
+        {#if data.invite && !data.invite.expired}
+            {@const inviteUrl = new URL(`/signup?token=${data.invite.token}`, page.url).href}
+            <p class="subtext">
+                {$t("admin.group-invite-help", {
+                    values: {
+                        date: new Date(data.invite.expiresAt).toLocaleString("fr-FR", {
+                            dateStyle: "long",
+                            timeStyle: "short"
+                        })
+                    }
+                })}
+            </p>
+            <div class="flex flex-row flex-wrap items-center gap-2">
+                <TokenCopy url={inviteUrl}>{inviteUrl}</TokenCopy>
+            </div>
+        {:else if data.invite}
+            <p class="subtext">{$t("admin.group-invite-expired")}</p>
+        {:else}
+            <p class="subtext">{$t("admin.group-invite-none")}</p>
+        {/if}
+        <div class="flex flex-wrap gap-2">
+            <form
+                method="POST"
+                action="?/createLink"
+                use:enhance={() =>
+                    async ({ update }) => {
+                        await update();
+                    }}
+            >
+                <button class="preset-filled-primary-500 btn" type="submit">
+                    {data.invite ? $t("admin.group-invite-renew") : $t("admin.group-invite-create")}
+                </button>
+            </form>
+            {#if data.invite}
+                <form method="POST" action="?/revokeLink" use:enhance>
+                    <button class="preset-tonal btn" type="submit">{$t("admin.group-invite-revoke")}</button>
+                </form>
+            {/if}
+        </div>
     </div>
 {:else}
     <Alert type="info">

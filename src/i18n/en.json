@@ -30,6 +30,13 @@
         "add-item": "add item"
     },
     "admin": {
+        "group-invite-title": "Group invitation link",
+        "group-invite-help": "Share this link with everyone you want to invite to this group: it works for several signups, until {date}.",
+        "group-invite-expired": "The link has expired. Generate a new one.",
+        "group-invite-none": "There is no link for this group yet. Create one and share it. It will work for 72 hours.",
+        "group-invite-create": "Create invitation link",
+        "group-invite-renew": "Generate a new link",
+        "group-invite-revoke": "Deactivate link",
         "about": "About",
         "account": "My account",
         "actions": "Actions",
@@ -243,6 +250,7 @@
         "invalid-credentials": "Invalid credentials!",
         "invalid-email": "Please provide a valid email address.",
         "invite-code-invalid": "Invite code is either invalid or already been used",
+        "invite-code-expired": "This invitation link has expired (it is valid for 72 hours). Ask the person who sent it for a new one.",
         "invite-failed-to-send": "Invite failed to send: {errorMessage}",
         "item-id-must-be-a-number": "Item id must be a number",
         "item-invalid-ownership": "Item does not belong to {username}",

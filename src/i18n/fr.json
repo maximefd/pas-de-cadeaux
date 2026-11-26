@@ -7,6 +7,7 @@
         "error-title": "Oups",
         "error-text": "Quelque chose s'est mal passé.",
         "invite-code-invalid": "Ce lien d'invitation a déjà servi ou n'est plus valable. Demande-en un nouveau à la personne qui te l'a envoyé.",
+        "invite-code-expired": "Ce lien d'invitation a expiré (il est valable 72 heures). Demande-en un nouveau à la personne qui te l'a envoyé.",
         "item-name-required": "Donne un nom à l'idée.",
         "item-id-must-be-a-number": "L'identifiant doit être un nombre",
         "incorrect-password": "Mot de passe incorrect",
@@ -87,6 +88,13 @@
         "invite-title": "Il te faut un lien d'invitation"
     },
     "admin": {
+        "group-invite-title": "Lien d'invitation du cercle",
+        "group-invite-help": "Envoie ce lien à toutes les personnes que tu veux inviter dans ce cercle : il sert à plusieurs inscriptions. Il marche jusqu'au {date}.",
+        "group-invite-expired": "Le lien a expiré. Génère-en un nouveau.",
+        "group-invite-none": "Il n'y a pas encore de lien pour ce cercle. Crée-le, puis partage-le (par exemple dans le groupe WhatsApp). Il marchera 72 heures.",
+        "group-invite-create": "Créer le lien d'invitation",
+        "group-invite-renew": "Générer un nouveau lien",
+        "group-invite-revoke": "Désactiver le lien",
         "version": "Version : <a class=\"{class}\" href=\"{href}\">{version}</a>",
         "groups": "Groupes",
         "default-group": "Groupe par défaut",

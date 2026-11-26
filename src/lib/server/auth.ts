@@ -10,7 +10,8 @@ import { getFormatter } from "$lib/server/i18n";
 import { Role } from "$lib/schema";
 
 const EXPIRES_IN = 1000 * 60 * 60 * 24 * 30; // 30 days
-const REFRESH_TIME = 1000 * 60 * 60 * 24 * 15; // 15 days
+// Renouvellement glissant : la session est prolongée à chaque visite (au plus une fois par jour).
+const REFRESH_TIME = EXPIRES_IN - 1000 * 60 * 60 * 24;
 const origin = new URL(env.ORIGIN || "localhost:3280");
 
 export const sessionCookieName = "wishlist_session";
