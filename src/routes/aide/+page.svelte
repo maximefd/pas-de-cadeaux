@@ -2,7 +2,7 @@
     import { getFormatter } from "$lib/i18n";
 
     const t = getFormatter();
-    const questions = ["1", "-claim", "2", "3"];
+    const questions = ["1", "-visible", "-claim", "2", "3"];
 </script>
 
 <!-- Aide : quelques questions, une phrase de réponse chacune (maquette d'accueil). -->

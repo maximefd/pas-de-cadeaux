@@ -4,6 +4,7 @@ import { getConfig } from "$lib/server/config";
 import { getFormatter } from "$lib/server/i18n";
 import { getById, getItems, type GetItemsOptions } from "$lib/server/list";
 import { getActiveMembership } from "$lib/server/group-membership";
+import { client } from "$lib/server/prisma";
 import { getNewItemIds, markListVisited } from "$lib/server/visits";
 import type { UserGroupMembership } from "$lib/generated/prisma/client";
 
@@ -63,6 +64,20 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
         await markListVisited(locals.user.id, list.id);
     }
 
+    // Nombre de commentaires par idée : jamais pour la personne concernée ni ses gestionnaires
+    // (sauf liste auto-réservable), comme pour les commentaires eux-mêmes.
+    const commentCounts: Record<number, number> = {};
+    const ownerSide =
+        list.owner.id === locals.user?.id || list.managers.some(({ userId }) => userId === locals.user?.id);
+    if (locals.user && (isSelfClaimable || !ownerSide) && items.length > 0) {
+        const grouped = await client.itemComment.groupBy({
+            by: ["itemId"],
+            where: { itemId: { in: items.map((item) => item.id) } },
+            _count: { _all: true }
+        });
+        for (const row of grouped) commentCounts[row.itemId] = row._count._all;
+    }
+
     // Read view preference from cookie (for SSR to prevent flicker)
     const viewPreference = cookies.get("listViewPreference") as "list" | "tile" | undefined;
 
@@ -87,6 +102,7 @@ export const load = (async ({ params, url, locals, depends, cookies }) => {
               }
             : undefined,
         newItemIds,
+        commentCounts,
         listMode: config.listMode,
         showClaimedName: config.claims.showName,
         showNameAcrossGroups: config.claims.showNameAcrossGroups,

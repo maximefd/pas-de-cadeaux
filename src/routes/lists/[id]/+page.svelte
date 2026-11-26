@@ -186,11 +186,12 @@
                 animate:flip={{ duration: flipDurationMs }}
             >
                 <ItemCard
+                    commentCount={data.commentCounts[item.id] ?? 0}
                     groupId={data.list.groupId}
+                    isNew={newIds.has(item.id)}
                     isSelfClaimable={data.list.isSelfClaimable}
                     isTileView={false}
                     {item}
-                    isNew={newIds.has(item.id)}
                     onPublicList={!data.loggedInUser && data.list.public}
                     requireClaimEmail={data.requireClaimEmail}
                     showClaimForOwner={data.showClaimForOwner}

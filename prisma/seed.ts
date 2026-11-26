@@ -41,15 +41,10 @@ const groups = async () => {
     const groupCount = await prisma.group.count();
 
     if (groupCount === 0) {
-        // Fork "Pas de cadeaux !" : groupes « Famille » (groupe par défaut) et « Amis »
+        // Fork "Pas de cadeaux !" : un seul cercle « Family » (groupe par défaut)
         const defaultGroup = await prisma.group.create({
             data: {
-                name: "Famille"
-            }
-        });
-        await prisma.group.create({
-            data: {
-                name: "Amis"
+                name: "Family"
             }
         });
 
@@ -72,7 +67,7 @@ const groups = async () => {
             });
         }
 
-        // Les nouveaux comptes (sans invitation) rejoignent « Famille » ; le premier compte aussi
+        // Les nouveaux comptes (sans invitation) rejoignent « Family » ; le premier compte aussi
         if (process.env.SEED_DEFAULT_GROUP !== "false") {
             await prisma.systemConfig.upsert({
                 where: { key_groupId: { key: "defaultGroup", groupId: "global" } },

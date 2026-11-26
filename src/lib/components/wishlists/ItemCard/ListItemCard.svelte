@@ -75,6 +75,11 @@
                 {/if}
             </div>
         {/if}
+        {#if props.commentCount > 0 && !expanded}
+            <div class="paper-by" data-testid="comment-count">
+                {$t("wishes.comment-count", { values: { count: props.commentCount } })}
+            </div>
+        {/if}
         {#if !props.reorderActions}
             <div class="paper-claimed-line print:hidden">
                 <ClaimButtons isClaimableOrClaimed={() => {}} {...props} />

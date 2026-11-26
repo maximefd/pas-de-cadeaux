@@ -624,7 +624,7 @@ header:has(> .paper-header) {
 .paper-bottom-tabs {
     background: var(--paper-bg);
     border-top: 1px solid var(--paper-line);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.25rem);
 }
 .paper-bottom-tabs > div {
     display: flex;
@@ -836,6 +836,7 @@ header:has(> .paper-header) {
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.5rem 0;
+    font-size: 0.9375rem;
     border-bottom: 1px solid var(--paper-line);
 }
 .paper-comment-delete {
