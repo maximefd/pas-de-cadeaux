@@ -39,6 +39,7 @@ jobs:
             - name: Taille de l'image
               run: |
                   docker image ls wishlist:test --format '{{.Repository}}:{{.Tag}} {{.Size}}'
+                  docker history --no-trunc=false --format '{{.Size}}\t{{.CreatedBy}}' wishlist:test | cut -c1-150
                   echo "Taille de l'image : $(docker image ls wishlist:test --format '{{.Size}}')" >> "$GITHUB_STEP_SUMMARY"
 
             - uses: pnpm/action-setup@v6
