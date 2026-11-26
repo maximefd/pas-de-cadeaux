@@ -610,25 +610,33 @@ header:has(> .paper-header) {
 }
 .paper-bottom-tabs > div {
     display: flex;
+    gap: 0.5rem;
     max-width: 36rem;
     margin-inline: auto;
+    padding: 0.5rem 0.75rem;
 }
 .paper-bottom-tabs a {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 3.5rem;
+    min-height: 3rem;
+    padding-inline: 0.5rem;
+    text-align: center;
     font-size: 0.9375rem;
-    color: var(--paper-mute);
+    font-weight: 500;
+    color: var(--paper-fg);
     text-decoration: none;
+    border: 1.5px solid var(--paper-fg);
+    border-radius: 0.75rem;
 }
 .paper-bottom-tabs a[aria-current="page"] {
-    color: var(--paper-fg);
+    background: var(--paper-fg);
+    color: var(--paper-bg);
     font-weight: 600;
 }
-.paper-bottom-tabs a:hover {
-    color: var(--paper-fg);
+.paper-bottom-tabs a:hover:not([aria-current="page"]) {
+    background: var(--paper-line);
 }
 
 /* Lien « ‹ Retour » au-dessus d'un titre */
