@@ -11,7 +11,7 @@
 
     --paper-bg: oklch(0.975 0.012 85);
     --paper-fg: oklch(0.27 0.015 70);
-    --paper-mute: oklch(0.52 0.015 70);
+    --paper-mute: oklch(0.47 0.015 70);
     --paper-line: oklch(0.9 0.014 80);
     --paper-accent: oklch(0.42 0.07 255);
     --paper-accent-bg: oklch(0.94 0.02 255);
@@ -57,7 +57,25 @@
 }
 
 [data-theme="wishlist"] {
-    line-height: 1.5;
+    line-height: 1.55;
+}
+
+/* Lisibilité : texte de base un peu plus grand (17 px au lieu de 16 px), les tailles en rem suivent */
+html[data-theme="wishlist"] {
+    font-size: 106.25%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Lisibilité : le focus clavier se voit partout, avec la même couleur */
+[data-theme="wishlist"] :is(a, button, summary, [role="button"], [tabindex]):focus-visible {
+    outline: 2px solid var(--paper-accent);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+[data-theme="wishlist"] ::placeholder {
+    color: var(--paper-mute);
+    opacity: 1;
 }
 
 /* Titres plus sobres */
@@ -119,7 +137,7 @@
 }
 .paper-note {
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     margin-top: 0.125rem;
     overflow-wrap: anywhere;
 }
@@ -128,7 +146,7 @@
 }
 .paper-by {
     color: var(--paper-mute);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     margin-top: 0.125rem;
 }
 .paper-by span {
@@ -151,7 +169,7 @@
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.25rem;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
 }
 
 /* Détail d'une idée, déplié sous sa ligne */
@@ -168,11 +186,11 @@
     padding-inline-start: 0.75rem;
     border-inline-start: 2px solid var(--paper-line);
     cursor: default;
-    font-size: 0.9375rem;
+    font-size: 1rem;
 }
 .paper-detail-fact {
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     margin: 0;
 }
 .paper-detail-actions {
@@ -190,9 +208,9 @@
     box-shadow: none;
     --tw-inset-ring-shadow: 0 0 #0000;
     color: var(--paper-accent);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 400;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;
     text-decoration: none;
@@ -222,7 +240,7 @@
 }
 .paper-row .text-subtle {
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
 }
 
 /* Ligne « + Ajouter une idée » */
@@ -296,7 +314,7 @@
     align-items: center;
     gap: 0.375rem;
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     white-space: nowrap;
 }
 .paper-chevron {
@@ -316,7 +334,7 @@
 }
 .paper-approvals {
     color: var(--paper-accent);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     margin-top: 0.125rem;
 }
 .paper-empty {
@@ -325,7 +343,7 @@
     padding: 1.25rem 0;
 }
 .paper-section {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -358,7 +376,7 @@
 }
 .paper-fields .label,
 .paper-account .label {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     color: var(--paper-mute);
 }
 .paper-fields .input,
@@ -610,25 +628,34 @@ header:has(> .paper-header) {
 }
 .paper-bottom-tabs > div {
     display: flex;
+    gap: 0.5rem;
     max-width: 36rem;
     margin-inline: auto;
+    padding: 0.5rem max(1.25rem, env(safe-area-inset-left, 0px)) 0.5rem max(1.25rem, env(safe-area-inset-right, 0px));
 }
+/* Chaque onglet est un vrai bouton : contour net, l'onglet actif est rempli */
 .paper-bottom-tabs a {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 3.5rem;
-    font-size: 0.9375rem;
-    color: var(--paper-mute);
+    min-height: 3rem;
+    font-size: 1rem;
+    color: var(--paper-fg);
     text-decoration: none;
+    border: 1.5px solid var(--paper-mute);
+    border-radius: 0.75rem;
+    background: transparent;
 }
 .paper-bottom-tabs a[aria-current="page"] {
-    color: var(--paper-fg);
+    color: var(--paper-bg);
+    background: var(--paper-accent);
+    border-color: var(--paper-accent);
     font-weight: 600;
 }
-.paper-bottom-tabs a:hover {
-    color: var(--paper-fg);
+.paper-bottom-tabs a:not([aria-current="page"]):hover {
+    background: var(--paper-accent-bg);
+    border-color: var(--paper-accent);
 }
 
 /* Lien « ‹ Retour » au-dessus d'un titre */
@@ -636,7 +663,7 @@ header:has(> .paper-header) {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     color: var(--paper-mute);
     text-decoration: none;
 }
@@ -675,7 +702,7 @@ header:has(> .paper-header) {
     align-items: center;
     gap: 0.375rem;
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     white-space: nowrap;
 }
 .paper-person .paper-person-name small {
@@ -685,7 +712,7 @@ header:has(> .paper-header) {
 /* Petite phrase d'aide sous une liste */
 .paper-hint {
     color: var(--paper-mute);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     margin: 1rem 0 0;
 }
 .paper-coach {
@@ -694,7 +721,7 @@ header:has(> .paper-header) {
     border-left: 3px solid var(--paper-accent);
     background: var(--paper-accent-bg);
     border-radius: 0 0.5rem 0.5rem 0;
-    font-size: 0.9375rem;
+    font-size: 1rem;
 }
 
 /* Aide : questions dépliables */
@@ -761,9 +788,9 @@ header:has(> .paper-header) {
 
 /* Lien « ‹ Retour » au-dessus du titre */
 .paper-link.paper-back {
-    font-size: 0.9375rem;
+    font-size: 1rem;
     padding-inline: 0;
-    min-height: 2rem;
+    min-height: 2.75rem;
 }
 .paper-link.paper-back:hover {
     background: transparent;
@@ -774,14 +801,62 @@ header:has(> .paper-header) {
 .paper-field-hint {
     margin-top: -0.875rem;
     color: var(--paper-mute);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     line-height: 1.4;
 }
 
 /* Phrase d'explication en haut d'une page (ex. Mes réservations) */
 .paper-intro {
     color: var(--paper-mute);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     margin: 0 0 0.5rem;
     max-width: 40rem;
+}
+
+/* Zone des commentaires d'une idée : un titre, un filet au-dessus, un commentaire par ligne signé en gras */
+.paper-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.25rem;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid var(--paper-line);
+}
+.paper-comments-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--paper-mute);
+}
+.paper-comment {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-comment-delete {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+}
+.paper-comment-author {
+    margin-inline-end: 0.375rem;
+    font-weight: 600;
+}
+.paper-comments .paper-comment-add {
+    margin-inline-start: -0.5rem;
+    align-self: flex-start;
+    color: var(--paper-accent);
+    font-weight: 600;
+}
+
+/* Actions de la ligne (Retirer, Modifier) : l'une sous l'autre pour laisser la place au titre */
+.paper-row .paper-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0;
 }

@@ -148,7 +148,7 @@
             />
         </div>
         {#if open && !reorderActions}
-            <ItemDetail {isSelfClaimable} {item} onClose={toggleDetail} {showClaimForOwner} {user} />
+            <ItemDetail {isSelfClaimable} {item} {showClaimForOwner} {user} />
         {/if}
     </div>
 {/if}

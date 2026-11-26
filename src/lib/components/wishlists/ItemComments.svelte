@@ -68,21 +68,29 @@
 </script>
 
 {#if canSee}
-    <section class="flex flex-col gap-2" data-testid="comments">
+    <section class="paper-comments" data-testid="comments">
+        <h3 class="paper-comments-title">
+            {$t("wishes.comment-title")}{comments.length ? ` (${comments.length})` : ""}
+        </h3>
+        {#if comments.length === 0}
+            <p class="paper-detail-fact">{$t("wishes.comment-empty")}</p>
+        {/if}
         {#each comments as comment (comment.id)}
-            <div class="flex items-start gap-2" data-testid="comment">
-                <p class="grow wrap-break-word whitespace-pre-wrap">
-                    {comment.text}
-                    <span class="paper-detail-fact whitespace-nowrap">— {comment.authorName}</span>
+            <div class="paper-comment" data-testid="comment">
+                <p class="grow wrap-break-word">
+                    <strong class="paper-comment-author">{comment.authorName}</strong>
+                    <span class="whitespace-pre-wrap">{comment.text}</span>
                 </p>
-                <button
-                    class="paper-link"
-                    aria-label={$t("wishes.comment-delete")}
-                    onclick={() => remove(comment.id)}
-                    type="button"
-                >
-                    <iconify-icon icon="ion:close"></iconify-icon>
-                </button>
+                {#if comment.mine}
+                    <button
+                        class="paper-link paper-comment-delete"
+                        aria-label={$t("wishes.comment-delete")}
+                        onclick={() => remove(comment.id)}
+                        type="button"
+                    >
+                        <iconify-icon icon="ion:close"></iconify-icon>
+                    </button>
+                {/if}
             </div>
         {/each}
 
@@ -103,7 +111,7 @@
                 </button>
             </form>
         {:else}
-            <button class="paper-link -ms-2 self-start" onclick={() => (editing = true)} type="button">
+            <button class="paper-link paper-comment-add" onclick={() => (editing = true)} type="button">
                 {$t("wishes.comment-add")}
             </button>
         {/if}
