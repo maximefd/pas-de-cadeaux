@@ -1,4 +1,4 @@
-FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS base
+FROM node:24.22.3-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS base
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     COREPACK_HOME=/usr/bin/corepack
 RUN corepack enable pnpm
@@ -8,9 +8,7 @@ WORKDIR /usr/src/app
 # Build step
 FROM base AS build
 # Deps for prisma and building packages
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential python3 openssl git \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache build-base python3 openssl git
 
 # Build flags for compatibility on older systems
 ENV RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=-sse4.1,-sse4.2,-avx,-avx2" \
@@ -18,7 +16,10 @@ ENV RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=-sse4.1,-sse4.2,-avx,-avx2
     CXXFLAGS="-march=x86-64 -mtune=generic"
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+# Image Alpine (musl) x64 uniquement : on n'installe pas les binaires macOS/arm64/glibc prévus pour le développement
+RUN sed -i '/darwin/d;/- arm64/d' pnpm-workspace.yaml \
+    && printf '    libc:\n        - musl\n' >> pnpm-workspace.yaml \
+    && pnpm install --frozen-lockfile
 COPY prisma/ ./prisma/
 RUN pnpm prisma generate
 COPY src/ ./src
@@ -30,6 +31,12 @@ ARG SHA="unk"
 ENV VERSION=${VERSION}
 ENV SHA=${SHA}
 RUN pnpm build && pnpm prune --prod
+
+# Allègement des dépendances de production (la base est SQLite : on retire le reste)
+RUN P=node_modules/.pnpm \
+    && rm -rf $P/@types+* $P/@electric-sql+pglite* \
+    && find $P -path '*query_compiler_*' \( -name '*cockroachdb*' -o -name '*mysql*' -o -name '*postgresql*' -o -name '*sqlserver*' \) -delete \
+    && find node_modules/.pnpm \( -name '*.map' -o -name '*.d.ts' -o -name '*.d.mts' -o -name '*.d.cts' -o -iname '*.md' \) -type f -delete
 
 # Download Caddy from github
 FROM --platform=$BUILDPLATFORM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS caddy
@@ -54,20 +61,15 @@ ENV NODE_ENV=production \
     BODY_SIZE_LIMIT=5000000 \
     PRISMA_HIDE_UPDATE_MESSAGE=1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends openssl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache openssl
 
-COPY --from=caddy /caddy /usr/bin/caddy
+COPY --from=caddy --chmod=755 /caddy /usr/bin/caddy
 COPY ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "entrypoint.sh", "prisma.config.ts", "Caddyfile", "./"]
 COPY ./templates/ ./templates
 COPY ./prisma/ ./prisma/
 
 COPY --from=build /usr/src/app/node_modules ./node_modules
-RUN chmod +x entrypoint.sh && \
-    chmod +x /usr/bin/caddy && \
-    echo "verifyDepsBeforeRun: false" >> pnpm-workspace.yaml && \
-    pnpm install --frozen-lockfile --prod
+RUN chmod +x entrypoint.sh
 
 COPY --from=build /usr/src/app/build ./build/
 COPY --from=build /usr/src/app/src/lib/generated/prisma ./src/lib/generated/prisma

@@ -48,6 +48,11 @@
             {:else}
                 <span id={`${props.id}-name`} data-testid="name">{item.name}</span>
             {/if}
+            {#if props.isNew}
+                <span class="paper-new-dot" data-testid="new-idea" title={$t("wishes.new-idea")}>
+                    <span class="sr-only">{$t("wishes.new-idea")}</span>
+                </span>
+            {/if}
         </div>
         {#if item.note}
             <div
