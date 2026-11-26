@@ -42,7 +42,8 @@ export class ItemCard {
     }
 
     async closeDrawer() {
-        await this.drawer.getByRole("button", { name: "Close", exact: true }).click();
+        // Un second clic sur la ligne referme le détail
+        await this.card.click({ position: { x: 4, y: 4 } });
         await expect(this.drawer).toBeHidden();
     }
 

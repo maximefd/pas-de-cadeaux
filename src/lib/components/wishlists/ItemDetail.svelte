@@ -10,11 +10,9 @@
     import type { InternalItemCardProps } from "./ItemCard/ItemCard.svelte";
     import ItemComments from "./ItemComments.svelte";
 
-    interface Props extends Pick<InternalItemCardProps, "item" | "user" | "isSelfClaimable" | "showClaimForOwner"> {
-        onClose: VoidFunction;
-    }
+    type Props = Pick<InternalItemCardProps, "item" | "user" | "isSelfClaimable" | "showClaimForOwner">;
 
-    const { item, user, isSelfClaimable, showClaimForOwner, onClose }: Props = $props();
+    const { item, user, isSelfClaimable, showClaimForOwner }: Props = $props();
     const t = getFormatter();
 
     // On n'affiche la quantité que si plusieurs exemplaires sont souhaités, et le nombre de réservés que s'il y en a
@@ -50,10 +48,9 @@
 
     <ItemComments {isSelfClaimable} {item} {user} />
 
-    <div class="paper-detail-actions">
-        {#if item.approved && userCanEdit(item, user?.id)}
+    {#if item.approved && userCanEdit(item, user?.id)}
+        <div class="paper-detail-actions">
             <button class="paper-link" onclick={edit} type="button">{$t("wishes.edit")}</button>
-        {/if}
-        <button class="paper-link" onclick={onClose} type="button">{$t("general.close-detail")}</button>
-    </div>
+        </div>
+    {/if}
 </div>
