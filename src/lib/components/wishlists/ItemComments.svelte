@@ -81,14 +81,11 @@
                     <strong class="paper-comment-author">{comment.authorName}</strong>
                     <span class="whitespace-pre-wrap">{comment.text}</span>
                 </p>
-                <button
-                    class="paper-link"
-                    aria-label={$t("wishes.comment-delete")}
-                    onclick={() => remove(comment.id)}
-                    type="button"
-                >
-                    <iconify-icon icon="ion:close"></iconify-icon>
-                </button>
+                {#if comment.mine}
+                    <button class="paper-link paper-comment-delete" onclick={() => remove(comment.id)} type="button">
+                        {$t("wishes.comment-delete")}
+                    </button>
+                {/if}
             </div>
         {/each}
 

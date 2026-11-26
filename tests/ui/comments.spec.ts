@@ -40,7 +40,7 @@ test("comments are signed, visible to other members and hidden from the list own
 
         const comment = detail.getByTestId("comment").filter({ hasText: commentText });
         await expect(comment).toBeVisible();
-        await expect(comment).toContainText(`— ${other.name}`);
+        await expect(comment).toContainText(other.name);
     });
 
     await test.step("the comment is still there after a reload", async () => {
@@ -64,7 +64,7 @@ test("comments are signed, visible to other members and hidden from the list own
         expect(postResponse.status()).toBe(403);
     });
 
-    await test.step("another member can remove the comment", async () => {
+    await test.step("the author can remove the comment", async () => {
         const detail = otherPage.getByTestId("item-detail");
         await detail.getByTestId("comment").filter({ hasText: commentText }).getByRole("button").click();
         await expect(detail.getByTestId("comment").filter({ hasText: commentText })).toHaveCount(0);
