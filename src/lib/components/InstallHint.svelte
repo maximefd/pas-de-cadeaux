@@ -73,7 +73,10 @@
         {:else}
             <p>{kind === "ios" ? $t("install.ios") : $t("install.android")}</p>
         {/if}
-        <p class="paper-install-address">{$t("install.address")} <strong>{host}</strong></p>
+        <p class="paper-install-address">
+            {$t("install.address")}
+            <strong>{host}</strong>
+        </p>
         {#if canShare}
             <button class="paper-link" onclick={share} type="button">{$t("install.share")}</button>
         {/if}
