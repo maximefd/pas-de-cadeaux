@@ -21,3 +21,4 @@ src/lib/generated/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+dist-o2switch/

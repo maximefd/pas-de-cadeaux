@@ -1,0 +1,73 @@
+name: Archive o2switch
+# Fabrique l'archive « prête à téléverser » pour un hébergement cPanel (o2switch) : rien à compiler côté utilisateur.
+# Compilée sous AlmaLinux 8 pour rester compatible avec les anciennes versions de Linux des hébergeurs mutualisés.
+permissions:
+    contents: write
+on:
+    workflow_dispatch:
+    pull_request:
+        paths:
+            - "scripts/o2switch/**"
+            - ".github/workflows/release_o2switch.yml"
+    push:
+        branches: [main]
+        paths:
+            - "src/**"
+            - "prisma/**"
+            - "static/**"
+            - "templates/**"
+            - "scripts/o2switch/**"
+            - "package.json"
+            - "pnpm-lock.yaml"
+            - ".github/workflows/release_o2switch.yml"
+
+jobs:
+    archive:
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+        container: almalinux:8
+        steps:
+            - name: Outils de compilation
+              run: |
+                  dnf install -y git zip unzip gcc-toolset-13-gcc-c++ make python3.11 openssl-devel findutils tar gzip which
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+            - name: Fabrication
+              env:
+                  npm_config_build_from_source: "true"
+              run: |
+                  git config --global --add safe.directory "$GITHUB_WORKSPACE"
+                  source /opt/rh/gcc-toolset-13/enable
+                  export PYTHON=/usr/bin/python3.11 npm_config_python=/usr/bin/python3.11
+                  corepack enable pnpm
+                  bash scripts/o2switch/build-archive.sh
+            - name: Contrôle de compatibilité glibc
+              run: |
+                  cd dist-o2switch/pas-de-cadeaux
+                  for f in $(find pdc_modules -name '*.node'); do echo "$f: $(objdump -T $f | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"; done
+            - name: Test de démarrage
+              run: |
+                  cd dist-o2switch/pas-de-cadeaux
+                  export HOME=/tmp/h ORIGIN=http://localhost:3399 PORT=3399
+                  node app.js > /tmp/app.log 2>&1 &
+                  sleep 15
+                  curl -sf -o /dev/null -w "%{http_code}\n" http://localhost:3399/login || (cat /tmp/app.log; exit 1)
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: pas-de-cadeaux-o2switch
+                  path: dist-o2switch/pas-de-cadeaux-o2switch.zip
+            - name: Version
+              id: v
+              run: echo "tag=o2switch-$(date -u +%Y%m%d)-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+            - uses: softprops/action-gh-release@v2
+              if: github.ref == 'refs/heads/main'
+              with:
+                  tag_name: ${{ steps.v.outputs.tag }}
+                  name: "Archive o2switch ${{ steps.v.outputs.tag }}"
+                  body: "Archive prête à téléverser sur un hébergement cPanel (o2switch). Voir la fiche d'installation."
+                  files: dist-o2switch/pas-de-cadeaux-o2switch.zip
+                  make_latest: true
