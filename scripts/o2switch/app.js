@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Point d'entrée pour o2switch / cPanel « Setup Node.js App » (Phusion Passenger).
 // Passenger lance ce fichier ; il prépare la base de données puis démarre l'appli.
 const path = require("path");

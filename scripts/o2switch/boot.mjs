@@ -22,7 +22,10 @@ db.exec(`CREATE TABLE IF NOT EXISTS "_prisma_migrations" (
 )`);
 
 const done = new Set(
-    db.prepare(`SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL`).all().map((r) => r.migration_name)
+    db
+        .prepare(`SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL`)
+        .all()
+        .map((r) => r.migration_name)
 );
 const migrationsDir = join(root, "prisma", "migrations");
 const names = readdirSync(migrationsDir, { withFileTypes: true })
