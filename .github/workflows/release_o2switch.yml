@@ -5,6 +5,10 @@ permissions:
     contents: write
 on:
     workflow_dispatch:
+    pull_request:
+        paths:
+            - "scripts/o2switch/**"
+            - ".github/workflows/release_o2switch.yml"
     push:
         branches: [main]
         paths:
