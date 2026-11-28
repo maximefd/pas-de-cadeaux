@@ -47,7 +47,7 @@ jobs:
             - name: Contrôle de compatibilité glibc
               run: |
                   cd dist-o2switch/pas-de-cadeaux
-                  for f in $(find node_modules -name '*.node'); do echo "$f: $(objdump -T $f | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"; done
+                  for f in $(find pdc_modules -name '*.node'); do echo "$f: $(objdump -T $f | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"; done
             - name: Test de démarrage
               run: |
                   cd dist-o2switch/pas-de-cadeaux

@@ -33,8 +33,9 @@ rm -rf $N/prisma $N/tsx $N/typescript $N/@types $N/@prisma/engines $N/@prisma/de
 rm -rf $N/better-sqlite3/deps $N/better-sqlite3/src $N/re2/vendor
 find node_modules -path '*query_compiler_*' \( -name '*cockroachdb*' -o -name '*mysql*' -o -name '*postgresql*' -o -name '*sqlserver*' \) -delete 2>/dev/null || true
 find node_modules \( -name '*.map' -o -name '*.d.ts' -o -name '*.d.mts' -o -name '*.d.cts' -o -iname '*.md' \) -type f -delete
+mv node_modules pdc_modules
 rm -f pnpm-lock.yaml pnpm-workspace.yaml
 printf '{\n  "name": "pas-de-cadeaux",\n  "private": true,\n  "version": "1.0.0",\n  "description": "Déjà installé : ne pas cliquer sur Run NPM Install"\n}\n' > package.json
 
 cd - >/dev/null
-cd dist-o2switch && zip -qr pas-de-cadeaux-o2switch.zip pas-de-cadeaux && ls -lh pas-de-cadeaux-o2switch.zip
+cd dist-o2switch/pas-de-cadeaux && zip -qr ../pas-de-cadeaux-o2switch.zip . && ls -lh ../pas-de-cadeaux-o2switch.zip

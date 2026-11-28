@@ -7,6 +7,14 @@ const fs = require("fs");
 process.chdir(__dirname);
 process.env.NODE_ENV = process.env.NODE_ENV || "production";
 
+// Les dépendances arrivent dans « pdc_modules » : cPanel gère lui-même un dossier « node_modules »
+// (lien vers son environnement), on le remplace donc par le nôtre au démarrage.
+const mods = path.join(__dirname, "pdc_modules");
+if (fs.existsSync(mods)) {
+    fs.rmSync(path.join(__dirname, "node_modules"), { recursive: true, force: true });
+    fs.renameSync(mods, path.join(__dirname, "node_modules"));
+}
+
 // Dossier des données (base + photos), hors du dossier de l'appli pour survivre aux mises à jour
 const dataDir = process.env.PDC_DATA_DIR || path.join(os.homedir(), "pdc-data");
 fs.mkdirSync(path.join(dataDir, "uploads"), { recursive: true });
