@@ -477,7 +477,10 @@
         "manage-list": "Gérer la liste",
         "my-wishes": "Mes envies",
         "no-wishes-yet": "Aucune envie pour l'instant",
-        "note-placeholder": "Une précision, une taille, un prix… (facultatif)",
+        "note-placeholder": "Taille, couleur, lien, prix… Inutile de répéter l'idée.",
+        "idea-label": "L'idée, en quelques mots",
+        "note-label": "Une précision (facultatif)",
+        "add-note": "Ajouter une précision (taille, couleur, lien, prix…)",
         "preview": "Aperçu",
         "price": "Prix",
         "purchased": "Acheté",
@@ -589,6 +592,15 @@
         "comment-count": "{count, plural, one {# commentaire} other {# commentaires}}",
         "claims-intro": "Les idées que tu as réservées. Tes proches voient que tu t'en occupes et peuvent participer avec toi. La personne concernée, elle, n'en sait rien."
     },
+    "install": {
+        "button": "Ajouter à l'écran d'accueil",
+        "ios": "Pour la retrouver facilement sur ton iPhone : clique sur le bouton Partager de Safari (le carré avec une flèche), puis sur « Sur l'écran d'accueil ».",
+        "android": "Pour la retrouver facilement : ouvre le menu de ton navigateur (les trois points en haut), puis clique sur « Ajouter à l'écran d'accueil » ou « Installer l'application ».",
+        "title": "Retrouve l'appli sur ton téléphone",
+        "address": "Son adresse, facile à retenir :",
+        "share": "M'envoyer le lien (SMS, mail, WhatsApp…)",
+        "dismiss": "Plus tard"
+    },
     "unable-to-load-icons": "Impossible de charger les icônes.",
     "help": {
         "title": "Aide",
@@ -598,6 +610,8 @@
         "a2": "Clique sur « Annuler » juste après. Tu peux aussi retirer une idée quand tu veux.",
         "q-visible": "Si j'ajoute une idée, les autres membres du groupe la voient ?",
         "a-visible": "Oui, tout le monde voit l'idée que tu as proposée, sauf la personne concernée.",
+        "q-install": "Comment retrouver l'appli sur mon téléphone ?",
+        "a-install": "Clique sur le bouton ci-dessous : l'appli apparaîtra sur ton écran d'accueil, comme une application. Sinon, retiens son adresse ou envoie-toi le lien.",
         "q3": "Tu as oublié ton mot de passe ?",
         "a3": "Demande à la personne qui t’a invité : elle t’en donnera un nouveau.",
         "q-claim": "À quoi sert « Réserver » ?",

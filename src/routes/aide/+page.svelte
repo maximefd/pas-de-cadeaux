@@ -1,8 +1,9 @@
 <script lang="ts">
     import { getFormatter } from "$lib/i18n";
+    import InstallHint from "$lib/components/InstallHint.svelte";
 
     const t = getFormatter();
-    const questions = ["1", "-visible", "-claim", "2", "3"];
+    const questions = ["1", "-visible", "-claim", "-install", "2", "3"];
 </script>
 
 <!-- Aide : quelques questions, une phrase de réponse chacune (maquette d'accueil). -->
@@ -11,6 +12,7 @@
         <details class="paper-faq">
             <summary>{$t(`help.q${n}`)}</summary>
             <p>{$t(`help.a${n}`)}</p>
+            {#if n === "-install"}<InstallHint />{/if}
         </details>
     {/each}
 </div>
