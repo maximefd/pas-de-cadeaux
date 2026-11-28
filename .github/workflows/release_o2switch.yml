@@ -29,7 +29,7 @@ jobs:
         steps:
             - name: Outils de compilation
               run: |
-                  dnf install -y git zip unzip gcc-toolset-13-gcc-c++ gcc-toolset-13-make python3 openssl-devel findutils tar gzip which
+                  dnf install -y git zip unzip gcc-toolset-13-gcc-c++ make python3 openssl-devel findutils tar gzip which
             - uses: actions/checkout@v7
               with:
                   fetch-depth: 0
