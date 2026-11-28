@@ -93,6 +93,10 @@ export class ItemForm {
     }
 
     async fillNote(text: string) {
+        const addNote = this.page.locator("#add-note");
+        if (await addNote.isVisible()) {
+            await addNote.click();
+        }
         await this.notesField.fill(text);
         return this;
     }

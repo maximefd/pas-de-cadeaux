@@ -207,7 +207,7 @@
                 rows="2"
                 value={productData.note ?? ""}></textarea>
         {:else}
-            <button class="paper-link paper-add-note" onclick={() => (showNote = true)} type="button">
+            <button id="add-note" class="paper-link paper-add-note" onclick={() => (showNote = true)} type="button">
                 {$t("wishes.add-note")}
             </button>
         {/if}
