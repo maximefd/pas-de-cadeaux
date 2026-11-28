@@ -861,3 +861,36 @@ header:has(> .paper-header) {
     justify-content: flex-start;
     gap: 0;
 }
+
+/* --- Formulaire d'idée : libellés et précision facultative --- */
+.paper-label {
+    display: block;
+    font-size: 0.9375rem;
+    color: var(--paper-mute);
+    margin-bottom: 0.25rem;
+}
+.paper-add-note {
+    padding-inline: 0;
+    min-height: 2.75rem;
+    text-align: left;
+}
+
+/* --- Invitation à ajouter l'appli à l'écran d'accueil --- */
+.paper-install {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--paper-line);
+}
+.paper-install p {
+    margin: 0;
+}
+.paper-install .paper-primary {
+    width: auto;
+    padding-inline: 1.25rem;
+}
+.paper-install .paper-install-address strong {
+    font-size: 1.25rem;
+}

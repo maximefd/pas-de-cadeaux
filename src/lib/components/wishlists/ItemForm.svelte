@@ -47,6 +47,7 @@
     const t = getFormatter();
 
     let productData = $state(item);
+    let showNote = $state(!!item.note);
     let form = $derived(page.form);
     let url = $derived(page.url);
     let fetching = $state(false);
@@ -178,7 +179,7 @@
 
 <div class="paper-fields paper-item-form">
     <div class="paper-field">
-        <label class="sr-only" for="name">{$t("wishes.item-name")}</label>
+        <label class="paper-label" for="name">{$t("wishes.idea-label")}</label>
         <input
             id="name"
             name="name"
@@ -196,14 +197,20 @@
     </div>
 
     <div class="paper-field">
-        <label class="sr-only" for="note">{$t("wishes.notes")}</label>
-        <textarea
-            id="note"
-            name="note"
-            class="input paper-item-note"
-            placeholder={$t("wishes.note-placeholder")}
-            rows="2"
-            value={productData.note ?? ""}></textarea>
+        {#if showNote}
+            <label class="paper-label" for="note">{$t("wishes.note-label")}</label>
+            <textarea
+                id="note"
+                name="note"
+                class="input paper-item-note"
+                placeholder={$t("wishes.note-placeholder")}
+                rows="2"
+                value={productData.note ?? ""}></textarea>
+        {:else}
+            <button class="paper-link paper-add-note" onclick={() => (showNote = true)} type="button">
+                {$t("wishes.add-note")}
+            </button>
+        {/if}
     </div>
 
     <!-- Champs avancés : non affichés dans le formulaire simple, mais leurs valeurs existantes sont conservées -->

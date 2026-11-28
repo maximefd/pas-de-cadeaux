@@ -4,6 +4,7 @@
     import CircleTabs from "$lib/components/papier/CircleTabs.svelte";
     import { page } from "$app/state";
     import { getFormatter } from "$lib/i18n";
+    import InstallHint from "$lib/components/InstallHint.svelte";
 
     let { data }: PageProps = $props();
 
@@ -11,6 +12,7 @@
 </script>
 
 <!-- « Mes proches » : une ligne par personne du cercle, sa liste s'ouvre d'un clic. -->
+<InstallHint banner />
 <CircleTabs groups={page.data.groups} user={page.data.user} />
 
 {#if data.otherLists.length === 0}
