@@ -1,0 +1,1 @@
+var e=`Pas de cadeaux !`;export{e as t};

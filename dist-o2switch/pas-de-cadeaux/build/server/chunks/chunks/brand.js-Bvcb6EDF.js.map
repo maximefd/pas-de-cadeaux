@@ -1,0 +1,1 @@
+{"version":3,"file":"brand.js-Bvcb6EDF.js","sources":["../../../../.svelte-kit/output/server/chunks/brand.js"],"sourcesContent":["// src/lib/brand.ts\n/** Nom affiché de l'application (en-tête, titre des pages, assistant, « À propos »). */\nvar APP_NAME = \"Pas de cadeaux !\";\nexport { APP_NAME as t };\n"],"names":[],"mappings":"AAAA;AACA;AACG,IAAC,QAAQ,GAAG;;;;"}

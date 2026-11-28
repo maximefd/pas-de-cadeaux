@@ -1,0 +1,1 @@
+import"../chunks/CMISW0EB.js";import"../chunks/DU60BYMT.js";import{Ct as e,Wt as t,Y as n,Z as r,bt as i}from"../chunks/DiA0gTYY.js";import{t as a}from"../chunks/3O3SN5_t.js";var o=r(`<div class="flex flex-wrap gap-2"><!> <!></div>`);function s(r){var s=o(),c=i(s);a(c,{});var l=e(c,2);a(l,{claimed:!0}),t(s),n(r,s)}function c(e){s(e,{})}export{c as component};
