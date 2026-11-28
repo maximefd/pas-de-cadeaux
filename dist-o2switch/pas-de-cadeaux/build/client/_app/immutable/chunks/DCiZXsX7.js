@@ -1,1 +1,0 @@
-var e=e=>e&&!e.endsWith(`@sans-email.invalid`)?e:``;export{e as t};

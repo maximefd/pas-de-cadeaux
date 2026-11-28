@@ -1,1 +1,0 @@
-var e=function(e){return e[e.USER=1]=`USER`,e[e.ADMIN=2]=`ADMIN`,e[e.GROUP_MANAGER=3]=`GROUP_MANAGER`,e}({});export{e as t};

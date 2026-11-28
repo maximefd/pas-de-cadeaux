@@ -1,1 +1,0 @@
-INSERT INTO system_config ("key", "value", "groupId") VALUES ('claims.showName', 'true', 'global');

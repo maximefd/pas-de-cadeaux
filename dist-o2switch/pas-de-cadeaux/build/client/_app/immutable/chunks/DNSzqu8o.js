@@ -1,1 +1,0 @@
-function e(e,t=300){let n;return(...r)=>(n&&clearTimeout(n),new Promise(i=>{n=setTimeout(()=>i(e(...r)),t)}))}export{e as t};
