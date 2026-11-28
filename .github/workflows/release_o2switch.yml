@@ -29,7 +29,7 @@ jobs:
         steps:
             - name: Outils de compilation
               run: |
-                  dnf install -y git zip unzip gcc-toolset-13-gcc-c++ make python3 openssl-devel findutils tar gzip which
+                  dnf install -y git zip unzip gcc-toolset-13-gcc-c++ make python3.11 openssl-devel findutils tar gzip which
             - uses: actions/checkout@v7
               with:
                   fetch-depth: 0
@@ -42,6 +42,7 @@ jobs:
               run: |
                   git config --global --add safe.directory "$GITHUB_WORKSPACE"
                   source /opt/rh/gcc-toolset-13/enable
+                  export PYTHON=/usr/bin/python3.11 npm_config_python=/usr/bin/python3.11
                   corepack enable pnpm
                   bash scripts/o2switch/build-archive.sh
             - name: Contrôle de compatibilité glibc
